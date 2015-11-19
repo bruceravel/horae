@@ -12,7 +12,7 @@ using [[https://github.com/bruceravel/demeter][Demeter]].
 
 More information about Demeter -- including Windows installer
 packages and installation instructions for linux and Mac -- can be
-found at [[http://bruceravel.github.io/demeter/][the Demetr homepage]].
+found at [[http://bruceravel.github.io/demeter/][the Demeter homepage]].
 
 Final note: quit using this ancient software.  Really.  I mean it.
 
