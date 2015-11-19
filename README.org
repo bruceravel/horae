@@ -1,0 +1,18 @@
+
+* Horae: Very old, unsupported XAS data processing and analysis software
+
+This repository exists to provide a historical record for the
+development of Bruce's big XAS software development project.
+
+This software was last updated in 2008 and has been replaced by 
+[[https://github.com/bruceravel/demeter][Demeter]]. 
+
+You really shouldn't be using this software.  You really should be
+using [[https://github.com/bruceravel/demeter][Demeter]].
+
+More information about Demeter -- including Windows installer
+packages and installation instructions for linux and Mac -- can be
+found at [[http://bruceravel.github.io/demeter/][the Demetr homepage]].
+
+Final note: quit using this ancient software.  Really.  I mean it.
+
