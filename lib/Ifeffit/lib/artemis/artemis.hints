@@ -1,0 +1,96 @@
+######################################################################
+## Artemis hints file
+##
+##                     Artemis is copyright (c) 2001-2006 Bruce Ravel
+##                                                     bravel@anl.gov
+##                                  http://cars9.uchicago.edu/~ravel/
+##
+##                   Ifeffit is copyright (c) 1992-2006 Matt Newville
+##                                         newville@cars.uchicago.edu
+##                       http://cars9.uchicago.edu/~newville/ifeffit/
+##
+##	  The latest version of Artemis can always be found at
+##	    http://cars9.uchicago.edu/~ravel/software/exafs/
+##
+## -------------------------------------------------------------------
+##     All rights reserved. This program is free software; you can
+##     redistribute it and/or modify it provided that the above notice
+##     of copyright, these terms of use, and the disclaimer of
+##     warranty below appear in the source code and documentation, and
+##     that none of the names of The Naval Research Laboratory, The
+##     University of Chicago, University of Washington, or the authors
+##     appear in advertising or endorsement of works derived from this
+##     software without specific prior written permission from all
+##     parties.
+##
+##     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+##     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+##     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+##     NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+##     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+##     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+##     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+##     OTHER DEALINGS IN THIS SOFTWARE.
+## -------------------------------------------------------------------
+######################################################################
+##
+## Each hint occupies one line.  Lines with only whitespace or which
+## start with a hash (#) are ignored.  Hints can be up to 87 columns
+## long.
+##-------------------------------------------------------------- 87th column is here -|
+
+# [English]
+Control-h displays a random hint.
+Control-q quits Artemis.
+Control-d is the equivalent of the "Done" button in pop-up dialogs.
+Left click on data or path parameter labels for a brief, helpful description.
+Right click on a path parameter label for a menu of parameter functions.
+Right click on a word in a path parameter math expression to set it as a variable.
+Right click on the path list to change the display without changing the path selection.
+Right click on the Guess,Def,Set list for a menu of functions.
+The GDS right click menu can operate on the extended selection.
+Right click on the Atoms list for a menu of functions.
+The Atoms right click menu can operate on the extended selection.
+Right click on the Feff interpretation list for a menu of path-related functions.
+The Feff interpretation right click menu can operate on the extended selection.
+This space is also used to display progress messages during analysis.
+Use Control-n to change the name of any itemn in the Data and Paths List.
+The "Fit" item in the Data & Paths list contains the result of a fit or a summation.
+Use the Sum menu to make summations of some or all paths used in a fit.
+The "Residual" in the Data & Paths list contains the difference between data and fit.
+The Data & Paths list uses extended selection: try C-click, S-click, and click-drag.
+Click a blue X to pluck a parameter value from the plot with the mouse.
+The "Traces" tab provides tools for stacking and inverting plots.
+The "Indic" tab is used to set indicators -- vertical lines drawn on every plot.
+All selected items in the Data & Paths list are plotted when a plot button is pressed.
+You can plot individual paths even before running a fit or making a summation.
+The keyboard shortcuts for plotting are C-p k, C-p r, and C-p q.
+Back-transformed k-space is called "q-space" in Artemis.
+Fits can be performed in k-, R-, or q-space (but we like R-space the best!).
+Residuals are calculated in the fitting space and may be forward Fourier transformed.
+A guess parameter is varied to find the best fit to the data.
+A def parameter's math expression is stored and updated throughout a fit.
+A set parameter is a math expression which is evaluated at the time of definition.
+An after parameter is not used in the fit, but is evaluated upon completion of the fit.
+A restraint is a math expression used as a penalty applied to the fitting criterion.
+The background refinement is just like the Autobk algorithm.  Rmin is the Rbkg parameter.
+By fitting a background, you can measure correlations between bkg and fit parameters.
+Phase corrected Fourier transforms are computed using the total phase shift from some path.
+Phase corrected Fourier transforms are used only for plotting, not for fitting.
+#Epsilon, the user-specified uncertainty, can be used to weight data sets.
+Correlations among parameters above the specified maximum are reported after the fit.
+The path parameters dphase, k_, amp_, and phase_array are the "extended" parameters.
+The path parameter N is set by default with the degeneracy from the feffNNNN.dat file.
+The path parameter N can be any positive integer or real, but not a variable.
+The path parameter S02 is for parameterizing amplitude terms other than degeneracy.
+The k_, amp_, and phase_array path parameters take array arguments.  Use with care!!
+The Ifeffit reference is J. Synchrotron Radiat. 8 (2001) p. 322.
+The Artemis reference is J. Synchrotron Radiat. (2005), 12:4, pp. 537-541.
+Ifeffit's homepage is http://cars.uchicago.edu/ifeffit/
+Artemis's homepage is http://feff.phys.washington.edu/~ravel/software/exafs/
+The journal in the Edit menu will be saved in the project file.
+Report bugs to bravel@anl.gov.
+
+
+
+

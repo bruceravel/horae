@@ -1,0 +1,147 @@
+
+   +--------------------------------------------------------------+
+   |                  Change log for Hephaestus                   |
+   |       http://cars9.uchicago.edu/~ravel/software/exafs        |
+   +--------------------------------------------------------------+
+   |                         Bruce Ravel                          |
+   |                       bravel@bnl.gov                         |
+   +--------------------------------------------------------------+
+
+8 Dec 2007 0.19
+  * new icon
+  * highlight lines associated with edge when edge is selected on
+    absorption page
+  * add La2 line to filter plots
+
+4 Oct 2007 0.18
+  * change rule for filter selection for L3 edges.  Now choose the
+    element with a K edge that is 90 eV above the La1 line
+  * integrate heph chapter of Athena User's Guide
+  * added doc to button bar
+  * refactored code for switching between utilities
+  * added Shaltout data to Xray::Absorption
+
+14 Sep 2007 0.17
+  * move font selection into the ini file
+  * mucked around with layout issues
+  * changed header text on transitions page
+
+March 25, June 24 2007 0.16
+  * added filter plot to absorption page
+  * removed absorption calculation from absorption page
+  * fill in formulas page when clicking an element on Data or
+    Absorption pages
+  * fixed a bug computing edge step lengths
+  * added Mossbauer isotopes to the Data utility and kalziumrc file
+  * fixed a stoopid bug using molarity on formulas page
+
+June 7 2006 0.15
+  * fixed a problem dealing with the ini files and the .horae directory
+
+April 20 2006 0.14
+  * Compute unit edge step lengths in formula utility
+  * implemented an ini file
+   
+February 4 2006 0.13
+  * fixed a problem in McMaster.pm returning zeros at very high energy
+  * use mass energy-absorption coefficient in ion chamber utility for
+    resources with photo and incoherent cross sections
+  * warn when trying to use Henke tables above 30 keV
+   
+December 26 2005 0.12
+  * fixed numerical error in computing photon flux in ion chamber
+    utility
+  * use HLists to display edge and line energies in absorption utility
+  * changed font in several places
+  * modified units swap to include new tables
+
+August ?? 2005 0.11
+  * add togles for total, photoelectric, coherent, and incoherent
+    cross-sections and text to the formula report
+  * fixed a bug in Elam.pm precluding the display of data about Np
+    through Cf
+  * added a label about resource and cross_section to periodic table,
+    but only for absorption utility
+  * finally figured out how to automatically zoom in on the pod text!
+
+July 16 2005 0.10
+  * added some pure metals to formula.dat
+  * added molarities to formula utility
+  * make sure the window is big enough for both the transitions chart
+    and the periodic table
+  * added photon flux calculation
+  * fixed a plotting typo in f1f2 -- y-axis of f" plot was mis-labeled
+
+April 29 2005 0.09
+  * tightened up some code in head.pl to make it easier to add and
+    maintain utilities.
+  * some changes to how widgets are packed so that the program behaves
+    reasonably well when resized
+  * added a little script to the distro to generate html and pdf
+    documentation 
+
+March 17 2005 0.08
+  * added a line finder
+  * made the text a big bigger in the finder lists
+  * come internal changes to color handling in the button box
+  * added icons in various formats to the distro for use on the
+    desktop
+  * bound the mouse wheel to the listboxes in formulas and the finders
+    
+
+October 8 2004 0.07
+  * fixed the disabled background color of the disabled entry boxes in
+    ion and f1f2
+  * added some text to the About box
+
+September 28 2004 0.06 (svn r24)
+  * in the entry boxes in the formula, ion chamber, and edge finder
+    utilities, bound the return key to do the calculation
+  * added file export to f'/f"
+  * updated pod
+
+July 27 -- August 2 2004 0.05 (svn r13)
+  * TRANSFER TO SUBVERSION
+  * added the edge finder utility
+  * fixed a bug in how pressure was used in the ion utility
+  * added energy and density units to the formula utility
+  * formula utility now computes the mass needed for one absorption
+    length even if the density of the sample is not provided.
+  * for some inscrutable reason, I had commented out the report of the
+    mass needed for an absorption length if the absorption length was
+    quite long
+  * added a reset button to the ion chamber utility
+  * changed the button color scheme
+  * made formula results area an ROtext and disabled the mouse-3 menu
+  * smaller icons, a more compact button bar, rearranged order of
+    utilities 
+
+July 10 2004 0.04
+  * added the emission lines page
+  * made buttonbox a scrolled pane
+  * fixed a bug reading the personal formulas data on unix (needed to
+    write it to personal space)
+  * added BN to the formulas.dat file
+
+June 2 2004 0.03
+  * fixed a layout problem in the ion chamber utility
+
+April 12 2004 -- April ?? 2004 0.02
+  * added a 10cm ion chamber
+  * allow negative width in f1f2
+  * added a checkbutton for natural core level widths in f1f2, on by
+    default
+  * some minor visual changes
+  * added a bit of text and a pressure slider to the ion utility
+  * added a user defined length to the ion utility
+  * add and remove buttons on formulas utility for keeping a database
+    of user data
+  * mass of a 1 cm^2 sample in formula section
+  * updated pod to reflect these changes
+  * explicitly set units value in the setting menu radiobuttons and
+    fixed a bug where the energy values were toggled every time
+    instead of only when appropriate
+
+
+April 8 2004 0.01
+  * initial release

@@ -1,0 +1,316 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+  <HEAD>
+    <TITLE>WebAtoms Help</TITLE>
+
+    <!-- Created by: Bruce Ravel, 12-Oct-1999 -->
+    <!-- Changed by: Bruce Ravel, 03-Feb-2006 -->
+  </HEAD>
+
+  <!--<LINK REL="stylesheet" TYPE="text/css" HREF="bruce.css">-->
+
+  <BODY bgcolor="white">
+    <H1 align=center>WebAtoms Help</H1>
+    <P>
+      This page provides quick, on-line help for using
+      Web<small>ATOMS</small>.  For complete documentation of
+      <small>ATOMS</small> and its algorithms, please check out the <a
+      href="http://cars9.uchicago.edu/~ravel/software/doc/Atoms/Welcome.html">ATOMS
+	documentation page</a>.
+    </P>
+    <P>
+      This page is basically just a big long list of the keywords in
+      <small>ATOMS</small> with a few words of explanation.  Just
+      enough to get you going.
+    </P>
+    <hr>
+    <UL>
+      <LI> <A HREF="#overview">Overview</A> </LI>
+      <LI> <A HREF="#abc">A, B, and C</A> </LI>
+      <LI> <A HREF="#alpha">Alpha</A> </LI>
+      <LI> <A HREF="#beta">Beta</A> </LI>
+      <LI> <A HREF="#central">Central Atom</A> </LI>
+      <LI> <A HREF="#edge">Edge</A> </LI>
+      <LI> <A HREF="#element">Element</A> </LI>
+      <LI> <A HREF="#gamma">Gamma</A> </LI>
+      <LI> <A HREF="#output">Output Types</A> </LI>
+      <LI> <A HREF="#rmax">Rmax</A> </LI>
+      <LI> <A HREF="#shift">Shift</A> </LI>
+      <LI> <A HREF="#space_group">Space Groups</A> </LI>
+      <LI> <A HREF="#tag">Site Tag</A> </LI>
+      <LI> <A HREF="#title">Titles</A> </LI>
+      <LI> <A HREF="#xyz">X, Y, and Z coordinates</A> </LI>
+    </UL>
+    <hr>
+
+    <H3> <A NAME="overview"><STRONG>Overview</STRONG></A> </H3>
+    <DL>
+      <DT> <STRONG>Run Atoms button</STRONG></DT>
+      <DD>
+	<P>
+	  Click this button to submit your crystallographic data.
+	</P>
+      </DD>
+      <DT> <STRONG>Clear button</STRONG> </DT>
+      <DD>
+	<P>
+	  Click this button to start over with a fresh page.
+	</P>
+      </DD>
+      <DT> <STRONG>Reset button</STRONG> </DT>
+      <DD>
+	<P>
+	  Click this button to reset everything to its starting
+	  values.  This is most useful when modifying an input file
+	  read in from the Atoms Database.
+	</P>
+      </DD>
+      <DT> <STRONG>Adding more atom positions</STRONG> </DT>
+      <DD>
+	<P>
+	  At the bottom of the form is a space to indicate how many
+	  atom positions you need.  Simply fill in the number and
+	  press the button marked "Do it!".
+	</P>
+      </DD>
+      <!--
+	   <DT> <STRONG>Entering element symbols</STRONG> </DT>
+	   <DD>
+	   <P>
+	   Normally element
+	   symbols are chosen off a list.  If you prefer to type them in
+	   by hand or if the list does not work on your browser, click
+	   the button labeled "Do it!".
+	   <P>
+	   </DD>
+      -->
+    </DL>
+    <HR>
+
+    <DL>
+      <DT> <A NAME="abc"><STRONG>A, B, and C</STRONG></A> </DT>
+      <DD>
+	<P>
+	  Fill in these text fields with the lengths of the unit cell
+	  axes.  These should be numbers in &Aring;ngstroms.  For many
+	  space groups, it is ok to leave some of these blank.  For
+	  example, for the cubic groups, you only need to specify A.
+	  For hexagonal and trigonal groups, you need to specify A and
+	  C, but you can leave B blank.  For low symmetry groups, you
+	  will, of course, need to specify all three.
+	</P>
+      </DD>
+
+      <DT> <A NAME="alpha"><STRONG>Alpha</STRONG></A> </DT>
+      <DD>
+	<P>
+	  Use this text field to specify the angle between the B and C
+	  axes.  This is needed for rhombohedral groups in the
+	  rhombohedral setting, triclinic groups, and some settings of
+	  some monoclinic groups.
+	</P>
+      </DD>
+
+      <DT> <A NAME="beta"><STRONG>Beta</STRONG></A> </DT>
+      <DD>
+	<P>
+	  Use this text field to specify the angle between the A and C
+	  axes.  This is needed for triclinic groups, and the standard
+	  settings of monoclinic groups.
+	</P>
+      </DD>
+
+      <DT> <A NAME="central"><STRONG>Central Atom</STRONG></A> </DT>
+      <DD>
+	<P>
+	  Choose a site from the list of unique sites to be the central
+	  atom of your cluster by selecting the radio button in the row
+	  containing that site.
+	</P>
+      </DD>
+
+      <DT> <A NAME="edge"><STRONG>Edge</STRONG></A> </DT>
+      <DD>
+	<P>
+	  Select a symbol from the popup menu.  This is the symbol of
+	  the absorption edge to use when <span
+	  class=program>ATOMS</small> writes a <span
+	  class=program>FEFF</small> input file.  If you leave the
+	  popup widget blank, then <small>ATOMS</small>
+	  will choose an edge for you.  If your central atom is
+	  lighter than Cerium (Ce, number 58), the K edge will be
+	  used.  Otherwise the L3 edge is used.
+	</P>
+      </DD>
+
+      <DT> <A NAME="element"><STRONG>Element</STRONG></A> </DT>
+      <DD>
+	<P>
+	  Specify the atomic species occupying a site by entering its
+	  one- or two letter symbol in this column.
+	</P>
+      </DD>
+
+      <DT> <A NAME="gamma"><STRONG>Gamma</STRONG></A> </DT>
+      <DD>
+	<P>
+	  Use this text field to specify the angle between the A and B
+	  axes.  This is needed for triclinic groups, and the certain
+	  settings of some monoclinic groups.  For hexagonal,
+	  trigonal, and rhombohedral groups in the trigonal setting,
+	  <small>ATOMS</small> will set this to 120 for
+	  you.
+	</P>
+      </DD>
+
+      <DT> <A NAME="output"><STRONG>Output Types</STRONG></A> </DT>
+      <DD>
+	<P>
+	  Use this popup menu to select the type of calculation you
+	  would like <small>ATOMS</small> to make.  You
+	  choices include input files for <span
+	  class=program>FEFF</small>6 and <span
+	  class=program>FEFF</small>8, a couple of common file formats
+	  for ball-and-stick viewers (alchemy and xyz), a list of the
+	  entire contents of of the unit cell (p1.inp), a
+	  non-stoichiometric description of the unit cell (unit.dat),
+	  some calculations involving tables of absorption
+	  coefficients (absorption), and two input formats for the
+	  <small>GNXAS</small>' CRYMOL program.
+	</P>
+      </DD>
+
+      <DT> <A NAME="rmax"><STRONG>Rmax</STRONG></A> </DT>
+      <DD>
+	<P>
+	  This defines the size of the cluster to be calculated by
+	  <small>ATOMS</small>.  It should be a positive
+	  number in &Aring;ngstroms.  It can also be left blank in
+	  which case <small>ATOMS</small> will choose a
+	  sensible default.
+	</P>
+      </DD>
+
+      <DT> <A NAME="shift"><STRONG>Shift</STRONG></A> </DT>
+      <DD>
+	<P>
+	  Some space groups are commonly referenced to a choice of
+	  symmetry positions.  If your source of crystal data
+	  references the structure to a symmetry position other than
+	  the one that <small>ATOMS</small> uses, you will
+	  need to specify the vector by which all the unique sites ill
+	  need to be shifted so that the calculation will be made
+	  correctly.  In most situations it will be clear that you
+	  will need to use a shift vector because the atom list in the
+	  <small>FEFF</small> input file will be wrong and
+	  Web<small>ATOMS</small> will print a little note
+	  to you browser.
+	</P>
+      </DD>
+
+      <DT> <A NAME="tag"><STRONG>Site Tag</STRONG></A> </DT>
+      <DD>
+	<P>
+	  Specify a unique label for a site in this column.  These can
+	  be up to 10 characters long.  These tags are used to
+	  differentiate between different sites which contain the same
+	  atomic species.
+	</P>
+      </DD>
+
+      <DT> <A NAME="space_group"><STRONG>Space Group</STRONG></A> </DT>
+      <DD>
+	<P>
+	  Use this text field to enter the symbol for the space group
+	  of your crystal.  <small>ATOMS</small> is
+	  capable of interpreting lots of different things as a space
+	  group symbols, including Hermann-Maguin symbols, Schoenflies
+	  symbols, numeric indeces from the International Tables, and
+	  some special words like "fcc" and "diamond".  You have a lot
+	  of latitude as to how you write the symbols.  With only a
+	  few obscure exceptions, spaces can be used in writing the
+	  space group group symbols or they can be omited.  "pm3m"
+	  means the same thing as "P&nbsp;m&nbsp;3&nbsp;m".
+	</P>
+      </DD>
+
+      <DT> <A NAME="title"><STRONG>Titles</STRONG></A> </DT>
+      <DD>
+	<P>
+	  Use this text field to enter any user-defined title lines
+	  that you would like to have printed in the output of the
+	  <small>ATOMS</small> calculation.
+	</P>
+      </DD>
+
+      <DT> <A NAME="xyz"><STRONG>X, Y, and Z coordinates</STRONG></A> </DT>
+      <DD>
+	<P>
+	  Specify the fractional coordinate of a site in one of the cell
+	  axis directions.  You may use simple fractions such as
+	  "1/2".
+	</P>
+      </DD>
+
+    </DL>
+
+    <HR>
+
+    <A NAME="features"><H3 align=center>Features of ATOMS</H3></A>
+
+    <P>
+      Although Web<small>ATOMS</small> is pretty handy at
+      generating input files for <small>FEFF</small> and
+      other interesting kinds of files, there are many features of <A
+      HREF="http://cars9.uchicago.edu/~ravel/software/aboutatoms/">
+      <small>ATOMS</small> </A> which are only available
+      in the version that you download and run on your own computer.
+      Here is an incomplete list of features.  Perhaps this will
+      entice you to try it out!
+    </P>
+    <OL>
+      <LI>
+	<P>
+	  Fine grained control over the appearence and content of the
+	  output files and the ability to make entirely new kinds of
+	  output files.
+	</P>
+      </LI>
+      <LI>
+	<P> Dopants can be used. </P>
+      </LI>
+      <LI>
+	<P>
+	  Other functionality, such as calculations using tables of
+	  absorption coefficients, DAFS simulations, powder
+	  diffraction simulations (coming soon), and conversion of
+	  molecule files into <small>FEFF</small> input
+	  files.
+	</P>
+      </LI>
+      <LI>
+	<P>
+	  The ability to have <small>ATOMS</small>
+	  communicate with you in languages other than English.
+	  Currently supported are French, Spanish, and German.
+	</P>
+      </LI>
+      <LI>
+	<P>
+	  Object oriented perl libraries which you can use in your own
+	  programs.
+	</P>
+      </LI>
+    </OL>
+
+    <HR>
+
+    <ADDRESS>
+      <A NAME="Signature"
+	 HREF="http://cars9.uchicago.edu/~ravel/">Bruce Ravel</A>
+    </ADDRESS>
+
+
+    <EM>Modified: 3-Feb-2006</EM>
+  </BODY>
+</HTML>

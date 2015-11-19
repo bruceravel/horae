@@ -1,0 +1,107 @@
+Bruce Ravel
+<ravel@phys.washington.edu>
+Time-stamp: <2001/01/18 21:43:55 bruce>
+
+
+This is the README file for atoms.cgi -- the version of Atoms intended
+to run on the web.  There is no automatic installation procedure
+because there are several things that the web administrator must take
+care of which depend on the specific configuration of the server.  It
+seems easier to me to just have you directly edit atoms.cgi rather
+than use some silly little interactive configuration tool.
+
+1. Make sure that Atoms is installed on the server and that it works.
+   In fact, it is not important that atoms.pl or tkatoms.pl actually
+   be installed.  atoms.cgi does not call either of those programs.
+   What is important is that all of Atoms's library files be installed
+   correctly.  If you can run atoms.pl or tkatoms.pl, then all of the
+   library files are well installed.  If you have not installed Atoms,
+   you should go ahead and do so.  Don't forget to install the
+   AtomsBundle (on NT the files in the AtomsBundle are included with
+   the Atoms distribution itself).
+
+2. Take a look at the file atoms.cgi.  Near the beginning are some
+   variables that need to be set appropriately for your web server.
+   They are:
+
+	$extra_INC	if Atoms is installed somewhere outside of the 
+			default search path for perl modules, then set 
+			this variable to that location.  The variable
+			is unshifted to @INC when atoms.cgi starts
+
+	$atoms_help	this takes the URL to the place where you will 
+			install the file WebAtoms_help.html.
+
+        $ADB_search     the URL of the Atoms Database search form
+
+	$ADB_directory  this takes the actual location (not the
+	                location relative to the server's root) on the
+	                server disk where input files may be found.
+	                The purpose of this is so that atoms.cgi can
+	                be on the back end of a search CGI script.
+
+3. Put atoms.cgi in a place where your web server knows to look for
+   CGI programs.  Make sure it is executable.
+
+4. Put WebAtoms_help.html in the place indicated by the $atoms_help
+   variable.  You can use the copy on my web page
+	http://feff.phys.washington.edu/~ravel/software/atoms/doc/WebAtoms_help.html
+   but I would rather that you install a copy on your own server.
+
+5. Run atoms.cgi once by hand from the command line like this:
+        atoms.cgi -install
+   This sets up the set of hard links to the script which are used 
+   to serve up the correct file names when the client clicks the
+   "save-as" button.
+
+6. If you encounter problems, there are two things that you could
+   include in a bug report that would greatly improve my chances of
+   solving the problem.  (1) Any relevant lines from the server log
+   and/or error files.  (2) Save the page where you entered input data 
+   as a flat text file and mail me the text file.
+
+
+Calling this CGI script directly will serve up a page with a blank
+fill-in form.  You can import data from a file in $ADB_directory with
+a URL like this:
+        http:/what.ever/path/to/atoms.cgi?file=foo.inp
+In that case, the form will be filled in with data from the specified
+input file.
+
+This CGI script has only been tested with Apache.  Please let me know
+how things work with other servers.
+
+----------------------------------------------------------------------------
+
+Here is how atoms.cgi is intended to work:
+
+1.  First time called it should display a fill-out form for entering
+    all the data.  The page has this structure:
+
+      +-----------------------+
+      |  header information   |
+      +-----------------------+
+      |     warning area      |
+      +-----------------------+
+      |      data form        |
+      +-----------------------+
+      |  trailer information  |
+      +-----------------------+
+
+    The warning area should be blank initially.  The data form should
+    be empty, unless data import has happened, in which case many of
+    the entry widgets will be filled.  The header contains the html
+    headers, and a brief explanation of the page.  The trailer
+    contains copyright information, some links, and closing tags.  The 
+    form has lots of links to a help file on it.
+
+2.  If any trapable errors are encountered, the form will be
+    redisplayed with state completely saved.  The warning area will be 
+    filled with red text explaining the problems.
+
+3.  If the calculation can proceed, then the browser will be
+    redirected to the appropriate symbolic link with the complete
+    query list in the URL.  This will display the chosen output as
+    text/plain and the default "save-as" name will be appropriate.  If
+    there were any warnings that did not preclude continuing the
+    calculation, they are written to the top of the output file.

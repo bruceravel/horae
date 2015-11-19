@@ -1,0 +1,74 @@
+
+                                        8 June, 2009
+                                        Bruce Ravel (bravel@bnl.gov)
+
+	      Installing Athena, Artemis, and Hephaestus
+
+
+Do you have root access on your computer?
+=========================================
+
+  If the answer is yes and you wish to install all this software to
+  system space, then you will need to do all the following steps as
+  root.  On some systems, this means becoming root by issuing the "su"
+  command and entering the root password.  On systems that use sudo,
+  you will need to precede evey command with "sudo" to run it with
+  elevated privileges.
+
+  If you do not have root access or if you do not wish to install to
+  system space, you will need to follow the instructions in the
+  `INSTALL_not_root' file.  The instructions there walk you through a
+  procedure for configuring your user account to maintain a local perl
+  library.  Once you have done this, you will not need to use sudo to
+  run the commands below and all perl software will be installed into
+  your own diskspace.
+
+
+Non-unix operating systems:
+===========================
+
+Packages for Windows and Mac OSX are build separately.  See
+http://cars9.uchicago.edu/iffwiki/Downloads for details.
+
+
+Prerequisites:
+==============
+
+  You must install all of the follow before building the horae package
+
+  1.  PGPLOT and Ifeffit.
+  2.  perl/Tk:
+  3.  All perl pre-requisites from CPAN. At the command line issue this command:
+           perl -MCPAN -e 'install Bundle::HoraeBundle'
+  4.  Bruce's LibPerlXray package of modules.
+
+Installing Athena, Artemis, and Hephaestus:
+===========================================
+
+  1. Download the latest version of the Horae from its homepage,
+     http://feff.phys.washington.edu/~ravel/software/exafs/
+
+  2. Unpack the archive by issuing this command
+         gzip -dc horae.XXX.tar.gz | tar xvf -
+     This will unpack the contents to a directory called `horae-XXX/'
+     where "XXX" indicates the release number of the latest release.
+
+  3. cd into the `horae-XXX/' directory and issue the following
+     commands
+         perl Build.PL
+         ./Build
+         ./Build install
+     The last step requires root privilege.  You can alternately
+     install into your own diskspace by running the "private-install"
+     script. 
+
+
+You are ready to go.  The executables are called "atoms", "athena",
+"artemis", and "hephaestus".  If you use csh or tcsh as your shell,
+you will need to type "rehash" if you are installing for the first
+time.  You will also have the "horae_update" program installed, which
+can be used to update the horae package automagically in the future.
+
+Good luck.  Submit bug reports to bravel@bnl.gov or to the
+ifeffit mailing list and be sure to include enough information for me
+to replicate the problem.

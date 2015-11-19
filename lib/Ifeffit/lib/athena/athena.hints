@@ -1,0 +1,99 @@
+######################################################################
+## Athena hints file
+##
+##                      Athena is copyright (c) 2001-2006 Bruce Ravel
+##                                                     bravel@anl.gov
+##                                  http://cars9.uchicago.edu/~ravel/
+##
+##                   Ifeffit is copyright (c) 1992-2006 Matt Newville
+##                                         newville@cars.uchicago.edu
+##                       http://cars9.uchicago.edu/~newville/ifeffit/
+##
+##	  The latest version of Athena can always be found at
+##          http://cars9.uchicago.edu/~ravel/software/exafs/
+##
+## -------------------------------------------------------------------
+##     All rights reserved. This program is free software; you can
+##     redistribute it and/or modify it provided that the above notice
+##     of copyright, these terms of use, and the disclaimer of
+##     warranty below appear in the source code and documentation, and
+##     that none of the names of The Naval Research Laboratory, The
+##     University of Chicago, University of Washington, or the authors
+##     appear in advertising or endorsement of works derived from this
+##     software without specific prior written permission from all
+##     parties.
+##
+##     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+##     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+##     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+##     NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+##     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+##     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+##     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+##     OTHER DEALINGS IN THIS SOFTWARE.
+## -------------------------------------------------------------------
+######################################################################
+##
+## Each hint occupies one line.  Lines with only whitespace or which
+## start with a hash (#) are ignored.  Hints can be up to 87 columns
+## long.
+##-------------------------------------------------------------- 87th column is here -|
+
+# [English]
+Control-h displays a hint.
+Control-q quits Athena.
+Control-d is the equivalent of the "Done" button in pop-up dialogs.
+Alt-k and alt-j can be used to move the current group up and down in the group list.
+Crtl-k and ctrl-j can be used to select the group above or below the current group.
+Many commonly used function have keyboard shortcuts.  These are listed in the menus.
+Left click on parameter labels for a brief description of that parameter.
+Right click on parameter labels to set parameters between groups.
+Right click on section headers in the main window to set parameters between groups.
+This space is also used to display progress messages during analysis.
+The edge step is determined as part of normalization but can be adjusted by hand.
+Flattened data has the difference between the post and pre edge lines subtracted.
+The deglitching dialog allows you to deglitch data algorithmically or point by point.
+The deglitching algorithm removes points which fall outside tolerance margins.
+The calibration dialog works by specifying e0 and applying the appropriate E shift.
+The alignment dialog allows you to shift energy of data sets interactively.
+The energy shift can be set in the alignment dialog or by hand in the main window.
+Auto-alignment works by minimizing the difference between derivative spectra.
+Data can be merged as chi(k), mu(E), norm(E), chi(R), or chi(q).
+Difference spectra can be computed in chi(k), mu(E), norm(E), chi(R), or chi(q).
+Data should be aligned BEFORE merging.
+Data should be aligned BEFORE doing log-ratio analysis.
+Data can be displayed as k-weighted chi(E), i.e. chi(k) with the x-axis in energy.
+Detector groups are constructed from the detector columns of a mu(E) record.
+A background group is constructed from the background function from a mu(E) record.
+Red buttons are for single-group plots, purple buttons are for many-group plots.
+Keyboard shortcuts for plotting the current group: C-; e, C-; k, C-; r, and C-; q.
+Keyboard shortcuts for plotting all marked group: M-; e, M-; k, M-; r, and M-; q.
+Right click on the \"Plotting options\" label to post the Plot styles menu.
+Background removal and Fourier transforms will be done as needed before plotting.
+Click the check buttons in the Data Groups box to mark groups.
+Many features, including plotting and merging, work on the marked groups.
+Click a blue X to pluck a parameter value from the plot with the mouse.
+Phase corrected Fourier transforms subtract the central atom phase shift.
+See Physical Review B47:21 (1993) p. 14126 for details of the AUTOBK algorithm.
+The CLnorm algorithm matches your data to the Cromer-Liberman calculation of f".
+See J. Synchrotron Rad. 8 (2001) p. 322 for details about Ifeffit.
+Ifeffit's homepage is http://cars.uchicago.edu/ifeffit
+Athena's homepage is http://feff.phys.washington.edu/~ravel/software/exafs
+Right clicking on a data group pops up a menu for plotting and group actions.
+Back-transformed k-space is called "q-space" in Athena.
+A "kq" plot over-plots chi(k) and the real part of chi(q).
+The plot multiplier is a multiplicative scaling factor in many plots.
+The y-axis offset is a vertical displacement when the group is plotted.
+Vertical displacements for plots can be set for marked groups using the Stack tab.
+The Ind tab sets plot indicators -- vetical bars which can be plotted in any plot.
+Plot indicators in k are also plotted in E, and vice versa.
+The PF tab contains the point finder, a tool for marking x-axis values in plots.
+Athena analyzes XANES: difference spectra, peak fitting, & linear combo fitting.
+The peak fitting dialog allows you to fit step and peak lineshapes to XANES data.
+The linear combination fitting allows you fit standards spectra to XANES data.
+The journal in the Edit menu will be saved in the project file.
+Athena is highly configurable -- see the Preferences dialog in the Setting menu.
+Athena allows configured key bindings -- see the Settings menu.
+Athena includes built-in documentation -- see the Help menu.
+Demo projects (see the Help menu) are project files demonstrating features of Athena.
+Report bugs to bravel@anl.gov.

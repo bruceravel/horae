@@ -1,0 +1,100 @@
+# -*- mode: cperl -*-
+# Language file generation tool, version 1.9
+
+######################################################################
+## Atoms language configuration file
+##                                     copyright (c) 1999 Bruce Ravel
+##                                          ravel@phys.washington.edu
+##                            http://feff.phys.washington.edu/~ravel/
+##
+##	  The latest version of Atoms can always be found at
+##      http://feff.phys.washington.edu/~ravel/software/atoms/
+##
+## -------------------------------------------------------------------
+##     All rights reserved. This program is free software; you can
+##     redistribute it and/or modify it under the same terms as Perl
+##     itself.
+##
+##     This program is distributed in the hope that it will be useful,
+##     but WITHOUT ANY WARRANTY; without even the implied warranty of
+##     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##     Artistic License for more details.
+## -------------------------------------------------------------------
+######################################################################
+##
+## This is a language configuration file for atoms or for tkatoms.
+## This file is read after atoms starts running.  The contents of this
+## file are used to fill in labels on the screen, messages in help
+## balloons, and other uses of text in the programs.
+##
+## To make another language file, copy this file to "(tk)atomsrc.??"
+## where ?? is a two letter symbol for your language.  Translate all
+## of the hash values (but NOT the keys) and add an entry to the
+## %languages hash in Atoms.pm for the new language.  And please send
+## your translation to Bruce Ravel <ravel@phys.washingon.edu> so he
+## can include it with future distributions of Atoms.
+##
+## Some languages:
+##   en = English
+##   fr = French
+##   sp = Spanish
+## and so on...
+##
+## Here is an example from the "help" hash.  Pardon my crappy language
+## skills.  Note that the key doesn't get translated, only the value --
+## that is very important!
+##
+## English:
+## 'add' =>
+##  "Add one more site to the list of unique crystallographic sites",
+##
+## Spanish:
+## 'add' =>
+##  "Ponga un otro sitio en la lista de sitios crystalograficos",
+##
+## French: 'add' =>
+##  "Placez une autre site au liste des uniques sites cristalographiques",
+####################################################################
+## code:
+$messages = {
+              'calculating_dafs' => 'Calculating the anomalous diffraction simulation',
+              'bad_edge' => 'The absorption edge must be one of K, L1-3, M1-5, N1-7, O-17,
+or P1-3.  The edge has been reset to K.',
+              'deprecated' => 'No longer a keyword in Atoms',
+              'no_directory' => 'could not read directory:',
+              'at_line' => 'at line',
+              'unknown_keyword' => 'Unknown keyword',
+              'file' => 'file',
+              'writing' => 'Writing file to',
+              'at_site' => 'at site',
+              'unknown_core' => 'is not one of the unique atoms.',
+              'not_an_element' => 'is not an element symbol',
+              'not_a_group' => 'You have specified an unknown space group symbol.',
+              'basis' => 'Not doing "basis" lists at this time',
+              'adb_unknown' => 'You requested an unknown ADB file',
+              'no_reflection' => 'You did not specify a reflection.',
+              'no_template' => 'could not open template file',
+              'tainted_atoms' => '
+Atoms detected tainted data among the atom coordinates',
+              'cannot_write' => 'could not write to',
+              'line' => 'line',
+              'rmax' => 'The cluster size "rmax" must be a positive number.
+Resetting "rmax" to its default value.',
+              'dopants' => 'The "dopants" keyword is not currently supported',
+              'no_atp' => 'No such atp file:',
+              'title' => 'title',
+              'require_fp' => 'You must select an absorption data resource which supplies f\'.
+Henke, Chantler, and Sasaki are your choices.',
+              'all_gases' => 'The fill gas percentages must sum to a value between 0 and 1.
+All three will be reset to 0.',
+              'no_sites' => 'No sites were found in',
+              'make_error' => 'takes an even number of arguments',
+              'tainted_vector' => '
+Atoms detected tainted data among the vector coordinates',
+              'no_core' => 'You did not specify a central atom using the "core" keyword.',
+              'invalid_input' => 'not a valid input file for Atoms.',
+              'one_gas' => 'This must be between 0 and 1 -- reset to 0.'
+            };
+
+
+1;

@@ -1,0 +1,124 @@
+/*
+
+  This stylesheet is (c) 2006 Bruce Ravel.
+  
+  This web site is licensed under a Creative Commons Attribution-Share-Alike License
+  See http://creativecommons.org/licenses/by-sa/2.5/
+
+*/
+
+BODY  {
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 8px;
+  margin-right: 0;
+  font-family: sans-serif;
+  background-color:#fff;
+  font-size: 1.0em;
+}
+H1 {
+  font: 1.8em sans-serif;
+  font-weight: bold;
+  color:#000077;
+  text-align:left
+  margin-top: 8px;
+  margin-left: 0px;
+  margin-bottom: 8px;
+  margin-right: 8px;
+  padding-left: 8px;
+  border-bottom:2px solid #ccc;
+}
+H2 {
+  font: 1.6em sans-serif;
+  font-weight: bold;
+  color:#000077;
+  text-align:left
+  margin-top: 16px;
+  margin-left: 16px;
+  margin-bottom: 16px;
+  margin-right: 16px;
+  padding-left: 8px;
+  border-bottom:2px dashed #ccc;
+}
+H3 {
+  font: 1.4em sans-serif;
+  font-weight: bold;
+  color:#000077;
+  text-align:left
+  margin-top: 16px;
+  margin-left: 40px;
+  margin-bottom: 16px;
+  margin-right: 16px;
+  padding-left: 8px;
+  border-bottom:2px dashed #ccc;
+}
+
+/*
+code {
+  font: 0.9em monospace; 
+  background: #eeeedd;
+  border-width: 1px;
+  border-style: solid solid solid solid;
+  border-color: #ccc;
+}
+*/
+code {
+  font: 0.9em monospace; 
+  color: #8B3A3A;
+  border-width: 1px;
+  border-style: solid solid solid solid;
+  border-color: #ccc;
+}
+
+a:link, a:visited {
+  text-decoration: none;
+  color: blue;
+}
+
+A:hover {
+  text-decoration: underline;
+}
+
+hr {
+   visibility: hidden;
+   background: #fff;
+   color: #fff;
+}
+
+
+P  {
+  font-family: sans-serif;
+  padding-left: 0px;
+}
+LI {font-family: sans-serif}
+P  {font-family: sans-serif}
+DL {
+  font-family: sans-serif;
+  padding-left: 0px;
+}
+
+PRE {
+  font: 0.9em monospace; 
+  margin-left: 5%;
+  margin-right: 10%;
+  background: #fff5ee;
+  border-top: solid 1px;
+  border-left: solid 1px;
+  border-bottom: solid 3px;
+  border-right: solid 3px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 8px;
+}
+
+.index {
+  background: #fff;
+  color: #000;
+  float: right;
+  width: 20%;
+  padding: 12px;
+  margin: 0px;
+  border-width: 1px;
+  border-style: solid solid solid solid;
+  border-color: #ccc;
+}

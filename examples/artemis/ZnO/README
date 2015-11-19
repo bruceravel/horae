@@ -1,0 +1,30 @@
+Notes for ZnO Artemis demo:
+
+This folder contains a demonstration of fitting oxide data of mediocre quality using Artemis.
+
+The tutorial is meant for people who understand the rudiments of EXAFS analysis, but have little practical experience. In other words, I assume you know what a "path" is, but are unsure of how to know what paths to include in a fit.
+
+As a secondary purpose, this tutorial will introduce some of the features of Artemis useful for fits of moderate complexity, but it is certainly not comprehensive in that area.
+
+I have chosen data of iffy (but not downright bad) quality in part because that is what many users are faced with, for one reason or another. In training my own students, I have heard the complaint "When I practice on copper, it's too easy--it just works." Hopefully this example helps fill the gap between copper and whatever mysterious materials you're working on...
+
+* * *
+
+USE OF THIS TUTORIAL
+
+Open Artemis and then use it to open the project ZnO1.apj. Under the "Edit" menu, choose "Write in journal." At that point a pallete will pop up which begins the tutorial.
+
+Whenever the journal contains instructions proceeded by >>>, like
+
+>>>Click the green fit button.
+
+that is an instruction for you to perform. Please read the ENTIRE paragraph preceeded by >>> BEFORE attempting the operation, as sometimes there may be instructions on how to handle an error box which may appear and prevent you from getting back to the journal until you deal with it.
+
+Bruce Ravel has added a couple of comments to the journals.  His comments are surrounded by guillemets, <<like so>>.
+
+QUESTIONS OR COMMENTS
+
+Please address questions or comments regarding this tutorial to SCalvin@mailaps.org.
+
+--Scott Calvin
+Sarah Lawrence College

@@ -1,0 +1,160 @@
+=head1 ARTEMIS: ATOMS, The Crystallographic Front End to FEFF
+
+B<ARTEMIS> - B<ATOMS>, The Crystallographic Front End to B<FEFF>
+
+
+The purpose of B<Atoms> is to generate a C<feff.inp> file from
+crystallographic data.  The hard part of making a C<feff.inp> file is
+creating the long list of atomic coordinates.  B<Atoms> thus makes the
+hard part of running B<Feff> easy, at least for crystalline matrials.
+
+This page can be used to create input data for B<Atoms> from scratch.
+It will also be used to display crystallography data imported from an
+C<atoms.inp> file or a CIF file.  To import an C<atoms.inp> file or
+CIF file, use the normal file import dialog.
+
+=head2 The title box
+
+At the top is a text box for entering title lines identifying the
+crystallographic data.  These lines will be written to the C<feff.inp>
+file and to the top of the B<Feff> interpretation page.  This is a
+good place to cite the literature reference or to provide other
+important information about the crystal.
+
+=head2 Crystal parameters
+
+To the left side of the page are entry boxes for entering space group,
+lattice constants, and lattice angles of the crystal.  A space group
+must always be provided.  B<Atoms> is very flexible about how the
+space group symbol is entered.  You can use the Hermann-Maguin or
+Scheonflies symbols or the index of the space group from the
+International Tables.  The algorithm that interprets the symbol is
+insensitive to white space and capitalization -- C<P m -3 m> and
+C<PM-3M>  are interpreted the same.  For complete details about how
+the symbols are interpreted, see the B<Atoms> docuemntation on Bruce's
+web site.
+
+Lattice constants are entered in units of Angstroms, angles are
+entered as decimal numbers in degrees (and not in arc minutes --
+i.e. 89 and a half degrees is entered as 89.5 rather than 89'30").
+Many space groups have symmetries that make some lattice angles and
+constants the same.  In those situations, it is only necesary to fill
+in the essential values.  For instance, a cubic space group only
+requires a value for the C<a> constant.  B<Atoms> will know to set the
+other lattice constants the same and to set the angles to 90 degrees.
+For lower symmetry groups, you must provide all the necessary
+information.
+
+Below the lattice constants are entry boxes for C<Rmax> and the shift
+vector and a menu for selecting the absorption edge of the B<Feff>
+calculation.  C<Rmax> is the radial extent of the cluster that will be
+written to the C<feff.inp> file.  Some space groups are given in the
+International Tables with two different origins -- i.e. the origin is
+placed at sites with two different point symmetries.  The fractional
+coordinates of the sites are different for the two different settings
+of the crystal.  In those cases, B<Atoms> requires that you use a
+particular one of the two choices.  If your input data has used the
+other origin choice, it should be fairly obvious.  In that case,
+coordination numbers and distances to the coordination shells will
+usually be obviously wrong.  When you use one of the space groups for
+which two origin choices exist, B<Artemis> will issue a warning.  If
+you suspect that the wrong origin choice has been used, insert the
+values for the shift vector that were reported in the warning message.
+
+On occassion, crystals are reported in the literature using origins
+other than the standard one used in the International Tables.  A
+famous example is germanium oxide.  Here is the crystal data for GeO2:
+
+   title GeO2 (hexagonal)
+   space p 32 2 1
+   a=4.98502       c=5.64800
+   rmax=6.0        core=Ge
+   shift   0 0 0.66667
+   atoms
+     Ge    0.4513  0.0     0.0
+     O     0.3969  0.3021  0.0909
+
+For some reason, the crystallography reference for this material uses
+an origin that is shifted by 2/3 in the z direction relative to the
+origin used in the International Tables.  To get B<Atoms> to compute
+this structure correctly, the shift vector given above must be used.
+
+=head2 The atoms list
+
+To the right side of the page is the list of unique crystallographic
+sites.  As new sites are created, they are inserted into the list.
+The sites are not edited directly, instead the editing area at the
+bottom of the screen is used and the list of all sites is displayed
+here.  This works much the same as the Guess, Def, Set page.
+
+To edit a site, left-click on its entry in the list.  It's element
+symbols, coordinates, and site tag will be displayed in the edit
+area.  A right click on a site in the list will post a context menu
+with several functions that can be perfromed on that site.  You can
+re-order the list using the "Move" menu item.  A site can be copied
+and the copy added to the list using the "Copy" menu item.  The
+"Discard" menu item completely removes the site from the list.  The
+list supports extended selection.  When many sites are selected
+(i.e. highlighted in yellow), the "Discard" menu item will work on all
+the selected sites.
+
+Sites can also be reordered using the keyboard.  C<Alt-k> and C<Alt-j>
+can be used to move the selected site up or down in the list. 
+
+=head2 The edit area
+
+At the bottom of the page is the collection of widgets used to
+actually create and edit unique crystallographic sites.  The element
+box is used to insert the two-letter element symbol for the site.  The
+site will not be created if this is not a valid symbol.  The tag can
+be any 10-letter string used to identify the site.  The tag is used to
+differentiate sites that contain the same element.
+
+The boxes for the C<x>, C<y>, and C<z> coordinates can be filled with
+floating point numbers or simple fractions.  That is, C<0.5> and
+C<1/2> are both acceptable.  These coordinates are fractional
+positions in the unit cell and are not Cartesian coordinates.
+
+Once you have created all sites in your crystal, click the "Run Atoms"
+button.  This will process the crystallographic data, create the
+C<feff.inp> file, display the C<feff.inp> page.
+
+
+
+=head2 Atoms template files
+
+The C<feff.inp> data that is generated when the "Run Atoms" button is
+pressed is determined by the contents of a special template file.
+B<Artemis> is distributed with a number of template files serving
+different purposes.  The structure of the C<feff.inp> data is set by
+the value of the "atoms->template" preference.  The default value is
+"feff", which tells B<Artemis> to use the template file suitable for
+running B<Feff6>.
+
+If you want to run some other version of B<Feff>, you should set the
+"atoms->template" preference variable to the appropriate value.
+Templates are provided with B<Artemis> for writing B<Feff7> and
+B<Feff8> input files.  B<Feff8> input files can be written which are
+suitable for XANES or non-self-consistent EXAFS calculations.
+
+Sometimes, it is useful to modify template files for writing out
+specialized C<feff.inp> data.  If these modified template files are
+placed in C<~/.horae/atp/> (unix) or C<C:Program
+Files\Ifeffit\horae\atp> (windows), B<Artemis> will be able to find them.
+
+
+
+=head2 Final note
+
+A full explanation of how the B<Atoms> algorithms works is beyond the
+scope of this document page.
+
+
+=over 5
+
+=item
+
+L<Back to the main document|artemis>
+
+=back
+

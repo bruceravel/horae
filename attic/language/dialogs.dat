@@ -1,0 +1,16 @@
+warning_title| TkAtoms Warning| TkAtoms: Aviso| TkAtoms vous informe:| TkAtoms Warnung
+info_title| TkAtoms Message| TkAtoms Mensaje| Message de TkAtoms| TkAtoms Mitteilung
+no_space_group| You have not yet specified a space group symbol.| Ud. no ha especificado todavia el grupo espacial.| Vous n'avez pas encore spécifié le groupe d'espace.| Bisher wurde keine Raumgruppe ausgewählt !
+not_a_group| You have specified an unknown space group symbol.| Ud. ha especificado un symbolo desconocido parael grupo espacial.| Le symbole du groupe d'espace n'est pas reconnu.| Unbekannte Raumgruppe.
+cell_ok| Cell is OK| Le celdilla es correcta| La cellule est correcte.| Zelle is korrekt
+atoms_ok| These keyword values are ok.| Estos valores de las palabras claves son aceptables| La valeur est valide.| Parameter OK.
+invalid_edge| You have entered an invalid value for the absorptionedge.  It has been reset to its default.| Ud. ha elegido un valor errado para el borde de absorcion.Este ha sido cambiado por un valor prefijado.| La valeur du seuil d'absorption n'est pas valide, il lui a été attribué une valeur par défaut.| Ungültige Absorptionskante gewählt. Wertwurde zurückgesetzt.
+invalid_gas| The fill gas values must be between 0 and 1.The incorrect value will be reset to 0.| Las fracciones de gases tienen valor entre 0 y 1.El valor incorrecto sera sustituido por 0.| Les quantités de gaz doivent etre fractionnelles, entre 0 et 1. Une valeur incorrecte prend la valeur 0.| Die Werte für das Füllgas müssen zwischen 0 und 1liegen. Der Wert wird auf 0 zurückgesetzt.
+invalid_gas_sum| The fill gas values must sum to less than 1.All three values will be reset to 0.| Las fracciones de gases deben sumar a menos que 1.Los tres valores seran sustituidos por 0.| La somme des fractions de gaz doit être inférieure à 1 sinon les trois valeurs seront remises à 0.| Die Werte für die verwendeten Füllgasemüssen kleiner als 1 sein! Alle drei Werte wurden auf 0 zurückgesetzt.
+no_such_file_1| The file you requested,| El fichero elegido,| Ce fichier,| Die gesuchte Datei,
+no_such_file_2| , could not be found.| , no existe.| , n'a pas été trouvé.| , ist unauffindbar.
+not_a_site| You did not select a valid site.| Este sitio no es valido.| Ce site n'est pas valide.| Keine gültige Atomlage gewählt.
+no_shift| , does not need a shift vector.| , no necesita la funcion 'shift vector'.| , ne nécessite pas un 'shift vector'.| , Es ist kein Translationsvektor notwendig.
+no_calculation| You have not yet made a DAFS calculation.| You have not yet made a DAFS calculation.| Vous n'avez pas encore fait le calcul DAFS.| Noch keine DAFS-Berechnung ausgeführt.
+no_molecule_data| You have not read in any molecule data.| You have not read in any molecule data.| Vous n'avez lu aucune donnée pour \"Molécule\"| Noch keine Moleküldaten eingelesen.
+no_absorption| Absorption calculations are unreliable for very low energies.They cannot be made for your chosen edge and central atom.| Absorption calculations are unreliable for very low energies.They cannot be made for your chosen edge and central atom.| Les calculs d'absorption ne sont pas fiables à basse énergie. Ils ne peuvent pas etre effectués pour le seuil et l'atome central spécifiés.| Für kleine Energien ist dieAbsorptionsberechnung nicht zuverlässig. Andere Kante bzw. anderes Zentralatomauswählen!

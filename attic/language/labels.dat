@@ -1,0 +1,157 @@
+tkatoms_title| TkAtoms| TkAtoms| TkAtoms| TkAtoms
+file_dialog| Open Atoms input file| Abrir un archivo de entrada de Atoms| Ouvrir un fichier d'entrée pour Atoms| Lade Atoms Eingabedatei
+save_dialog| Save output file| Gravar el fichero de salida| Sauver le fichier| Speichere Ausgabedatei
+display| Display Frame| Ventana de exhibicion| Fenêtre d'affichage| Darstellung
+sg_browser| Space Group Browser| Browser de Grupos Espaciales| Browser des Groupes de Symetrie| Hilfsprogramm zum Durchsuchen der Raumgruppen
+space| Space Group| Grupo espacial| Groupe de symétrie| Raumgruppe
+a| A| A| A| A
+b| B| B| B| B
+c| C| C| C| C
+alpha| Alpha| Alpha| Alpha| Alpha
+beta| Beta| Beta| Beta| Beta
+gamma| Gamma| Gamma| Gamma| Gamma
+elem| Elem.| Elem.| Elem.| Elem.
+x| X| X| X| X
+y| Y| Y| Y| Y
+z| Z| Z| Z| Z
+tag| Tag| Tag| Ident.| Tag
+core| Core| Cent.| Cent.| Zentralatom
+unique| Unique Crystallographic Sites| Sitios unicos cristalograficos| Positions cristallographiques asymétriques| Kristallgitterplatz
+nsites| Number of Sites:| Numero de sitios:| Nombre de sites:| Anzahl der Plätze:
+file| File| Fichero| Fichier| Datei
+data| Data| Datos| Date| Daten
+clear_menu| Clear| Borrar| Effacer| Menü Löschen
+data_menu| Data| Datos| Données| Dateimenü
+help_menu| Help| Ayuda| Aide| Hilfe
+space_validate| Validate Cell| Validar la celdilla| Valider la cellule| Überprüfe Elementarzelle
+space_browse| Browse Space Groups| Mirar los Grupos Espaciales| Voir les Groupes de Symétrie| Durchsuche Raumgruppen
+add| Add 1 Site| Agregar un sitio| Ajouter un site| Füge einen Kristallplatz hinzu
+clear_lattice| Clear Unit Cell| Borrar la celdilla| Effacer la cellule| Elementarzelle löschen
+clear_site| Clear| Borrar| Effacer| Lösche Atomlagen
+clear_all| Clear All| Borrar Todo| Effacer Tout| Alles Löschen
+insert_shift| Insert shift vector| Insertar el 'shift vector'| Insérer le 'shift vector'| Füge Translatiosnsvektor ein
+help_atoms| Help with Atoms| Ayuda con Atoms| Aide avec Atoms| Hilfe für Atoms
+about_atoms| About Atoms| Informacion acerca de Atoms| Informations sur Atoms| Über Atoms
+remove| Remove| Remover| Renvoyer| Löschen
+dump| Dump data| Desechar los datos| Décharger les données| Verwerfe Daten
+quit| Quit| Terminar| Quitter| Quit
+ok| OK| OK| OK| OK
+atoms_validate| Validate| Validar| Valider| Überprüfe
+run_atoms| Run Atoms| Correr Atoms| Exécuter Atoms| Starte Atoms
+clear_atoms| Clear Atoms| Borrar Atoms| Eclaircir Atoms| Lösche Schlüsselworte
+load_input| Open input file| Abrir fichero| Charger un fichier| Lade Eingabedatei
+save_input| Save Input File| Grabar fichero| Sauver le fichier d'entrée| Speichere Eingabedatei
+load_database| Load from database| Abrir usando la base de datos| Charger une base de données| Lese aus Datensatz
+dismiss| Dismiss| Descartar| Quitter| Vergiss es
+back| Back| Volver atras| Antérieur| Zurück
+save| Save| Grabar| Sauver| Speichern
+run_feff| Run FEFF| Correr FEFF| Exécuter FEFF| Starte FEFF
+atoms_description| Atoms: make atomic clusters from crystallographic data| Atoms: construyendo conjunto de atomos basado en los datoscristalograficos| Atoms: établit une structure d'atomes à partir de donnéescristallographiques| Atoms: berechnet Cluster aus kristallographischen Daten
+dafs_description| DAFS: simulate energy dependent anomalous diffraction| DAFS: simular la dependencia energetica de la difraccion anomala| DAFS: simuler la dépendance en énergie de ladiffraction anomale| DAFS: simuliere anormale Brechung energiedispersiv
+powder_description| Powder: simulate powder diffraction data| Powder: simular difraccion de policristal| Powder: simuler la diffraction de poudre| Powder: simuliere Pulverbeugungsdiagramm
+edge| Edge:| Ombral:| Seuil:| Kante:
+rmax| Cluster Size:| Radio maximo:| Rayon maximum:| Clustergröße:
+nitrogen| N2| N2| N2| N2
+argon| Ar| Ar| Ar| Ar
+krypton| Kr| Kr| Kr| Kr
+shift| Shift Vector:| Shift Vector:| Shift Vector:| Translationsvektor:
+title| Titles:| Titulos:| Titres:| Titel:
+fill_gases| I0 Fill Gases| Gases en el detector I0| Gaz pour la mesure de I0| I0 Füllgas
+outfiles| Output file types| Estilos de ficheros de salida| Types des fichiers de sortie| Ausgabe Dateityp festlegen
+restore| Restore| Restorar| Restituer| Wiederherstellen
+not_written| This program has not yet been written.| Este programa aun no ha sido escrito.| Ce programme n'est pas encore écrit.| Dieses Programm existiert noch nicht !
+created_by| This file was created by| Este fichero fue creado por| Ce fichier a été écrit par| Datei wurde erstellt von
+no_feff_yet| Running Feff from within TkAtoms is not yet possible.| Todavia no puede utilizar Feff desde TkAtoms.| On ne peut pas exécuter encore Feff par TkAtoms.| Feff kann noch nicht aus TkAtoms gestartetwerden.
+absorption_description| Absorption: Calculations using tables of X-ray absorption cross sections.| Absorption: Calculationes usando tabulas de X-ray absorption cross sections.| Absorption: Calculs utilisant des tables d'absorption des rayons X.| Absorption: Berechnung des Absorptionsquerschnittes.
+clear_absorption| Clear Absorption Data| Borrar los datos de absorption| Effacer les données d'absorption| Lösche Absorptionsdaten
+data_resources| Data Resources| Recurso des Datos| Sources des Données| Datenquelle
+run_absorption| Run Absorption| Correr Absorption| Exécuter Absorption| Starte Absorptionsberechnung
+abs_units| Absorption Units| Unitos de Absorption| Unités d'Absorption| a.u.
+total_abs| Total absorption| Absorption total| Absorption totale| Totale Absorption
+edge_step| Edge step| Borde| Saut du Seuil| Kantenhub
+density| Specific gravity| Densidad| Densité| Dichte
+mcmaster_corr| Normalization correction| Correción de normalizacion| Correction de normalisation| McMaster Korrektur
+i0_corr| I0 correction| Correción por I0| Correction pour I0| I0 Korrektur
+self_amp| Self-absorption amplitude| Self-absorption amplitude| Self-absorption amplitude| Selbstabsorptionsamplitude
+self_sigma| Self-Absorption correction| Correción por absorption sí mismo| Correction pour la self-absorption| Selbst-Absorptionskorrektur
+sum_sigma| Sum of sigma^2 terms| Suma de términos de sigma^2| Addition des termes sigma^2| Summe der sigma^2
+occ| Occ.| Frac.| Occ.| Occ.
+valence| Valence| Valence| Valence| Valenz
+file| File| Fichero| Fichier| Datei
+color| Color| Color| Couleur| Farbe
+B| B| B| B| B
+Bx| Bx| Bx| Bx| Bx
+By| By| By| By| By
+Bz| Bz| Bz| Bz| Bz
+save_absorption| Save absorption calculation| Grabar la calculacion de absorption| Sauver le calcul d'absorption| Speichere Absorptionsberechnung
+abs_length| Absorption length| Largura de absorption| Longueur d'Absorption| Absorptionslänge
+unit_edge| Unit edge length| Longura de borde unito| Longueure de seuil unité| Kantenlänge
+reflection| Reflection| Reflexión| Réflexion| Reflektion
+energy_grid| Energy Grid| Parrilla de energia| Grille d'énergie| Energie-Raster
+emin| Emin| Emin| Emin| E-min
+emax| Emax| Emax| Emax| E-max
+estep| Estep| Estep| Estep| E-Schritt
+run_dafs| Run DAFS| Correr DAFS| Exécuter DAFS| Starte DAFS
+clear_dafs| Clear DAFS| Borrar DAFS| Effacer DAFS| Lösche DAFS
+save_dafs_data| Save DAFS Data| Grabar los datos de DAFS| Sauver les données de DAFS| Speichere DAFS Daten
+save_dafs_ps| Save Postscript| Grabar Postscript| Sauver Postscript| Speichere Postscript
+overplot| Overplot data with Ifeffit| Sobre-dibujar los datos con Ifeffit| Redessiner les données avec Ifeffit| Überschreibe Daten
+newplot| Plot data with Ifeffit| Dibujar los datos con Ifeffit| Dessiner les données avec Ifeffit| Graph in neuem Fenster
+intensity_axis| Int.| Int.| Int.| Int.
+energy_axis| Energy (eV)| Energia (eV)| Energie (eV)| Energie (eV)
+clear_molecule| Clear molecule data| Borrar datos moléculares| Effacer les données moléculaires| Lösche Moleküldaten
+skip| Skip| Saltar| Retirer| Überspringen
+load_data| Open data file| Abrir fichero| Ouvre un fichier| Lese Datei
+pref_menu| Preferences| Preferencias| Préférences| Voreinstellungen
+pref_var| Configure variables| Configure variables| Configuration des variables| Variablendeklaration
+pref_col| Configure colors| Configure colores| Configuration des couleurs| Farbeinstellungen
+pref_fon| Configure fonts| Configure fundicónes| Configuration de la police| Konfiguriere Schriftart
+molecule_description| Molecule: Generate FEFF input files from molecule data| Molecule: Creer un fichero de entrar usando datos moléculares| Molecule: Génère un fichier pour FEFF avec des données moléculaires| Molekül: Erstelle FEFF Eingabedatei aus Moleküldaten
+skip_rules| Select skip rules| Selecionar reglas de saltar| Choisissez les règles de sélection.| Auswahlregeln für das Überspringen
+unselect_skip| Unselect all skip sites| Desaltarse todos los sitios saltados| Désélectionner tous les sites enlevés| Markierung aller übersrungenen Atomlagenrückgängig machen
+run_molecule| Run Molecule| Correr Molecule| Exécuter Molecule| Starte Molecule
+explain_skip| Set rules for skipping entire catagories of sites| Hacer reglas para saltar categorios enteros de sitios| Faire des règles pour retirer des cateégories de sites| Regeln zur Auslassung der Atomlagen definieren
+skip_sites| Skip all sites with| Saltar todos los sitios con| Enlève tous les sites avec| Überspringe folgende kristallographische Plätze
+skip_elements| elements| elementos| des éléments| Elemente
+skip_tags| tags| tags| des labels| Bezeichnung
+skip_re| (regular expression)| (expression regular)| (expression régulière)| (regulärer Ausdruck)
+skip_numeric| (numeric value)| (un número)| (un nombre)| (numerischer Wert)
+apply| Apply| Applicar| Appliquer| Anwenden
+mol_format| Molecule: Data File Format| Molecule: Formato del Fichero de Entrada| Molecule: Style de Fichier des Données| Molekül: Datenformat
+mol_format_explain| Choose the input file format| Seleccioner el formato del fichero de entrada| Choisissez le style du fichier qui contient les données| Dateiformat
+mol_skip_rules| Molecule: Skip Rules| Molecule: Reglas de Saltar| Molecule: Règles de Sélection| Molekül: Auswahlregeln für das Überspringen
+skip_matching| matching| matching| assortir| Übereinstimmung
+site_table| Sites Table| Sites Table| Table des sites| Kristallstrukturtabelle
+site_aux_file| Auxilliary File| Auxilliary File| Fichier auxiliaire| Hilfsdatei
+write_template_6| Write FEFF6 template| Write FEFF6 template| Write FEFF6 template| Schreibe FEFF6 Datei
+write_template_8| Write FEFF8 template| Write FEFF8 template| Write FEFF8 template| Schreibe FEFF8 Datei
+yes| Yes| Sí| Oui| Yes
+no| No| No| Non| Nein
+save_data| Save?| ¿Grabar?| Sauver?| Save?
+save_data_message| Save the current data before exiting?| ¿Grabar los datos antes de terminar?| Sauver les donées avant quitter?| Save the current data before exiting?
+plotter_description |simple interface to Ifeffit |simple interface to Ifeffit |interface simple pour Ifeffit |simple interface to Ifeffit 
+plotter_command |Command: |Command: |Command: |Command: 
+plotter_zoom |Zoom |Zoom |Zoom |Zoom 
+plotter_unzoom |Unzoom |Unzoom |Unzoom |Unzoom 
+plotter_read |Read Data |Read Data |Read Data |Read Data 
+plotter_previous |Previous |Previous |Previous |Previous 
+plotter_next |Next |Next |Next |Next 
+plotter_enter |Enter |Enter |Enter |Enter 
+clear_powder |Clear Powder |Clear Powder |Clear Powder |Clear Powder 
+run_powder |Run Powder |Run Powder |Run Powder |Run Powder 
+energy |Energy: |Energía: |Energie: |Energy: 
+order |Max Order |Orden Max. |Ordre Max. |Max Order 
+twotheta_axis |2theta |2theta |2theta |2theta 
+choose_line |Line energies |Energías de lineas |Enegies des lignes |Line energies 
+thickness |Thickness |Thickness |Thickness |Thickness 
+absen |Energy |Energía |Energie |Energy 
+preserve |Preserve |Preservar |Préserver |Preserve 
+adb_header |Files in the Atoms\nData Base |Files in the Atoms\nData Base |Files in the Atoms\nData Base |Files in the Atoms\nData Base 
+adb_dldir |ADB download directory |ADB download directory |ADB download directory |ADB download directory 
+adb_dlnum |Files in database: |Files in database: |Files in database: |Files in database: 
+adb_dldirname |Download directory: |Download directory: |Download directory: |Download directory: 
+adb_dling |Downloading file |Downloading file |Downloading file |Downloading file 
+plotter_cursor |Cursor |Cursor |Cursor |Cursor 
+load_adb |Open ADB file |Open ADB file |Open ADB file |Open ADB file 
+download_adb |Download ADB files |Download ADB files |Download ADB files |Download ADB files 
+plot_menu |Plot |Plot |Plot |Plot 

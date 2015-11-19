@@ -1,0 +1,34 @@
+<atp -- Atoms Template File>
+<com> This file is part of the Atoms distribution.
+<com> Atoms is copyright (c) Bruce Ravel 1998-2006.
+<com> This is the atoms template file for a GNXAS CRYMOL input file of the SYM style
+<com> Homepage: http://cars9.uchicago.edu/~ravel/software/
+<com>
+<meta :file "GNXAS CRYMOL file" :precision 9.5 :output "cluster">
+<meta :occupancy 0 :incbegin 1 :list "atoms" :gnxas 1 :sphere 1.1>
+SYM
+<com> The identifier is the first word of the first title line
+<gnid>
+<gnclass>
+<gncell>
+<nclus>
+<list :style atoms>
+ <inc>  '<elem>' <x> <y> <z>     1    0.0    1.09
+<bravais>
+<meta :list "symmetry">
+<nclus>
+<list :style symmetry>
+<inc>,'<x>','<y>','<z>',<rx>,<ry>,<rz>
+NNY
+1
+'*' '*' <rss>
+<rmax>                             # maximum distance around each absorber
+<central>_<gnid>
+<nabs>,<abslist>                              # unique absorbers
+0.05                             # tolerance for phase shift calculation
+<iedge>                                # <edge> edge
+1                                # norman criterion for MT radii
+<redge>,0.0                    # edge energy, Fermi energy (Rydbergs)
+3,-0.15,57,0.05                  # exponential energy step, initial energy
+5,-1                             # HL potentials, calculate gamma_ch
+'S',1,40.,20.,'S',' ','S'        # graphics options

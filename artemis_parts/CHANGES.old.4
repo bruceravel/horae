@@ -1,0 +1,259 @@
+
+   +--------------------------------------------------------------+
+   |                    Change log for Artemis                    |
+   |   http://leonardo.phys.washington.edu/~ravel/software/exafs  |
+   +--------------------------------------------------------------+
+   |                         Bruce Ravel                          |
+   |                  ravel@phys.washington.edu                   |
+   +--------------------------------------------------------------+
+
+
+Begin change log for version numbers starting at 0.6.  See CHANGES.2
+for the 0.5 releases.  See CHANGES.1 for earlier versions whose
+version numbers were the same as release dates.
+
+December 2 2003 -- December ?? 2003 0.6.011  (never released, go to 0.7.000)
+  * make all toplevels in the same class (and common with athena) so
+    that they group in the taskbar
+  * correct a situation where spurious path parameter math expressions
+    may be left in Ifeffit's memory, leading to incorrect evaluation
+    of a path (one way this might have happened was to define a
+    pathparam math expression, evaluate the path, delete the math
+    expression entirely, then reevaluate the path.  in that case, the
+    previous math expression would have been left in Ifeffit's memory,
+    leading to an incorrect evaluation of that path)
+  * added several Echo messages specific to certain actions
+  * cloning a path now halves the degeneracy of the current and cloned
+    paths
+  * using the right click menus on a path parameter math expression to
+    define a new variable on the GDS page now inserts "0" as the math
+    expression if it is a newly created variable
+  * the "Add a new variable" button now focusses on the name of the
+    new variable
+  * change the page layouts on the GDS, feff, and path views to use a
+    frame and the packer.  this gives more consistent layout on
+    different screens/font sizes
+  * added a Messages tab so that errors and warnings issued by Artemis
+    have a place to go without overwirting the contents of the Files
+    tab.
+  * several improvements to the Edit math expression dialog
+  * write initial guesses to the log file
+  * made the window a bit narrower and made size of views a global
+    parameter so it's easier for me to change
+  * found several places where the flag for inquiring about saving the
+    project was not being set when it should have been
+  * when importing feff paths, the choice for importing the first N
+    paths is now configurable
+  * added Scott's ZnO example to the distro.  removed the Pu and
+    NiC4N4 examples
+  * fixed a logic problem in one of the comments in the fitting script
+    generation which misidentified a normal fit as a difference fit
+
+November 28 2003 -- December 3 2003 0.6.010
+  * fixed the color of the scrollbar of the prefs description
+  * added line styles for data, fit, and parts
+  * disable log viewer when prefs dialog is shown
+
+October 30 2003 -- November 25 2003 0.6.009
+  * bound &quit_artemis as the delete protocol for the main window
+  * prompt for verification when clearing variables or converting all
+    guesses to sets
+  * clear the Files tab before every fit (so that warnings from
+    previous fits aren't still reported there)
+  * disable plot and include data buttons if discarding data brings
+    the project down to a single data set, also toggle including of
+    first data set if it is excluded from fit
+  * several appearence problems uncovered in Tk 804.025
+  * fixed a problem contructing command string for an fft using a feff
+    path for the phase correction
+  * fixed a problem constructing suggested file names for res and diff
+    output files
+  * ask ifeffit about its limits on number of paths and such
+
+September 4 2003 -- October 27  2003 -- version 0.6.008
+  * fixed a problem reporting fit results when a path parameter
+    evaluates to NaN, resulting in a string of *'s in ifeffit path
+    report.  artemis now handles this gracefully and issues an error
+    message useful for diagnosing the problem.
+  * when saving results to a log file, default file name is based on
+    project file name, if it exists
+  * made the intrp box in the APA a bit smaller
+  * added an echo bar message to the "Reset all variables" option in
+    the GDS menu
+  * added an echo area message for mouse-over in intrp box
+  * Clicking the "include path" button now issues an echo area
+    message.
+  * Can now specify a path to be ifeffit's current path so that after
+    the fit the def parameters are evaluated in terms of that path.
+    This info is saved to the project file.
+  * Moved the "Show" submenu from Edit to it's own menu.
+  * Plot running r-factors in k, R, or q.  Put a cascade in the Data
+    menu.
+  * Log viewing utility, with reports and plots + averages and
+    Einstein fits.  In Edit menu.
+  * added an xbm icon so the unix windowmanager toolbars/panels/icon
+    boxes/docks/whatever have something pretty to display
+  * post explanation of problem when a fit is aborted due to
+    parenthesis mismatch
+  * can now convert all guesses to sets in GDS menu
+  * disable right click menus for the column heads on the GDS view
+  * modified many keyboard shortcuts to align more closely with common
+    UI choices, e.g. C-o for open data, C-p for print, and so on.
+    zoom is now C-= and unzoom is now C--.  The key chains for
+    plotting in k, R, or q are now C-; k, C-; r, and C-; q
+    (i.e. control-semicolon) 
+  * grab previous and grab next in GDS right click menu
+  * projectbar underneath menu bar for displaying path+name of current
+    project + configuration option for displaying file, project title,
+    or nothing
+  * closing project now asks if you want to save before closing.
+  * right click to define a new param with Stay option, vhanges view
+    on GDS grid without showing GDS grid.  also do an update before
+    moving when clicking the "Add a parameter" button.
+  * split path() commands into separate lines for each path
+    parameter.  this helps to avoid very long lines caused by long
+    file names and/or long math expressions
+  * include error checking for
+     -- number of paths used
+     -- number of variables used
+  * deal with upper/lower case feffnnnn.dat file names.  this is an
+    issue when transferring a project between windows and unix
+  * fixed bug where a null paths entry would be created if the pcpath
+    parameter for a data group points at a nonexistant path
+  * fixed a bug where a fit would abort if a path for a data set NOT
+    included in the fit does not exist
+  * added the ability to delete data sets (but not the first one --
+    use change data, instead)
+
+
+June 20 2003 -- August 20 2003 -- version 0.6.007
+  * save and restore plot features in project file
+  * handle Mac terminated files transparently
+  * handle long filenames transparently
+  * added a right click menu to the numbers on the GDS view with the
+    following two features + a way to clear that variable
+  * added a way to move GDS params up and down the list more flexibly
+    than the little up and down buttons
+  * added a way to ask Artemis where a parameter is used
+  * can now choose which data set to plot once fit is finished
+  * fixed a problem managing guess variables that lead to inconsistent
+    fit results.  the problem was an erase() line that was too long
+    for ifeffit.  the solution was to break it up into many shorter
+    erase()'s
+  * difference fitting is implemented.  the diff spectrum can be made
+    from an arbitrary set of paths.
+  * preferences implemented
+  * can now restore default values for operational params
+  * added a feature for automated generation of parameters.  it's not
+    super-brilliant, but it should give a decent starting point,
+    particularly for first shell fits.
+  * fixed a bug counting data sets in an MDS fit and some data sets
+    are excluded from the fit.
+  * figured out how to explicitly set backpage and inactive colors in
+    the NoteBook widget
+  * added a dialog at read data time asking if this is to be a
+    multiple data set fit or a change of data sets.  renew data in the
+    Data menu circumvents this
+  * fixed a bug where title lines get lost when a data set was changed
+  * when changing paths to feff, update the headers, reff, etc for
+    each path + fix a bug when on feff view when changing paths
+
+June 18 2003 -- June 19 2003 -- version 0.6.006
+  * Fixed a bug handling the is_rec flag
+  * perl/Tk 804.024 is pickier that earlier versions about minus signs
+    in front of method arguments, such as width and height, so put in
+    the dash wherever needed
+
+May 24 2003 -- June 16 2003 -- version 0.6.005
+  * Fixed bugs in save_all_paths and save_selected
+  * better column labels (short_descriptor method) and title lines
+    for save_selected. also use plotting k-weight for r and q
+  * fixed major problems in saving column data for individual groups.
+    also, data in r or q is now saved using the current k-weight for
+    plotting
+  * also use plotting k-weight for save_all_paths
+  * fixed a bug identifying the parent in the situation where the
+    include path menu is used while the feff calcualtion is current
+  * added dphase to the path parameters list
+  * added $config{meta}{extpp} and the "extended path parameters"
+    (dpahse and (k|amp|phase)_array).  by default, the extended pps
+    are hidden.  when the config variable is true, they are unhidden
+    and added to the end of the list.  a checkbutton is in the paths
+    menu for unhiding them.  when hidden, they are not used in the fit
+  * Now give the user the option of carrying on even if certain errors
+    are found in the math expressions.  This is a modal dialog box:
+    Continue or Abort.
+  * fixed problem in Project Assistant where the same feff calc could
+    not be imported for more than one data set (which is useful for a
+    multiple-temperature fit)
+  * removed Control-c keyseq, replaced it with Control-period
+  * allow restraints to be defined on the GDS page and use them as
+    such in the fit.  (all restraints are applied to the final
+    data_set)  Added an example of using a restraint to the tarball.
+  * put epsilon_k on the data view.  put an item in the data menu for
+    reporting epsilon_k
+  * allow saving selected as k-weighted chi(k)
+  * erase delta_ scalars before the fit
+  * added some more options to the right click menu for words in the
+    path parameter math expressions.  added skip + the option not to
+    jump to the GDS view
+  * verify that an data file for import is actually a data file
+  * fixed a bug where athena chi(k) records were only read correctly
+    as the first data set
+  * try to make sure that the plot options have sensible values
+  * constrain the fitting space variable to be the same for every data
+    set (like cormin)
+  * added a right click menu for most op params
+  * added a "Save as ..." to the file menu.  Made Control-s save
+    without prompting if a default project filename already exists.
+    Project saving now writes a .bak backup file.
+
+May 2 2003 -- May 18 2003 -- version 0.6.004
+  * use features of ifeffit 1.0077
+  * refuse to run without Ifeffit 1.0077 or higher installed
+  * new syntax for multiple k weight fits
+  * fix a minor bug in project saving (only save titles for data
+    groups)
+  * make use of the list of ill-posed variables reported by ifeffit
+    when writing results of a fit
+  * fixed a bug displaying keys containing commas (by enclosing the
+    key string in quotes)
+  * report reff+dr for each path in the results
+  * fixed a bug where skip variables were not saved to the project
+    file
+  * made foreground text of anchored, unincluded paths the brownish
+    color rather than the black
+  * do a simple check of math expressions to verify that parens match
+  * reporsition Data and Paths list when a new data file is imported
+
+April 24 2003 -- May 2 2003 -- version 0.6.003
+  * add a confirmation dialog to project deletion. also move the
+    delete project choice farther away from the save project in the
+    File menu
+  * check that files are writable before writing
+  * fixed a bug in path selection where the selection rule was not
+    sticking to the current feff calc in situations where that makes
+    sense.
+
+April 22 2003 -- April 23 2003 -- version 0.6.002
+  * move rc and mru files to the .horae directory
+  * fixed a bug whereby the first path may be assigned index=0
+  * fixed a bug involving the C-n (rename_this) keyboard shortcut when
+    the shortcut is done on a feff calculation
+  * fixed a bug regarding how titles get saved to project files
+  * exclude a few data-group parameters from the project file, one of
+    which was causing trouble in the Safe box evaluation of the
+    parameter array when the project was read in
+
+April 21 2003 -- version 0.6.001
+  * Multiple data sets + many changes to accommodate this
+  * multiple k-weights
+  * Artemis Project Assistent
+  * removed templates (see version 2002.08.19)
+  * report Nidp in echo area whenever kmin,kmax,rmin,rmax are changed
+  * fixed a bug in up/down buttons and skip variables
+  * always compute residual in k-space
+  * fixed a bug running ff2chi which resulted in bad low-r Fourier
+    components
+  * changed layout of widgets controlling the plotting options, also
+    make widgets for plotting k-weight separate from fitting k-weight

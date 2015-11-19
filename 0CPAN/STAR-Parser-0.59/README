@@ -1,0 +1,126 @@
+This document describes the Perl modules and scripts contained in this 
+distribution for parsing STAR compliant data files and dictionaries.
+
+It contains the following parts:
+
+-- General description
+-- Installation instructions
+-- Usage instructions
+-- Copyright notice
+
+
+General description
+-------------------
+
+This distribution contains a set of Perl modules for parsing STAR compliant
+data files and dictionaries, for example CIF or mmCIF data files and
+dictionaries. While these tools are not limited to CIF or mmCIF files, they
+do not allow the presence of nested loops.
+
+The following modules are included in this distribution:
+
+  STAR::Parser
+  STAR::DataBlock
+  STAR::Dictionary
+  STAR::Writer
+  STAR::Checker
+  STAR::Filter 
+
+Some simple examples of application scripts are also included.
+
+
+Installation instructions
+-------------------------
+
+Unzip and untar the archive:
+
+  % gunzip STAR.tar.gz
+  % tar xvf STAR.tar
+  % cd STAR
+
+Install the perl modules:
+
+  % perl Makefile.PL
+  % make
+  % make test
+  % make install
+
+These commands should install the modules into a default location on your
+system.
+
+Alternatively, you may create a STAR directory in a location of your choice,
+copy the "*.pm" files into the newly created STAR directory, and include a 
+"use lib" line in all of the "*.pl" scripts in the bin directory:
+
+  use lib "<path to the directory above STAR>";
+
+The modules require Storable to be installed in your Perl distribution.
+(See ftp://ftp.cpan.org/pub/perl/CPAN/modules/by-module/Storable/ )
+
+
+Usage instructions
+------------------
+
+Users are expected to have a working knowledge of Perl and a basic familiarity
+of CIF or some other STAR compliant data file formats. 
+
+Detailed documentation for each "*.pm" Perl module can be extracted 
+with pod2html:
+ 
+  % pod2html Parser.pm > Parser.html
+
+or viewed with perldoc:
+  
+  % perldoc Parser.pm
+
+Each "*.pl" script has a minimum description and usage information embedded, 
+which can be viewed with perldoc:
+
+  % perldoc parse.pl
+
+The included scripts are a mixture of basic utility scripts (e.g. parse.pl or 
+check.pl), and very simplistic examples that are meant to test certain methods 
+in the modules (e.g. create.pl). Most users would generally be expected to 
+write their own customized scripts.
+
+The included documentation should be sufficient for all the scripts and 
+modules. As a general comment, please be aware of the type of files each 
+script operates on:
+
+parse.pl reads a CIF text file (.cif file). It has an option of saving 
+  the parsed data structure as a ".cob" (cif object) file. Note that the file
+  extentions are by convention only, and are not enforced.
+
+write.pl reads a data structure (.cob file) and outputs a CIF text file 
+  (.cif file).
+
+All other scripts operate on data structures (.cob files), *NOT* on CIF text 
+  files (.cif files).
+
+Therefore, a user will probably want to first parse files and dictionaries,
+save the data structures (as .cob files) and then apply some of the other 
+scripts to the saved data structures:
+
+  % perl parse.pl -s 1LEP.cif
+  % perl parse.pl -Ds mmcif1000.dic
+  % perl check.pl -l 1LEP.cob cif_mm.dic.cob
+
+etc.
+
+More information on mmCIF can be found at these web sites:
+
+  http://pdb.rutgers.edu/mmcif/
+  http://ndbserver.rutgers.edu/mmcif/
+
+Additional questions or comments may be directed to the author of these 
+modules and scripts:
+
+  Wolfgang Bluhm
+  mail@wbluhm.com
+
+
+Copyright notice
+----------------
+
+A full copyright statement is provided with the distribution
+(c) 2000 University of California, San Diego

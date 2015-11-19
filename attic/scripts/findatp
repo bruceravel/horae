@@ -1,0 +1,82 @@
+#!/usr/bin/perl -w
+######################################################################
+## Time-stamp: <2006/07/18 17:36:06 bruce>
+######################################################################
+## This is the findatp utility.  It is used to find atp files in the
+## search path used by programs in the Atoms package.
+##
+##  This program is copyright (c) 2001 Bruce Ravel
+##  <bravel@anl.gov>
+##  http://cars9.uchicago.edu/~ravel/software/atoms/
+##
+## -------------------------------------------------------------------
+##     All rights reserved. This program is free software; you can
+##     redistribute it and/or modify it under the same terms as Perl
+##     itself.
+##
+##     This program is distributed in the hope that it will be useful,
+##     but WITHOUT ANY WARRANTY; without even the implied warranty of
+##     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##     Artistic License for more details.
+## -------------------------------------------------------------------
+##
+######################################################################
+## Code:
+
+##use lib '/usr/local/share/ifeffit/perl';
+use Xray::Atoms;
+use Ifeffit::FindFile;
+
+my @search_path = (Ifeffit::FindFile->find('other', 'atp_personal'),
+		   Ifeffit::FindFile->find('atoms', 'atp_sys'));
+
+if ((! $ARGV[0]) or ($ARGV[0] =~ /^-{1,2}h(elp)?$/i)) {
+  print "$/Find an atp file in the atp search path.$/$/";
+  print "usage : findatp <atpfile>$/$/the atp search path includes:$/";
+  map {print "\t$_$/"} (@search_path);
+  print $/;
+  exit;
+};
+
+my $atpfile = $ARGV[0];
+($atpfile =~ /\.$/)    and $atpfile .= "atp";
+($atpfile =~ /\.atp$/) or  $atpfile .= ".atp";
+
+
+foreach (@search_path) {
+  opendir DIR, $_ or die $!;
+  my @list = grep { /^$atpfile$/ } readdir(DIR);
+  closedir DIR;
+  if (@list) {
+    print "$atpfile was found in $_$/";
+    exit;
+  };
+};
+
+print "$atpfile was not found in the atp search path:$/";
+map {print "\t$_$/"} (@search_path);
+
+1;
+
+__END__
+
+=head1 NAME
+
+findatp - query the search path for a specific Atoms template file
+
+=head1 SYNOPSIS
+
+   findatp <template_file_name>
+
+=head1 DESCRIPTION
+
+This little program tells you where in the search path a specific
+Atoms template file is found.  Running this program with no arguments
+will return text showing the search path for template files.
+
+=head1 AUTHOR
+
+  Bruce Ravel, bravel@anl.gov
+  http://cars9.uchicago.edu/~ravel
+
+=cut

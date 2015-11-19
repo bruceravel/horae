@@ -1,0 +1,26 @@
+
+Files in this directory:
+
+README	        This file
+fe73ga27.010	Iron/Gallium alloy data taken in transmission at 10K
+fe73ga27.011    10K scan 2
+fe73ga27.012    10K scan 3
+fe73ga27.100    100K scan 1
+fe73ga27.101    100K scan 2
+fe73ga27.102    100K scan 3
+fe73ga27.200    200K scan 1
+fe73ga27.201    200K scan 2
+fe73ga27.202    200K scan 3
+fe73ga27.302    300K scan 1
+fe73ga27.303    300K scan 2
+fe73ga27.304    300K scan 3
+
+
+This data set is provided for testing the data pre-processing features
+of Athena.  Read in the `fe73ga27.010' and adjust the parameters until
+you are happy.  Next read in the remaining data using the "Open many
+files" option in the File menu.  In the "Data columns" dialog, click
+on the button labeled "Set preprocessing parameters".  Choose
+"fe73ga27_010" as the standard, then click on the checkbuttons for
+aligning the data and for setting parameters.  For this data set, the
+auto-alignment algorithm works quite well.

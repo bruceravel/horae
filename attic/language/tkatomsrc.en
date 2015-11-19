@@ -1,0 +1,687 @@
+# -*- mode: cperl -*-
+# Language file generation tool, version 1.9
+
+######################################################################
+## Atoms language configuration file
+##                                     copyright (c) 1999 Bruce Ravel
+##                                          ravel@phys.washington.edu
+##                            http://feff.phys.washington.edu/~ravel/
+##
+##	  The latest version of Atoms can always be found at
+##      http://feff.phys.washington.edu/~ravel/software/atoms/
+##
+## -------------------------------------------------------------------
+##     All rights reserved. This program is free software; you can
+##     redistribute it and/or modify it under the same terms as Perl
+##     itself.
+##
+##     This program is distributed in the hope that it will be useful,
+##     but WITHOUT ANY WARRANTY; without even the implied warranty of
+##     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##     Artistic License for more details.
+## -------------------------------------------------------------------
+######################################################################
+##
+## This is a language configuration file for atoms or for tkatoms.
+## This file is read after atoms starts running.  The contents of this
+## file are used to fill in labels on the screen, messages in help
+## balloons, and other uses of text in the programs.
+##
+## To make another language file, copy this file to "(tk)atomsrc.??"
+## where ?? is a two letter symbol for your language.  Translate all
+## of the hash values (but NOT the keys) and add an entry to the
+## %languages hash in Atoms.pm for the new language.  And please send
+## your translation to Bruce Ravel <ravel@phys.washingon.edu> so he
+## can include it with future distributions of Atoms.
+##
+## Some languages:
+##   en = English
+##   fr = French
+##   sp = Spanish
+## and so on...
+##
+## Here is an example from the "help" hash.  Pardon my crappy language
+## skills.  Note that the key doesn't get translated, only the value --
+## that is very important!
+##
+## English:
+## 'add' =>
+##  "Add one more site to the list of unique crystallographic sites",
+##
+## Spanish:
+## 'add' =>
+##  "Ponga un otro sitio en la lista de sitios crystalograficos",
+##
+## French: 'add' =>
+##  "Placez une autre site au liste des uniques sites cristalographiques",
+####################################################################
+## code:
+$labels = {
+            'krypton' => 'Kr',
+            'alpha' => 'Alpha',
+            'beta' => 'Beta',
+            'gamma' => 'Gamma',
+            'B' => 'B',
+            'save_input' => 'Save Input File',
+            'plot_menu' => 'Plot',
+            'plotter_zoom' => 'Zoom',
+            'mcmaster_corr' => 'Normalization correction',
+            'adb_dldir' => 'ADB download directory',
+            'core' => 'Core',
+            'unit_edge' => 'Unit edge length',
+            'nitrogen' => 'N2',
+            'z' => 'Z',
+            'write_template_8' => 'Write FEFF8 template',
+            'unselect_skip' => 'Unselect all skip sites',
+            'clear_menu' => 'Clear',
+            'nsites' => 'Number of Sites:',
+            'emin' => 'Emin',
+            'mol_skip_rules' => 'Molecule: Skip Rules',
+            'run_dafs' => 'Run DAFS',
+            'adb_header' => 'Files in the Atoms
+Data Base',
+            'title' => 'Titles:',
+            'atoms_description' => 'Atoms: make atomic clusters from crystallographic data',
+            'thickness' => 'Thickness',
+            'yes' => 'Yes',
+            'energy_grid' => 'Energy Grid',
+            'a' => 'A',
+            'dismiss' => 'Dismiss',
+            'display' => 'Display Frame',
+            'help_menu' => 'Help',
+            'twotheta_axis' => '2theta',
+            'valence' => 'Valence',
+            'file_dialog' => 'Open Atoms input file',
+            'file' => 'File',
+            'load_input' => 'Open input file',
+            'order' => 'Max Order',
+            'i0_corr' => 'I0 correction',
+            'load_data' => 'Open data file',
+            'insert_shift' => 'Insert shift vector',
+            'skip' => 'Skip',
+            'tag' => 'Tag',
+            'y' => 'Y',
+            'clear_atoms' => 'Clear Atoms',
+            'absen' => 'Energy',
+            'atoms_validate' => 'Validate',
+            'absorption_description' => 'Absorption: Calculations using tables of X-ray absorption cross sections.',
+            'color' => 'Color',
+            'load_database' => 'Load from database',
+            'shift' => 'Shift Vector:',
+            'fill_gases' => 'I0 Fill Gases',
+            'plotter_unzoom' => 'Unzoom',
+            'add' => 'Add 1 Site',
+            'ok' => 'OK',
+            'pref_menu' => 'Preferences',
+            'pref_col' => 'Configure colors',
+            'preserve' => 'Preserve',
+            'run_powder' => 'Run Powder',
+            'rmax' => 'Cluster Size:',
+            'c' => 'C',
+            'adb_dling' => 'Downloading file',
+            'clear_lattice' => 'Clear Unit Cell',
+            'load_adb' => 'Open ADB file',
+            'skip_matching' => 'matching',
+            'plotter_command' => 'Command:',
+            'back' => 'Back',
+            'restore' => 'Restore',
+            'explain_skip' => 'Set rules for skipping entire catagories of sites',
+            'skip_elements' => 'elements',
+            'reflection' => 'Reflection',
+            'self_amp' => 'Self-absorption amplitude',
+            'abs_units' => 'Absorption Units',
+            'powder_description' => 'Powder: simulate powder diffraction data',
+            'save_dafs_ps' => 'Save Postscript',
+            'save_dialog' => 'Save output file',
+            'space_browse' => 'Browse Space Groups',
+            'help_atoms' => 'Help with Atoms',
+            'quit' => 'Quit',
+            'total_abs' => 'Total absorption',
+            'write_template_6' => 'Write FEFF6 template',
+            'edge_step' => 'Edge step',
+            'intensity_axis' => 'Int.',
+            'skip_sites' => 'Skip all sites with',
+            'Bz' => 'Bz',
+            'overplot' => 'Overplot data with Ifeffit',
+            'molecule_description' => 'Molecule: Generate FEFF input files from molecule data',
+            'created_by' => 'This file was created by',
+            'Bx' => 'Bx',
+            'plotter_description' => 'simple interface to Ifeffit',
+            'tkatoms_title' => 'TkAtoms',
+            'not_written' => 'This program has not yet been written.',
+            'clear_powder' => 'Clear Powder',
+            'pref_fon' => 'Configure fonts',
+            'plotter_cursor' => 'Cursor',
+            'remove' => 'Remove',
+            'save_data_message' => 'Save the current data before exiting?',
+            'site_aux_file' => 'Auxilliary File',
+            'run_molecule' => 'Run Molecule',
+            'save_data' => 'Save?',
+            'edge' => 'Edge:',
+            'newplot' => 'Plot data with Ifeffit',
+            'density' => 'Specific gravity',
+            'emax' => 'Emax',
+            'unique' => 'Unique Crystallographic Sites',
+            'space' => 'Space Group',
+            'clear_all' => 'Clear All',
+            'dafs_description' => 'DAFS: simulate energy dependent anomalous diffraction',
+            'run_feff' => 'Run FEFF',
+            'estep' => 'Estep',
+            'clear_absorption' => 'Clear Absorption Data',
+            'pref_var' => 'Configure variables',
+            'occ' => 'Occ.',
+            'plotter_previous' => 'Previous',
+            'b' => 'B',
+            'about_atoms' => 'About Atoms',
+            'mol_format' => 'Molecule: Data File Format',
+            'energy_axis' => 'Energy (eV)',
+            'skip_rules' => 'Select skip rules',
+            'no_feff_yet' => 'Running Feff from within TkAtoms is not yet possible.',
+            'sum_sigma' => 'Sum of sigma^2 terms',
+            'save_absorption' => 'Save absorption calculation',
+            'mol_format_explain' => 'Choose the input file format',
+            'outfiles' => 'Output file types',
+            'space_validate' => 'Validate Cell',
+            'download_adb' => 'Download ADB files',
+            'data_resources' => 'Data Resources',
+            'energy' => 'Energy:',
+            'plotter_read' => 'Read Data',
+            'elem' => 'Elem.',
+            'save_dafs_data' => 'Save DAFS Data',
+            'save' => 'Save',
+            'adb_dldirname' => 'Download directory:',
+            'adb_dlnum' => 'Files in database:',
+            'data' => 'Data',
+            'x' => 'X',
+            'choose_line' => 'Line energies',
+            'plotter_next' => 'Next',
+            'self_sigma' => 'Self-Absorption correction',
+            'abs_length' => 'Absorption length',
+            'site_table' => 'Sites Table',
+            'argon' => 'Ar',
+            'clear_dafs' => 'Clear DAFS',
+            'clear_molecule' => 'Clear molecule data',
+            'run_atoms' => 'Run Atoms',
+            'apply' => 'Apply',
+            'dump' => 'Dump data',
+            'sg_browser' => 'Space Group Browser',
+            'no' => 'No',
+            'clear_site' => 'Clear',
+            'data_menu' => 'Data',
+            'skip_re' => '(regular expression)',
+            'plotter_enter' => 'Enter',
+            'skip_numeric' => '(numeric value)',
+            'By' => 'By',
+            'run_absorption' => 'Run Absorption',
+            'skip_tags' => 'tags'
+          };
+
+$dialogs = {
+             'no_shift' => ', does not need a shift vector.',
+             'cell_ok' => 'Cell is OK',
+             'no_calculation' => 'You have not yet made a DAFS calculation.',
+             'invalid_edge' => 'You have entered an invalid value for the absorption
+edge.  It has been reset to its default.',
+             'warning_title' => 'TkAtoms Warning',
+             'atoms_ok' => 'These keyword values are ok.',
+             'not_a_site' => 'You did not select a valid site.',
+             'not_a_group' => 'You have specified an unknown space group symbol.',
+             'no_molecule_data' => 'You have not read in any molecule data.',
+             'no_such_file_1' => 'The file you requested,',
+             'invalid_gas' => 'The fill gas values must be between 0 and 1.
+The incorrect value will be reset to 0.',
+             'no_such_file_2' => ', could not be found.',
+             'invalid_gas_sum' => 'The fill gas values must sum to less than 1.
+All three values will be reset to 0.',
+             'no_absorption' => 'Absorption calculations are unreliable for very low energies.
+They cannot be made for your chosen edge and central atom.',
+             'no_space_group' => 'You have not yet specified a space group symbol.',
+             'info_title' => 'TkAtoms Message'
+           };
+
+$help = {
+          'save_dafs_ps' => 'Save the DAFS canvas as a postscript file.',
+          'krypton' => 'Volume percentage of krypton in I0.
+The gasses in I0 are used to calculate the
+I0 correction and indicate that the self-
+absorption correction should be calculated also.',
+          'alpha' => 'Alpha is the angle between B and C',
+          'atp_mol' => 'Select an atp file for formatting the output file
+for this molecule from the menu below.',
+          'quit' => 'Quit Atoms',
+          'beta' => 'Beta is the angle between A and C',
+          'space_browse' => 'Click here to use the space group browser.',
+          'total_abs' => 'The number to the left is an approximation of the total
+absorption of your material.  The inverse of that number
+is one absorption length.',
+          'gamma' => 'Gamma is the angle between A and B',
+          'B' => 'Enter the value of the thermal sphere
+in this column.',
+          'alchemy' => 'Enabling this button causes TkAtoms to write
+a ball-and-stick file in the alchemy format.',
+          'edge_step' => 'The number to the left is an approximation of the change
+in absorption crossing the edge.  The inverse of this
+number is the sample thickness which will give an edge
+step of 1 in a transmission experiment.',
+          'plotter_zoom' => 'Zoom the plot using the cursor',
+          'mcmaster_corr' => 'The number to the left is an approximation of the
+correction to the error in your data introduced by
+edge step normalization.',
+          'geom' => 'Enabling this button causes TkAtoms to write
+a geom.dat file for use by feff\'s pathfinder.',
+          'core' => 'Choose this central atom by checking its radiobutton.',
+          'dump_dismiss' => 'Dismiss display frame',
+          'Bz' => 'Enter the z values of the thermal ellispoid
+in this column.',
+          'nitrogen' => 'Volume percentage of nitrogen in I0.
+The gasses in I0 are used to calculate the
+I0 correction and indicate that the self-
+absorption correction should be calculated also.',
+          'z' => 'Insert fractional coordinates in the
+`z\' direction in this column',
+          'plot_bindings' => 'Click mouse-1 on the canvas to plot using the external
+plotter or click mouse-3 to overplot.',
+          'Bx' => 'Enter the x values of the thermal ellispoid
+in this column.',
+          'henke' => 'Use the tables of anomalous scattering factors compiled
+by Henke, Gullikson, and Davis',
+          'progress_meter' => 'During the DAFS calculation, this meter
+indicates the progress of the calculation.  When
+the calculation is finished, the bar is filled
+to the top.',
+          'valance_dn' => 'Decrement this valance value.',
+          'symmetry' => 'Enabling this button causes TkAtoms to write
+a file contining the symmetry operations for
+this space group.',
+          'xyz' => 'Enabling this button causes TkAtoms to write
+a ball-and-stick file in the xyz format.',
+          'apply_skip' => 'Click here to apply you skip rules.',
+          'output_files' => 'Select an output file format from the menu.',
+          'chantler' => 'Use the tables of anomalous scattering factors calculated
+by C.T. Chantler.',
+          'set_site_color' => 'Click here to select a new color.',
+          'lauch_apt' => 'Press here to open a window with the ATOMS Periodic Table.',
+          'remove' => 'Remove this site from the list',
+          'mol_x' => 'The x coordinates of the atoms go in this column',
+          'dafs_plot' => 'The energy dependence of the form factor is displayed
+in this space.  The form factor is calculated with the
+complex anomalous corrections for all atoms in the crystal.',
+          'emin' => 'This number is subtracted from the edge energy
+to provide the lower bound on the calculation.',
+          'feff8' => 'Enabling this button causes TkAtoms to write an
+input file for feff8.',
+          'edge' => 'Choose the absorption edge symbol from the menu.
+If left blank, K is chosen for La and lighter
+elements and L3 for heavier.  K, L1, L2, and L3
+are the only valid edges for feff6.',
+          'run_dafs' => 'Run DAFS using the displayed data.',
+          'valance_up' => 'Increment this valance value.',
+          'emax' => 'This number is added to the edge energy
+to provide the upper bound on the calculation.',
+          'density' => 'The number to the left is the density of your material
+calculated by dividing the mass of the contents of the
+unit cell by its volume.',
+          'titles' => 'The title lines inserted into the adjoining space
+will appear in output files.',
+          'unique' => 'Use shift + the arrow keys to move around the grid of
+entry boxes that define the unique crystallographic
+sites.  The shift+arrow motion wraps at all four sides.
+That is, when the keyboard focus is on the top row
+<Shift-Up> moves the keyboard focus to the bottom row,
+<Shift-Right> moves the focus from the Tag column
+to the Elem. column, and so on.',
+          'space' => 'Insert the space group symbol here',
+          'mol_y' => 'The y coordinates of the atoms go in this column',
+          'thickness' => 'Enter the sample thickness in this space.  This is used to
+approximate the absorption correction.',
+          'energy_grid' => 'Use the spaces below to set the energy
+grid for the DAFS calculation.',
+          'a' => 'Insert the A lattice constant here',
+          'estep' => 'This number is the size of the energy step
+used to determine the energy grid of the
+calculation.',
+          'user_atp' => 'Enabling this button causes TkAtoms to write
+an output file based on a user defined ATP file.',
+          'valence' => 'Enter the formal valence symbol in this column.',
+          'occ' => 'Use the slider to set the occupancy of this site.
+Occupancy is only used for absorption and crystallography
+calculations and is ignored when building the atomic
+cluster used by FEFF.',
+          'plotter_previous' => 'Previous command in history',
+          'b' => 'Insert the B lattice constant here',
+          'file' => 'Use this column to specify an auxiliary
+file for this site.',
+          'feff' => 'Enabling this button causes TkAtoms to write an
+input file for feff6 or feff7.',
+          'i0_corr' => 'The number to the left is an approximation of the
+correction to the error in your data introduced by
+the energy dependence of the I0 chamber in a fluorescence
+experiment.',
+          'sum_sigma' => 'The number to the left is the sum of the
+normalization, I0, and self-absorption corrections.
+It is an additive correction to the measured sigma^2.',
+          'space_enter' => 'Click here to validate the space group symbol.
+This will also set appropriate defaults for
+lattice constants and angles.',
+          'tag' => 'Insert the unique site tags in this column.
+The tag defaults to the element symbol and is used
+to indicate the central atom in a cluster expansion.',
+          'outfiles' => 'Choose an output file type from this list.',
+          'unit' => 'Enabling this button causes TkAtoms to write a
+file contining the overfilled contents of the
+unit cell.',
+          'y' => 'Insert fractional coordinates in the
+`y\' direction in this column',
+          'clear_atoms' => 'Click here to clear all keyword values',
+          'cl' => 'Use the Cromer-Liberman calculations of anomalous
+scattering factors.  This uses the \'f1f2\' function from Ifeffit',
+          'data_resources' => 'Select from the list of available absorption data resources.',
+          'absen' => 'You can specify an energy for the absorption calculation in
+the adjacent space or leave it blank to use the absorption
+energy of the element chosen as the central atom.',
+          'plotter_read' => 'Fetch a file name for the read_data command',
+          'mol_z' => 'The z coordinates of the atoms go in this column',
+          'elem' => 'Insert the one or two letter atomic symbols
+in this column.  Any row without an element
+symbol will be ignored.',
+          'dismiss_skip' => 'Dismiss skip window',
+          'atoms_validate' => 'Click here to check the values of the keywords.',
+          'save_dafs_data' => 'Save the DAFS simulation to a file.',
+          'elam' => 'Use the table of x-ray absorption cross sections
+from the 1999 compilation by W.T. Elam',
+          'color' => 'Select site colors in this column.',
+          'mol_skip' => 'Atoms selected by clicking on the buttons in this column will
+not be written to the output file.',
+          'x' => 'Insert fractional coordinates in the
+`x\' direction in this column',
+          'plotter_next' => 'Next command in history',
+          'shift' => 'Insert the elements of the shift vector in the
+following three fields.  This vector will be added
+to each unique atom coordinate.',
+          'mol_tag' => 'Insert the unique site tags in this column.
+The tag defaults to the element symbol and is used
+to indicate the central atom.',
+          'self_sigma' => 'The number to the left is an approximation of the
+correction to the error in your data introduced by
+the self-absorption of your sample in a fluorescence
+experiment.  This calculation assumes you have an
+infinately thick sample and equal incidence and outgoing
+angles.',
+          'powder_plot' => 'A simulated powder scan is displayed in this space.
+The calculation is made with complex anomalous
+corrections for all atoms in the crystal.',
+          'dump_run' => 'Run FEFF using the contents of the display frame.
+Note:  this does not currently work.',
+          'fill_gases' => 'Use the sliders to the right to set the contents
+of the I0 chamber.  When any of these are not zero
+Atoms will calculate the self-absorption and
+I0 corrections.  The values of the gasses are volume
+percentages in the I0 chamber and must sum to 1 or less.
+If they sum to less than 1, the remainder of I0 is
+assumed to be filled with helium.',
+          'plotter_unzoom' => 'Unzoom the plot',
+          'add' => 'Add one more site to the list
+of unique crystallographic sites',
+          'argon' => 'Volume percentage of argon in I0.
+The gasses in I0 are used to calculate the
+I0 correction and indicate that the self-
+absorption correction should be calculated also.',
+          'run_atoms' => 'Run Atoms using the displayed data.',
+          'none' => 'Suppress the use of anomalous scattering corrections.',
+          'powder_energy' => 'Enter a photon energy in the space or
+select a line energy from the menu below.
+You can also enter a wavelength in angstroms.',
+          'reflection_up' => 'Increment this reflection index.',
+          'run_powder' => 'Run Powder',
+          'rmax' => 'Insert the radial size of the cluster here.',
+          'c' => 'Insert the C lattice constant here',
+          'powder_order' => 'Enter the maximum order of reflection of the
+calculation in the space to the left.',
+          'clear_lattice' => 'Click here to clear the space group, all lattice
+constants and angles, and all sites.',
+          'clear_site' => 'Reset all values for this site
+to their defaults',
+          'check_core' => 'The specified core is not one of the unique atoms.',
+          'plotter_command' => 'Enter an ifeffit command in the space and click the enter button
+to execute that command.  The up and down arrows
+scroll through the history.',
+          'run_mol' => 'Click here to generate a feff.inp file from
+the displayed data',
+          'dismiss_sites' => 'Dismiss sites table',
+          'mcmaster' => 'Use the tables of x-ray absorption cross sections
+from the 1969 compilation by McMaster et al.',
+          'reflection_dn' => 'Decrement this reflection index.',
+          'By' => 'Enter the y values of the thermal ellispoid
+in this column.',
+          'dump_preserve' => 'Normally this frame is reused for each new output
+file, but clicking here will cause a new frame to be
+generated next time.',
+          'dump_save' => 'Save contents of display frame.',
+          'run_absorption' => 'Run Absorption using the displayed data.',
+          'self_amp' => 'The number to the left is an approximation of the
+amplitude attenuation in your data introduced by
+the self-absorption of your sample in a fluorescence
+experiment.  This calculation assumes you have an
+infinately thick sample and equal incidence and outgoing
+angles.  It is intended as a multiplicative correction
+to the amplitude of your data.',
+          'reflection' => 'Enter the Miller indeces of the reflection to use in the
+anomalous diffraction simulation.  You may type directly
+in the spaces or use the up and down arrows to change
+the indeces.',
+          'p1' => 'Enabling this button causes TkAtoms to write
+this unit cell in the P1 space group.',
+          'test' => 'Enabling this button causes TkAtoms to write
+a test file for use in bug reports.'
+        };
+
+$file_dialog = {
+                 '-OKButtonLabel' => 'OK',
+                 '-ShowAllLabel' => 'Show All',
+                 '-RescanButtonLabel' => 'Rescan',
+                 '-PathEntryLabel' => 'Pathname:',
+                 '-FileEntryLabel' => 'Filename:',
+                 '-EDlgText' => 'You must specify an existing file.
+($filename not found)',
+                 '-DirLBCaption' => 'Directories',
+                 '-CancelButtonLabel' => 'Cancel',
+                 '-FltEntryLabel' => 'Filter:',
+                 '-FileLBCaption' => 'Files',
+                 '-EDlgTitle' => 'File does not exist!'
+               };
+
+$sgb = {
+         '-Number' => 'Number',
+         '-MouseADisplay' => 'Any mouse button for groups of this class.',
+         '-ShortDesc' => 'Short symbols for alternate settings',
+         '-FullDesc' => 'Symbol denoting complete symmetries',
+         '-MouseLInsert' => 'Mouse-1 to insert this symbol.',
+         '-Hexagonal' => 'Hexagonal',
+         '-SettingsOrt' => 'The five additional settings correspond to the five additional ways of setting a coordinate system in 3-space.  They correspond to permutations of ba-c, cab, -cba, bca, and a-cb away from the standard setting, abc.  Atoms has no a priori way of knowing the correct setting for your data.',
+         '-Triclinic' => 'Triclinic',
+         '-DismissMsg' => 'Dismiss the space group browser.',
+         '-Trigonal' => 'Trigonal',
+         '-Monoclinic' => 'Monoclinic',
+         '-Settings' => 'Settings',
+         '-Thirtyfive' => '1935 symbol',
+         '-NewSymbolDesc' => 'Symbol using "e" for the glide plane',
+         '-RestoreMsg' => 'Restore the initial symbol:',
+         '-NumberDesc' => 'Space group index from ITC',
+         '-BackScreen' => 'Return to the previous screen.',
+         '-Orthorhombic' => 'Orthorhombic',
+         '-Short' => 'Short symbols',
+         '-Cubic' => 'Cubic',
+         '-SchoenfliesDesc' => 'Schoenflies notation',
+         '-Full' => 'Full symbol',
+         '-TopTop' => 'Select a crystal class to display all space groups within that class.',
+         '-ViewCurrent' => 'View current group:',
+         '-Groups' => 'groups',
+         '-Note' => 'Note:',
+         '-ThirtyfiveDesc' => 'Symbol from the 1935 edition of ITXC',
+         '-NewSymbol' => 'New symbol',
+         '-SettingsRho' => 'You may use the rhombohedral parameters, in which case you must specify a and alpha.  You may also use the trigonal parameters in which case you must specify a and c.  The trigonal representation has three times the volume of the rhombohedral representation.  Atoms has no a priori way of knowing the correct setting for your data.',
+         '-SettingsTet' => 'C and F centered tetragonal cells are related to the standard cells by a 45 degree rotation in ab plane and a doubling of the cell volume.  Atoms has no a priori way of knowing the correct setting for your data.',
+         '-MouseLDisplay' => 'Mouse-1 to display space group',
+         '-ShorthandDesc' => 'Special nicknames for certain space groups',
+         '-Schoenflies' => 'Schoenflies',
+         '-Shorthand' => 'Shorthand',
+         '-Tetragonal' => 'Tetragonal',
+         '-SettingsMon' => 'The first three settings are for the b axis and beta angle unique.  The next three are for the c axis and gamma angle unique.  The final three are for the a axis and alpha angle unique.  Within each group, the three choices are the possible choices of axes. Atoms has no a priori way of knowing the correct setting for your data.',
+         '-ClassTop' => 'Space group listing:',
+         '-SettingsDesc' => 'Symbols for alternate settings',
+         '-MouseLR' => 'Mouse-1=insert  Mouse-3=describe',
+         '-GroupTop' => 'Various symbols which may be used to describe space group:'
+       };
+
+$messages = {
+              'calculating_dafs' => 'Calculating the anomalous diffraction simulation',
+              'bad_edge' => 'The absorption edge must be one of K, L1-3, M1-5, N1-7, O-17,
+or P1-3.  The edge has been reset to K.',
+              'deprecated' => 'No longer a keyword in Atoms',
+              'no_directory' => 'could not read directory:',
+              'at_line' => 'at line',
+              'unknown_keyword' => 'Unknown keyword',
+              'file' => 'file',
+              'writing' => 'Writing file to',
+              'at_site' => 'at site',
+              'unknown_core' => 'is not one of the unique atoms.',
+              'not_an_element' => 'is not an element symbol',
+              'not_a_group' => 'You have specified an unknown space group symbol.',
+              'basis' => 'Not doing "basis" lists at this time',
+              'adb_unknown' => 'You requested an unknown ADB file',
+              'no_reflection' => 'You did not specify a reflection.',
+              'no_template' => 'could not open template file',
+              'tainted_atoms' => '
+Atoms detected tainted data among the atom coordinates',
+              'cannot_write' => 'could not write to',
+              'line' => 'line',
+              'rmax' => 'The cluster size "rmax" must be a positive number.
+Resetting "rmax" to its default value.',
+              'dopants' => 'The "dopants" keyword is not currently supported',
+              'no_atp' => 'No such atp file:',
+              'title' => 'title',
+              'require_fp' => 'You must select an absorption data resource which supplies f\'.
+Henke, Chantler, and Sasaki are your choices.',
+              'all_gases' => 'The fill gas percentages must sum to a value between 0 and 1.
+All three will be reset to 0.',
+              'no_sites' => 'No sites were found in',
+              'make_error' => 'takes an even number of arguments',
+              'tainted_vector' => '
+Atoms detected tainted data among the vector coordinates',
+              'no_core' => 'You did not specify a central atom using the "core" keyword.',
+              'invalid_input' => 'not a valid input file for Atoms.',
+              'one_gas' => 'This must be between 0 and 1 -- reset to 0.'
+            };
+
+$config = {
+            'ADB_location' => 'This is the URL of a place on the web where the
+Atoms Database of input files is stored.',
+            'entry' => 'This color is the background in entry boxes.  It is also
+used as a highlight color indicating mouse pass-over and
+for the labels on buttons.',
+            'todo' => 'This color is used as the backdrop to plotting canvases.',
+            'display_balloons' => 'When this variable is true, help balloons will pop open
+whenever the mouse pauses for a half second over a widget.
+If false, display of balloons is suppressed.',
+            'balloon' => 'This is the background color in the pop-up help balloons.',
+            'sgbGroup' => 'Active text indicating the current space group is
+displayed in this color in the space group browser.',
+            'default_filepath' => 'The file dialog used for loading and saving files
+uses the current working directory as its starting point.
+This may be undesireble on Windows or if TkAtoms is
+launched from the desktop on Unix.  You can state a
+starting place with this variable.  Use the button
+to the left to invoke a file dialog for selecting
+the value of this variable.',
+            'foreground' => 'This is the color used for text in entry windows and as
+the default foreground color.',
+            'convolve_dafs' => 'When this variable is true the dafs calculation
+will be convolved by the core-hole lifetime of the
+central atom.',
+            'buttonActive' => 'Buttons change to this color when the mouse passes over.',
+            'save_values_help' => 'Press here to save your selections to your runtime configuration file.',
+            'colors' => 'Colors',
+            'no_crystal_warnings' => 'When this variable is true, TkAtoms will not
+issue warning messages regarding shift vectors, lattice
+parameters which do not match the space group, and certain
+other topics.',
+            'explain_colors' => 'Pick a color using the color selector and set a color type to that color by hitting its `Set\' button.',
+            'set_palette' => 'Set Palette',
+            'variables' => 'Variables',
+            'config_title' => 'Configure TkAtoms',
+            'button' => 'This is the normal background color for buttons.
+It is also the color used for certain static text and
+the color indicating a selected check- or radiobutton.',
+            'plot' => 'Lines in plotting canvases are drawn in this color.',
+            'dafs_default' => 'For DAFS calculations, the data resource in
+$absorption_tables is used if it contains anomalous
+scattering factors.  If it does not, then this
+resource is used by default.',
+            'one_frame' => 'When this variable is false, TkAtoms will display the
+notecards and the crystallography data in separate windows.
+Otherwise a single window is used to hold both.  You
+must quit and restart TkAtoms for this to take effect.',
+            'atoms_language' => 'Choose the language displayed by Atoms in text strings.
+This WILL NOT take effect immediately.  Instead you will
+see the new language the next time you start Atoms.',
+            'never_ask_to_save' => 'When this is true, TkAtoms will never inquire whether
+you want to save data before exiting the program.
+When it is false, TkAtoms will always ask whether
+to save data before terminating.',
+            'plotting_hook' => 'This is an unsupported and experimental variable.
+Do not use it.',
+            'restore_variables_help' => 'Restore all variables to their initial values.',
+            'radio' => 'Radio and checkbuttons are displayed in this color.',
+            'dismiss_help' => 'Press here to dismiss this window.',
+            'trough' => 'This color is used in troughs behind all sliders.',
+            'fonts' => 'Fonts',
+            'browse' => 'Browse',
+            'absorption_tables' => 'Select the default data resource to use for absorption
+calculations.  This will not change the currently selected
+resource, instead it sets default for the next time you
+use Atoms.',
+            'unused_modifier' => 'You can navigate through the site tables in the
+crystallography panel and in the Molecule notecard
+using this modifier key and the arrow keys.  Some
+window managers capture certain <modifier-arrow>
+sequences, so be sure to select one that works for
+your desktop.',
+            'restore_palette_help' => 'Click this button to restore the color variables to
+your original color values.  Press the `Set Palette\'
+button again to actually restore the colors
+on screen.',
+            'set_palette_help' => 'Press here to make your color changes take effect.  Use the
+`Save Values\' button to save them for future sessions.
+Note that the foreground, bacground, and trough colors
+take much longer to set than the rest.',
+            'sgbActive' => 'Most active text in the space group browser is
+displayed in this color.',
+            'set_color_help' => 'Press here to set this color variable to the color
+selected on the right.',
+            'background' => 'This color is used for the backdrop to TkAtoms',
+            'write_to_pwd' => 'When true, this variable tells Atoms to write output
+files to the current working directory by default.
+When false, outut files are written to the location
+of the input file.  Mac and Windows users probably
+want this to be false.',
+            'prefer_feff_eight' => 'When true, this variable tells Atoms that the
+default output should be an input file for
+feff8.  Otherwise a feff6 input file is the default.',
+            'browse_help' => 'Press here to browse the directory structure.',
+            'set_variables_help' => 'Press here to make your changes in variable values take
+effect.  Use the `Save Values\' button to save them for
+future sessions.',
+            'always_write_feff' => 'When true, the command line version of atoms will
+behave more like the old Fortran version with respect
+to output files.  TkAtoms ignores this variable.',
+            'set_variables' => 'Set Variables',
+            'restore' => 'Restore',
+            'save_values' => 'Save Values',
+            'dismiss' => 'Dismiss',
+            'set' => 'Set',
+            'label' => 'This color is used for most static text (i.e. not the
+text in entry boxes).'
+          };
+
+
+1;

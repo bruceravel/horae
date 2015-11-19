@@ -1,0 +1,10 @@
+## This is a small database of common multi-electron excitation
+## energies.  This number is relative to E0 of the main edge.
+
+## Th, U, Np, Pu, and Am from C. Henig PRB 75 (2007) 035120
+[energies]
+th_l3 = 373.4
+u_l3 = 419.2
+np_l3 = 443.2
+pu_l3 = 456.5
+am_l3 = 478.3

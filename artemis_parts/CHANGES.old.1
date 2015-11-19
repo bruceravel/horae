@@ -1,0 +1,335 @@
+
+   +--------------------------------------------------------------+
+   |                    Change log for Artemis                    |
+   |   http://leonardo.phys.washington.edu/~ravel/software/exafs  |
+   +--------------------------------------------------------------+
+   |                         Bruce Ravel                          |
+   |                  ravel@phys.washington.edu                   |
+   +--------------------------------------------------------------+
+
+
+Begin change log for version numbers starting at 0.7.  See CHANGES.3
+for the 0.6 releases.  See CHANGES.2 for the 0.5 releases.  See
+CHANGES.1 for earlier versions whose version numbers were the same as
+release dates.
+
+
+April ?? 2005  0.7.014
+  * fixed the macro for moving input chi(k) from a non-uniform grid
+    onto the canonical k grid
+
+January 12 2005 0.7.013
+  * Fixed the maximum columns limit
+  * Added a message to ParseFeff for exceeding the limit of the number
+    of atoms in feff.inp
+  * fixed a problem parsing numbers from set and def lines in
+    ArtemisLog
+
+November 5 2004 -- January 3 2005 0.7.012
+  * fixed filtering by amplitude
+  * sort set variables by use to avoid ambiguous definition in ifeffit
+  * fixed problem in saving selected paths when the anchor is on a
+    fit, res, or bkg
+  * fixed a bug importing no paths from an existing, imported feff calc
+  * fixed a bug adding paths from the intrp page or from the menus
+
+August 3 2004 -- October 6 2004 0.7.010
+  * fixed a bug in ATP.pm in code for finding atp files
+  * C-a selects all in the palettes.
+  * anchor the projectbar text to the east side to better accommodate
+    very long filenames
+  * fixed a bug in writing out fit column files
+  * added an rmax_out variable to the data section
+  * fixed a problem where importing multiple data sets with the same
+    file name will overwrite one another in the project space
+  * now reading CIF files, poorly tested
+
+July 26 2004 -- August 2 2004 0.7.009
+  * THIS VERSION NOT RELEASED AS SUCH -- TRANSFER TO SUBVERSION
+  * upgraded Archive::Zip to 1.12
+  * fixed a bug fitting MDS in q-space -- the data and fit of the
+    not-plotted data sets were not brought up to date in q space which
+    was a problem in computing data-set specific R-factors
+  * better error checking for the selection of the atoms core
+  * fixes to small issues in ATP.pm and Atoms.pm
+
+
+June 26 2004 -- July 26 2004 0.7.008
+  * autosave file management (saved after reading data, importing a
+    feff, running fit, running atoms, running feff.  removed after
+    saving project or shutting down normally).
+  * fixed a bug discarding data sets
+  * clear title lines from ifeffit memory when discarding project
+  * always offer the 'import no paths' option for a feff
+    run/calculation
+  * fixed a few situation where data files are openned but may not be
+    closed
+  * handle no specified core atom in the atoms page with a echo area
+    message
+  * take care to only enable "save as..." and running R-factor menu
+    entries if the appropriate data exists.  that is, do not enable
+    "Save fit as ..." if no fit or sum has been done, and so on.
+  * hide fit/res/bkg entries and flag them as not yet existing when
+    changing data sets
+  * when copying feff.inp and related files into the project space,
+    only copy files with these extensions: inp bin dat run log
+  * fixed a problem setting the header lines on the path page that had
+    to do with setting the intrpline attribute before filling the
+    intrp box
+  * added a useful error message for the situation of the potentials
+    list in feff.inp having entries that did not make it into the
+    atoms list
+  * summarize data parameters in single group output file headers
+  * add window column to single group chi(k) and chi(R) output files
+  * changed some behavior on the GDS page.  editing the math
+    expression is much more automatic (clicking away defined the
+    mathexp).  replaced the "Define" button with an "Undo edit"
+    button.
+  * fixed a bug for the odd situation of reading a project file for
+    which a path is defined but the feffNNNN.dat file does not exist
+    in the project
+  * updated several CPAN modules
+  * some language changes
+  * disabled trap file generation and changed language in trap message
+
+June 16 2004 -- June 21 2004 0.7.007 (for EDCA 2004)
+  * fixed some bugs reading home made feff.inp files, also correctly
+    deal with feff.inp files with absorber not at (000)
+  * get rid of general->workspace config variable for now
+  * gracefully handle the strange situation of a path whose
+    feffNNNN.date file exists but which is not in the intrp list
+  * fixed a bug deleting paths from the list, also changed echo
+    message from "Deleted" to "Discarded"
+  * fixed a problem with overwritten files when reading two
+    multicolumn data files which have the same column headers (for
+    example k/chi/stddev from Athena from before I put in the
+    identifier title line)
+  * added the first time user's splashscreen
+  * added a title line to output column data identifying it as from
+    Artemis with version number
+  * fixed a bug in adding paths one-by-one and fixed the display of
+    the path after adding
+  * fixed a problem comparing paths to files on Windows due to
+    confusion between forward and backward slashes
+  * fixed a problem on windows when switching between projects without
+    explicitly closing the current one
+
+June 2 2004 0.7.006
+  * fixed a typo in the echo area message regarding suspicious
+    parameter values
+  * restricted the number of calls to &initialize_project in an
+    attempt to solve some problems switching project files
+
+May 21 2004 -- May 28 2004 0.7.005
+  * fixed a bug generating log entries for background parameters
+  * the feff calculation counter was not being incremented when
+    reading in a feff.inp file but not an entire feff calculation
+  * attempt to deal with non-numeric portions of the Ifeffit version
+    number in Ifeffit::Tools::vstr
+  * fixed cwd at startup
+  * option to discard autoparams when discarding a feff calc
+  * swapped mouse-2 and mouse-3 in the data and paths list
+  * only offer to clean up stale project folders at beginning of
+    instance
+  * fixed a bug opening a project with cloned paths
+  * deal well with the situation of a data set with no associated
+    (included) paths
+  * closing a branch in the DPL deselects any selected items in that
+    branch.  opening does *not* restore them.
+  * enable/disable menu items related to output data files on the
+    basis of whether a fit has been run using the current data set
+    (i.e. it is possible to run a fit, then add a data set.  in that
+    case you want to be able to write the fit for the first but not
+    the second data set)
+  * use path descriptor for filename in "File->Save all paths..." and
+    "Paths->Save path as..."
+  * made an echo area error message for the situation where no
+    directory is specified for "File->Save all paths..."
+  * Tk::HList::selectionGet always returns an array in ptk804 and will
+    return in scalar context in ptk800, so added some logic to deal
+    with this discrepancy in all the places it is uded in the gds2
+    system
+  * clean old trap files to accommodate trapping multiple files
+  * changed default for "Prepared by" property
+  * creeate the list entries for fit, resid, and bkg when the data
+    entry is created.  hide them until a fit is run then show them.
+    do this rather than creating then when the fit is run and
+    inserting them into the list, which causes trouble under ptk804.
+
+
+April 12 2004 -- May 20 2004 0.7.004
+  * massive overhaul of the GDS page, new functionality, new key
+    bindings 
+  * more work on the histogram tool, prefs for histo tool
+  * since the paths list can be quite long, it can take a while to
+    display the data view due to the phase correction menu.  so
+    slapped a $top->Busy around the data view display
+  * fixed a bug in the set_degeneracy function
+  * use HList in logviewer for a bit more functionality
+  * store appropriate line in intrp page with the path object
+    associated with that line
+  * right click menu item on paths page to insert eins() or debye()
+    into the sigma^2 slot and define the parameters if necessary
+  * added the ZCWIF to the path header
+  * save location of scrollbar on intrp page
+  * fixed a bug importing the first N paths of a feff calc when feff
+    made fewer than N paths
+  * clean up feff folders in project space when discarding data.  also
+    verify when discarding a feff calc.
+  * put a limit of 95 characters on a message in the echo area.  the
+    full message gets written to the echo buffer
+  * fixed problem with setting general.workspace variable.  the
+    problem was in correctly using the actual Ifeffit installation
+    folder as the default value
+  * remove quotation marks and match unmatched open parens in each
+    title line
+  * simplified handling of titles for the data sets, also made the
+    display_properties subroutine only run on button press events and
+    not on button release events.
+  * fixed a bug reading radial distance of a site in intrp, also check
+    for feff.inp, FEFF.INP, Feff.Inp, or Feff.inp before doing intrp
+  * added an ability to clone a feff calculation by linking
+    (i.e. sharing a feff folder) or by copying (i.e. making a
+    duplicate feff folder)
+  * control-s saves project when journal has focus
+  * warning in case of variables that do not effect the fit is now
+    written with an eye catching tag, also fixed the regex that
+    catches this message in the ifeffit buffer
+  * Ifeffit::Path::make now verifies that path parameters are never
+    undef 
+  * limit phase correction menu to first five paths from each data set
+  * added tracking of whether parameters need to be updated in
+    ifeffit.  whenever a parameter is defined or altered in any way,
+    the parameters are flagged for updating in ifeffit.  keeping track
+    of this makes plotting and such move along much faster when a very
+    largenumber of parameters are defined
+  * removed the Show menu (actually, just didn't pack it)
+  * slapped a $top->Busy around opening, saving, and closing a project
+  * tracked down an obscure but serious bug related to the $0 variable
+    on windows in closing a project
+  * moved journal to its own file in the descriptions folder.  this
+    will be convenient for someone looking inside the zip file
+  * added some more information to the string returned by the
+    project_header method
+  * store pathparam evaluations in the path objects so they can be
+    echoed when the pathparam label is clicked after a fit.
+  * fixed prompt for excluding paths based on zcwif
+  * added new views of the log file, a menu for selecting between
+    them, and a configuration variable for setting the default
+  * removed the feff path parameter from the paths page
+  * added some color and more information to the path header
+  * fixed a number of bugs and UI issues involved in importing a
+    feff.inp and running feff
+
+
+April 9 2004 -- April 10 2004 0.7.003
+  * fixed broken "Just the first" option in path import.
+  * fixed a bug importing multiple data sets from the MRU menu
+  * fixed a bug involving the generation of the list of paths when
+    setting the opparams page
+  * fixed a bug cleaning up stale project folders
+
+March 11 2004 -- April 8 2004 0.7.002
+  * initialize file attribute of a type=data Ifeffit::Path object.
+    that way (-e $paths{whatever}->{file}) will fail properly rather
+    than spewing a warning about an unitialized variable
+  * put in some checks on the data parameters
+  * fixed a bug in checking paths to feff when deciding if a newly
+    added path belongs to an old feff calculation
+  * added an artemisrcw file for use on windows that uses the windows
+    options from the config file
+  * fixed some problems with making plots when data has not yet been
+    imported
+  * delete old feffNNNN.dat files from the feff folder when rerunning
+    a feff calc.  also add some logic to the path number selection
+    dialog for that situation
+  * make sure the "prepared by" property is never initialized with ENV
+    variables that are not initialized.
+  * Fixed a bug in how a blank feff.inp gets made.  also made a dialog
+    for "Feff->New feff input template" to select between importing
+    and making a blank.
+  * include paths for fitting or discard paths by amplitude
+  * dialog to clean up stray project folders from past crashes
+  * intrp method in Paths.pm can now deal reasonably with a
+    home-brewed paths.dat file that doesn't have the beta column
+  * take care to preserve the order of paths in the path list
+    (previously, the order had been determined asciibetically)
+  * write a log file for a summation
+
+
+February 25 2004 -- March 8 2004 0.7.001
+  * project not properly initialized when converting an oldstyle
+    project to a zip style
+  * various bug fixes: C-r wasn't working to import a feff calc,
+    exclude/include paths in current feff calc, made invert paths work
+    for all calcs or this calc
+  * in verify_number_of_paths, only count the paths included in the
+    fit
+  * remove GDS highlights when closing a project or rearranging the
+    order of the parameters
+  * put in some logic to avoid the problem recoloring the echo area
+    under the Tk804 beta releases
+  * save log viewer reports in log_files directory of project space by
+    default
+  * fixed a minor problem in the files Artemis writes after extracting
+    data from a multicolumn data file
+  * fixed a bug in grab_all_best_fits where def math expressions were
+    overwritten by their evaluations
+  * made a project data cascade and made a bulk data transfer function
+  * put focus on Plot in R button when changing views.  it is
+    dangerous to leave focus on an out-of-view widget
+  * on atoms page: check that at least one lattice constant was
+    specified and fixed a bug in setting the core checkbuttons to
+    either the corresponding tag or element 
+  * increased the number of spaces on the GDS page and made this
+    number configurable
+  * use "erase @path N" for more predictable results when deleting a
+    project
+  * use erase @paths at the beginning of every fit to be sure to clean
+    up any extraneous paths lying around in ifeffit's memory
+  * fixed a bug in run_atoms that lead to an annoying but probably not
+    fatal error message when an angle was left blank
+  * trapping $SIG{__DIE__} and $SIG{__WARN__} in a way that leaves the
+    user with a file that can be submitted as part of a bug report and
+    that writes a useful message to the echo area while still writing
+    the traceback to stderr
+    
+
+
+January 7 2004 -- February 20 2004 0.7.000
+  * zip-style projects
+  * convert old-style projects to zip format
+  * feff page split into atoms, feff.inp, and intrp tabs
+  * atoms tab as a full atoms interface
+  * improved mru list, now includes and identifies data, project,
+    feff, and atoms files
+  * can read a multicolumn file and select the column to use as
+    chi(k), recognize data file and multicolumn data file tags in
+    files written by Athena
+  * can now do a sum of paths before reading in the data and/or on the
+    set of selected (i.e. highlighted in orange) paths
+  * use new features of 1.2.5, such as kmax_suggest, new path listing,
+    erase(@paths), and feff.run/feff.err
+  * change echo area to a garish color for messages during long
+    operations, such as running a fit or running feff
+  * removed use bkg button in favor of explicitly saving the
+    background subtracted data as project data and the replacing the
+    data with it
+  * difference spectrum is now done by saving the diff spectrum to the
+    data folder in the project space and offering to replace the
+    current data with the diff
+  * use unguess command
+  * fixed a particularly dumb bug whereby it was impossible to change
+    the name of a feffNNNN.dat file in certain situations
+  * fixed a bug returning to data view from prefs view when no data
+    has been entered yet
+  * changed how exluding/deleting after current works so that it plays
+    well with cloned paths
+  * moved atp files to horae space (both system and personal)
+  * added a comment property to serve as a subtitle
+  * completely removed feffit.inp import
+  * removed Artemis Project Assistent, less appropriate now that Atoms
+    is incorporated into Artemis
+  * removed the purge_stash config variable, now always do so upon
+    exit.  removed the query_data_file config variable.
+

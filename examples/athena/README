@@ -1,0 +1,72 @@
+This directory contains examples files for testing different parts of Athena.
+
+README           this file
+cu10k.dat	 copper foil at 10K
+cu50k.dat	 copper foil at 50K
+cu150k.dat	 copper foil at 150K
+chi_cu.dat	 Feff's chi.dat file for copper foil
+chi_teo.dat	 Feff's chi.dat file for EuTiO3
+danger.prj	 demonstration of a potential security vulnerability in Athena
+tieu300.dat	 Ti edge EuTiO3 at 300K, scan 1
+tieu301.dat	 Ti edge EuTiO3 at 300K, scan 2
+tieu302.dat	 Ti edge EuTiO3 at 300K, scan 3 
+Uroc_101f.xmu	 U L3/L2 edge data for which normalization is extremely difficult
+uhup.003	 glitchy U L3 edge data, glitch in post-edge
+Udsvuo2.029      glitchy U L3 edge data, glitch in pre-edge
+backwards.xmu    data which was collected backwards in energy
+mngaas.351       data taken with a multielement detector (8 fluor. columns)
+nio_001.xmu      an example of non-monotonically increasing data
+nonuniform.chi   an example of chi(k) data that is not on a uniform k-grid
+InAsP_16	 dispersive exafs data, mu as a function of pixel position
+InAsP_ave.dat	 the same sample as InAsP_16, normal mu(E) data
+56_columns.dat   a multi-column file
+x10c.xfs         example data file from NSLS X10C, test filetype plugin
+s_x15b.dat       example data file from NSLS X15B, test filetype plugin
+
+In the demos directory:
+
+align_merge.prj  project file demonstrating how to align and merge data
+calibrate.prj    project file demonstrating how to calibrate data
+clamp.prj        project file demonstrating spline clamps
+clnorm.prj       project file demonstrating CL normalization of XANES data
+deglitch.prj     project file demonstrating the deglitching algorithms
+diff.prj	 project file demonstrating difference spectra
+dispersive.prj	 project file demonstrating calibration of dispersive data
+peakfit.prj      project file demonstrating the near edge peak fitting
+rbkg.prj         project file demonstrating the effect of the Rbkg parameter
+reports.prj      project file explaining report generation
+selfabs.prj	 project file demonstrating self-absorption corrections
+smoothing.prj    project file demonstrating the smoothing algorithms
+stacked_plot.prj project file demonstrating how to make stacked plots
+truncate.prj     project file demonstrating data truncation
+
+
+
+Some things to try:
+
+ 1. Use `uhup.003' and `Udsvuo2.029' to test deglitching functionality
+ 2. Use the EuTiO3 data to test merging functionality
+ 3. `tieu302.dat' is misaligned from the other two by about 1.3 eV, so
+    is good for testing alignment functionality
+ 4. The copper or the EuTiO3 data sets are good for testing the marked
+    plot features
+ 5. After aligning, merging, and playing around with other parameters,
+    try saving your entire project, deleting the project, and reading
+    the project file back in.
+ 6. Try reading in `cu10k.dat' and then make a copy of it.  Weight the
+    original by kw=1 and the copy by kw=2.  Set the Plot multiplier
+    parameter for the kw=1 group to 4.  Choose the "chi*k^kw" plotting
+    option, mark both groups and push the "plot marked in k" button.
+ 7. The backwards.xmu file is just that -- a wacky xmu file measured
+    in reverse.  Athena checks for and corrects this wackiness.
+ 8. The other odd-ball file is `nio_001.xmu'.  It contains data that
+    is non-monotonic in energy.  This is here to test Athena's data
+    sorting algorithm.
+ 9. The project files contain entensive notes in their journals.
+10. The file `mngaas.351' contains data from a muti-element detector.
+    You can test the feature of the column selection dialog that
+    allows you to add columns of data as the file is read in.
+11. Some other data processing programs write chi(k) data onto a
+    k-grid that is not the ifeffit standard of zero-padded at the
+    beginning and uniform in k with a grid of 0.05.  Athena corrects
+    such data on the fly.  Try nonuniform.chi to see this in action.

@@ -1,0 +1,31 @@
+<atp -- Atoms Template File>
+<com> This file is part of the Atoms distribution.
+<com> Atoms is copyright (c) Bruce Ravel 1998-2006.
+<com> This is the atoms template file for a Powder output file
+<com> Homepage: http://cars9.uchicago.edu/~ravel/software/
+<com>
+<meta :precision 9.5 :file "powder simulation" :list powder>
+<meta :output "powder.dat">
+<id :prefix "# ">
+#
+<titles :prefix "# Title: ">
+<resource :prefix "# Anomalous scattering data resource: ">
+# Calculated for photon energy <energy> eV
+#                   wavelength <lambda> angstroms
+#
+# Crystal Data:
+#    space = <given>
+<com> # <space> in setting <setting>
+#    a =	<a>	b =	<b>	c =	<c>
+#    alpha =	<alpha>	beta =	<beta>	gamma =	<gamma>
+#    atoms
+#    !  elem   x          y          z       tag      occupancy    B
+<list :style atoms>
+#       <elem>  <x>  <y>  <z>  <tag>   <occ>  <b>
+#
+# ---------------------------------------------------------------------
+#   2theta    h  k  l    intensity
+<com> valid columns are <tth> <th> <a> <asqr> <r> <i> <p> <mult> <lp> <h> <k> <l> <inc>
+<meta :precision 7.3>
+<powder>
+   <tth>   <h> <k> <l>     <asqr>

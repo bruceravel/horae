@@ -1,0 +1,49 @@
+=head1 ARTEMIS: Importing ATHENA Project Data
+
+B<ARTEMIS> - Importing B<ATHENA> Project Data
+
+B<Artemis> has an interface for importing data directly from an
+B<Athena> project file.  To use this dialog, just import an B<Athena>
+project file in the same manner you might import a column data file.
+B<Artemis> will recognize that it is a project file from B<Athena> and
+show this dialog.
+
+Each group from the B<Athena> project file is shown in the list on the
+left.  Left-click on a group to select it.  The selected group is
+plotted as indicated by the radiobuttons to the right of the groups
+list.  Its header lines are displayed in the box above the plotting
+buttons.  If this is the data group that you wish to analyze in
+B<Artemis>, click on the button labeled "Import this group".  The
+B<Athena> dialog will close, the data will be imported and its data
+page will be shown.
+
+There is some choice as to how the fitting and Fourier transform
+parameters will be set when reading data from an B<Athena> project
+file.  The default is to set these parameters for the new data group
+to the values speciried in the B<Athena> project file.  The forward
+Fourier transform parameters from B<Athena> will be used as the
+initial values of forward transform parameters in B<Artemis>.  The
+backward transform parameters from B<Athena> will be used as the
+fitting range in B<Artemis>.  Finally the label from the groups list
+in B<Athena> will be used as the label in the Data and Paths List in
+B<Artemis>.
+
+Alternately, you can choose to use the "default" values.  This is
+context dependent.  For a new data, the defaults indicated by the
+Artemis preferences will be used.  When replacing data, the values
+from the data being replaced will be maintained.
+
+In earlier versions of B<Artemis> it was necessary to have exported
+chi(k) data as a column data file from B<Athena> in order to use them
+in B<Artemis>.  This can still be done but is no longer necessary.
+
+
+
+=over 5
+
+=item
+
+L<Back to the main document|artemis>
+
+=back
+

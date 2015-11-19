@@ -1,0 +1,254 @@
+
+   +--------------------------------------------------------------+
+   |                    Change log for Artemis                    |
+   |   http://leonardo.phys.washington.edu/~ravel/software/exafs  |
+   +--------------------------------------------------------------+
+   |                         Bruce Ravel                          |
+   |                  ravel@phys.washington.edu                   |
+   +--------------------------------------------------------------+
+
+2002.09.01
+  * "Open FEFF calculation" now reads feff.inp or a single
+    feffNNNN.dat file.  it does he right thing if the parent feff
+    object exists or not.  the "add a feff path" option in the FEFF
+    menu is a sort of truncated version.
+  * intrp pop-up menu now works correctly for multiple feff
+    calculations
+  * fixed a bug in the toggle option to select_paths
+
+2002.08.26
+  * take a command line argument for a data or project file
+  * remember project file name
+  * file buttons on feff page are disabled if file does not exist in the -e sense
+  
+2002.08.20
+  * made a generic function for saving the contents of a palette to a
+    file
+  * added ability to save results to a file.  also added def values to
+    the result report
+  * issue a useful Echo in situation where unplottable things are
+    selected and a plot button is pressed.
+  * made the fit and ff2chi buttons a different color (green by
+    default) than the plot buttons
+  * do a raise for the items in the Edit menu
+  * disabled grab buttons for def's
+  * fixed some problems deleting a project and opening a new one.
+    Also fixed some problems changing path to feff after reading a
+    project.
+  * added several templates to the templates directory, currently only
+    three are working, but I added two as placeholders.
+
+
+2002.08.19
+  * added mouse-3 functionality to intrp box
+  * removed mouse-3 functionality from all other text boxes
+  * added a crude templating scheme + a menu for templates.
+
+2002.08.16
+  * got intrp working on the feff page
+  * reformat path page a bit
+
+2002.08.13
+  * identify OS, OS version, perl version, and ifeffit version in
+    comments at top of project file
+
+2002.08.07
+  * fixed a problem which prevented saving path data in any space
+  * made several dialog windows raise so they do not get buried on
+    Windows 
+
+2002.08.07
+  * added a patch found on Usenet which removes much of the looooong
+    delay posting certain dialogs (see the end of misc.pl)
+  * fixed a problem reading in project files with multiple feff calcs
+  * added some mouse-3 functionality to set GDS parameters from the
+    the path pages.  this is done by mouse-3 clicking on a word in a
+    path parameter math expression on a path page and selecting guess,
+    def, or set from the posted menu
+  * Added Tk::PathparamEntry to the distro, which inherits from
+    Tk::Entry but redefines word boundaries appropriate to Ifeffit's
+    math expressions
+
+
+2002.07.25
+  * added Tie::Watch to the distro, needed by Splashscreen
+
+
+2002.07.22
+  * splash screen
+  * lots of key bindings + -accelerator tags in menus
+
+
+2002.07.16
+  * don't check excluded paths in verify_parameters
+  * I didn't like how "show @variables" would order the things it
+    showed, so I now show the variables after the fit making extensive
+    use of Ifeffit::get_scalar().
+  * erase all background variables before starting a new fit
+  * fixed a very silly bug that precluded using third or fourth
+    cumulants in fits
+
+
+2002.07.16
+  * titles now getting restored from project files
+  * fixed include/exclude by ..., which was broken for all criteria
+  * fixed small bug in "Clear math expression for each path" submenu
+  * automagically plot data in R when reading a data file, a project
+    file, or a feffit.inp (the data file must pass the -e test)
+  * buttons in the Plotting options notecards now auto-redisplay the
+    plots (also removed envelope option, which doesn't make sense
+    alone all by itself -- I need plotting options that combine env
+    with other traces) 
+
+
+2002.07.15
+  * finished fixing the "delete feff calculation" problem.  the
+    problem was that the path (in the sense of the ifeffit path
+    command) needed to be erased when the Artemis path was deleted.
+    failing to do so resulted in very strange pathparam values in
+    certain situations.
+  * allow deleting a feff calculation when one of its paths is
+    displayed
+  * disallow deleting feff calculation when data is displayed (how do
+    I know which feff calc to delete in the case of more than one?)
+  * fixed a problem where athena tried to get correlatins between
+    things that were not both guess parameters.
+  * remember directory after changing path to feff
+  * generate_script does not trip if it cannot find an excluded path
+    file
+  * can now Edit and Export path parameters for a group of selected
+    paths
+  * can now delete a group of selected paths
+  * plot options for plotting space is raised when plotting (i.e. plot
+    in R and R plot options are raised) see new meta variable
+    plot_tab.
+  * fixed a minor display problem in the pathparam right-click menu
+  * made a crude fix to a strange problem.  If you read in a project,
+    fit without a background, then fit with a background, the array
+    containing the background will be corrupted.  Fitting again with a
+    background will not show this problem.  The crude fix involves
+    copying some arrays around within Ifeffit and, for reasons I don't
+    quite grok, avoids having the background chi(k) array be corrupted.
+
+
+2002.07.14
+  * generic message posting routine, used for ifeffit script and error
+    messages
+  * added hints for Artemis
+  * rearranged Guess, Def, Set page
+  * "Grab best fit" button now grabs values for def parameters
+  * see the first item for 2002.07.02 -- this was also a problem for
+    deletion of entire feff calculations
+  * added show @groups to the Show submenu
+
+      
+2002.07.12
+  * added code to check that all guesses and defs are used and that
+    all parameters used in math expressions are defined as guesses,
+    sets, or defs.  a fault is handled gracefully and a useful error
+    message is posted.  functions are also checked against a list of
+    valid function names in ifeffit, but the number of arguments is
+    not verified
+
+
+2002.07.09
+  * added a check early in the execution of the code that the main
+    program and the Path.pm module have the same version number.
+    This should help when installation problems crop up.
+
+
+2002.07.08
+  * can now change path to feff calculation while displaying data (or
+    fit|bkg|res)
+
+
+2002.07.07
+  * using $plot_devices variable from Ifeffit to construct a list of
+    image types on the fly
+    
+
+2002.07.02
+  * fixed a serious bug in path deletion where the $current variable
+    was not reset to the newly selected path.  This resulted in the
+    deleted path's entry in the %paths hash "reappearing", albeit with
+    an undef value.  This caused serious problems anywhere the %paths
+    hash was iterated through with the intent of finding a Path object
+    as every entry
+  * added a hack to open_project that allows project files from before
+    the path deletion bug fix to be read in correctly.
+
+
+2002.06.20
+  * use the "k=" argument to feffit and fftf
+  * There is a problem that, in certain situations, the data0.k array
+    gets overwritten by the data0.chi array and the data0.chi array
+    gets some bizarre values.  This results in a "starburst" plot of
+    the data at low k.  This would show up like clockwork by reading a
+    project, doing a fit, redoing the fit, then plotting in k.  As a
+    crufty solution to this problem, I now reread the data after the
+    fit, but before doing the automatic, after-fit plot in the fitting
+    space.  This seems to avoid the problem by rewriting over the
+    data0.k and data0.chi arrays.  Ugly, but it seems servicable.
+
+
+2002.06.19
+  * change text color for a path in the list when it is excluded from
+    the fit.
+  * added ability to include/exclude selected paths
+
+
+2002.06.18
+  * fixed a bunch of bugs related to the %paths hash when feff
+    calculations are deleted and reread.  A lot of these had to do
+    with trying to use parts of the %paths hash which were null or
+    which did contain information relevant to the task at hand.  To
+    address that I added a lot of conditionals to plotting and
+    script-writing chores whenever the keys of %paths are looped
+    through. 
+
+2002.06.17
+  * fixed several bugs in displaying and using different FT window
+    types
+
+2002.06.14
+  It's the Mark Jensen commemerative bug day.  All bugs today were
+  reported by him!
+  * fix a bug which made it impossible to use upper case letters in
+    parameter names
+  * fixed an obscure bug in fetch_nnnn wherein the path header text
+    box would not get filled in in the odd case of running artemis on
+    unix and having run feff on windows.  artemis was gettingt
+    confused by end of line characters
+  * the "View paths.dat" button now looks for paths.dat then
+    path00.dat in an attempt to deal with both feff6 and feff8.
+
+2002.06.13
+  * renew_data works when feff, path, or bkg|fit|res is anchored
+  * include NiCN example
+  * interp box a bit smaller
+
+2002.06.11
+  * improved input file import, expanded list of properly processed
+    keywords, and handle path 0 -- only a few missing keywords, most
+    important is include
+  * fixed the save data function -- can now properly save data, fit,
+    res, bkg, or paths in any space
+
+2002.06.03
+  * revamped project file format, got writing and reading working with
+    new format
+  * made all canvases the same height
+
+2002.05.28
+  * Made it so chi(k) data and project files are obtained from the
+    same Edit menu item
+  * added residuals
+    
+2002.05.13
+  * Initial functional release.
+
+2001.12.24
+  * Initial alpha release
+  * Run and plot single data set / single feff calculation fits
+  * Minimal functionality
+

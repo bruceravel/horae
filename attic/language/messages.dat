@@ -1,0 +1,31 @@
+no_sites| No sites were found in| Ningun sitio fue encontrado en| Aucun site n'a été trouvé dans| Keine Gitterplätze in
+writing| Writing file to| Escribiendo archivo en| Ecrit le fichier dans| Schreibe Datei
+cannot_write| could not write to| No pude escribir en| Il n'est pas possible d'écrire dans| Datei kann nicht geschrieben werden
+no_directory| could not read directory:| No pude leer el directorio:| Il n'est pas possible de lire dans le répertoire:| Verzeichnis nicht vorhanden:
+make_error| takes an even number of arguments| recive un numero par de argumentos| nécessite un nombre pair d'arguments| Nur eine gerade Anzahl erlaubt !
+title| title| titulo| titre| Titel
+tainted_vector| Atoms detected tainted data among the vector coordinates| Atoms detecto datos corruptos entre las coordenadas de vectores| Atoms a trouvé des données erronées  parmi les coordonnées du vecteur| Atoms hat ungültige Eintrage in den Vektorkoordinaten gefunden
+tainted_atoms| Atoms detected tainted data among the atom coordinates| Atoms detecto datos corruptos entre las coordenadas atomicas| Atoms a trouvé des données non valide parmi les coordonnées des atomes| Atoms detected tainted data among the atom coordinates
+line| line| linea| ligne| Zeile
+file| file| fichero| fichier| Datei
+deprecated| No longer a keyword in Atoms| Esta palabra clave ya no es valida en Atoms.| Ce mot clé n'est pas valide dans Atoms| Wird nicht mehr als Schlüsselwort verwendet.
+dopants| The \"dopants\" keyword is not currently supported| La palabra clave \"dopants\" no esta soportada| Le mot \"dopants\" n'est pas encore supporté!| Dotierungen werden im Augenblick noch nichtunterstützt
+basis| Not doing \"basis\" lists at this time| Dejo de hacer listas de  \"basis\" en este momento| Ne fait pas encore des listes de \"basis\"| Hier kann keine Basis gewählt werden.
+unknown_keyword| Unknown keyword| Palabra clave desconocida| Mot inconnu| Unbekanntes Schlüsselwort
+one_gas| This must be between 0 and 1 -- reset to 0.| Esto toma valores entre 0 y 1 -- reevaluado en 0| La valeur doit être entre 0 et 1 -- elle est fixée à 0.| Wert muß zwischen 0 und 1 liegen, - wird auf 0zurückgesetzt.
+all_gases| The fill gas percentages must sum to a value between 0 and 1.All three will be reset to 0.| Los porcentajes de gases deben sumar a un valor entre 0 y 1. Los tres valores seran reevaluados como 0.| La somme des fractions de gaz doit être entre 0 et 1, sinon tous les trois seront fixés à 0.| Der Gasmischungsanteil muß zwischen 0 und 1liegen.  Alle Werte wurden auf 0 zurückgesetzt.
+rmax| The cluster size \"rmax\" must be a positive number.Resetting \"rmax\" to its default value.| El radio del cluster \"rmax\" debe ser un numero positivo. Redefiniendo \"rmax\" a su valor basico.| Le rayon maximum du cluster \"rmax\" doit être positif.Il a été fixé à sa valeur par défaut.| rmax muß eine positive Zahl sein und wird zurückgesetzt.
+no_core| You did not specify a central atom.| Ud. no especifico el atomo central.| Vous devez spécifier un atome central.| Kein Zentralatom festgelegt.
+unknown_core| is not one of the unique atoms.| no es uno de los atomos unicos.| n'est pas une des positiom asymétriques.| Ungültiges Zentralatom.
+bad_edge| The absorption edge must be one of K, L1-3, M1-5, N1-7, O-17,or P1-3.  The edge has been reset to K.| El borde de absorcion debe ser uno de entre K, L1-3, M1-5, N1-7,O-17 o P1-3. El borde fue reasignado a K.| Le seuil d'absorption doit être K, L1-3, M1-5, N1-7, O-17 ou P1-3.  Le seuil K a été mis.| Mögliche Absoptionskanten:  K, L1-3, M1-5, N1-7,O1-7 oder P1-3.  Wert wurde auf K zurückgesetzt.
+no_template| could not open template file| no pudo abrirse el archivo de templado| le fichier 'template' n'a pu être ouvert| Kann Template-Datei nicht öffnen
+no_atp| No such atp file:| No existe este archivo atp:| Il n'y a pas de fichier atp:| atp Datei existiert nicht:
+require_fp| You must select an absorption data resource which supplies f'.Henke, Chantler, and Sasaki are your choices.| You must select an absorption data resource which supplies f'.Henke, Chantler, and Sasaki are your choices.| Vous devez choisir une table pour le calcul de f'. Henke, Chantler et Sasaki sont des choix possibles.| Es muß eine der folgenden Datenquellengewählt werden:f'.Henke, Chantler oder Sasaki.
+invalid_input| not a valid input file for Atoms.| not a valid input file for Atoms.| Le fichier d'entrée pour Atoms n'est pas valide.| Ungültige Input-Datei.
+no_reflection| You did not specify a reflection.| You did not specify a reflection.| Vous n'avez pas spécifié la réflexion| Es wurde keine Reflexion festgelegt.
+calculating_dafs| Calculating the anomalous diffraction simulation| Calculating the anomalous diffraction simulation| Calcul de la simulation de la diffraction anomale.| Simulation der anormalen Brechung
+not_a_group| You have specified an unknown space group symbol.| Ud. ha especificado un symbolo desconocido parael grupo espacial.| Vous avez sécifié un symbol de groupe d'espace inconu.| Unbekannte Raumgruppe !
+not_an_element| is not an element symbol| is not an element symbol| is not an element symbol| is not an element symbol
+at_line| at line| at line| at line| at line
+at_site| at site| at site| at site| at site
+adb_unknown |You requested an unknown ADB file |You requested an unknown ADB file |You requested an unknown ADB file |You requested an unknown ADB file 

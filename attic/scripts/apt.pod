@@ -1,0 +1,144 @@
+=head1 NAME
+
+APT - The ATOMS Periodic Table
+
+=head1 SYNOPSIS
+
+Simple graphical interface to the Xray::Absorption package
+
+   apt [-v] [-h]
+
+=head1 DESCRIPTION
+
+This is a simple graphical interface to the x-ray absorption data for
+the elements contained in the Xray::Absorption package.  When run, a
+window appears displaying a colorful periodic table of the elements.
+Clicking on an element causes data about that element to be displayed
+in the bottom half of the window.
+
+All energies in this program are in eV.  All wavelengths are in
+Angstroms.  All distances are in microns or centimeters as described
+above.  The buttons labeled C<Clear>, C<Help>, and C<Exit> do exactly
+what their labels suggest, although the C<Clear> button only clears
+the currently displayed notecard.  These have keyboard shortcuts of
+C<control-c>, C<control-h>, and C<control-q> respectively.
+C<Control-t> is the keyboard shortcut for toggling between energy and
+wavelength units.
+
+If this program is invoked with a C<-v> switch, version information is
+displayed to standard output and the program quits.  If C<-h> is
+given, this help document is displayed to standard output and the
+program quits.
+
+=head1 THE ENERGIES AND ABSORPTION LENGTHS PROGRAM
+
+This notecard is used to display edge and line energies of the
+elements and to make simple calculations of absorption legth and
+attenuation.  When you click on an element in the periodic table,
+these data about that element are displayed in the notecard.
+
+If an energy in eV is specified, then the absorption length of the
+selected element at the specified energy will also be displayed.  If
+the selected element is a gas, the absorption length is given in
+centimeters, otherwise it is given in microns.
+
+If a length is also specified in the box marks "thickness", then an
+attenuation factor will be given for a pure sample of that length and
+at the specified energy.  For example, if you enter 8000 eV as the
+energy, and "10" as the thickness then select nickel, the attenuation
+will be 0.64.  This means that a 10 micron nickel foil absorbs 36% of
+the incident beam.  Again, centimeters are assumed for gases.  With
+the thickness set to 10, selecting nitrogen gives an attenuation of
+0.91 at that energy.  This means that a 10 centimeter ionization
+chamber filled with nitrogen will absorb about 9% of the beam.
+
+Not all of the data is available for all the elements.  When data is
+missing, the corresponding space will be left blank.  For transuranic
+elements, only the name and atomic number are displayed.
+
+All data used in this program comes from the Elam data resource (see
+L<Xray::Absorption> and L<Xray::Absorption::Elam>).  Of all the
+available xray absorption data resources, the Elam resource has by far
+the most complete collection of edge and line energies.  The edge and
+line energies are organized into notecards.  Click on the tabs of the
+notecards to see the different pages.  The Siegbahn and IUPAC symbols
+for the fluorescence lines are displayed, along with the line energy
+and the relative intensity of the line.  The relative intensity is
+normlized such that the sum of intensities from lines originating in
+the same core state sum to 1.
+
+The weight displayed is the isotope-averaged atomic weight.  The
+density is for the most common pure from of the element.  The density
+displayed for carbon is the density of graphite.  (Diamond has a
+specific gravity of about 3.1.)  The densities of fluorine, and
+bromine are their liquid phase densities.
+
+The third button from the left at the bottom of the screen is used to
+change the units displayed in the program between eV for energy and
+Ansgtroms for wavelength.  Clicking this button will toggle all parts
+of the program between these two units.  Please note that the entry
+box labeled C<Energy> (or C<Wavelength>) also toggles between the two
+units.  When you have the program set to use wavelength, you must
+enter wavelength values in that box.  If you enter a value that seems
+too small for energy units or too large for wavelength units, the
+program will pop open a confirmation dialog.
+
+=head1 THE ANOMALOUS SCATTERING PROGRAM
+
+This notecard contains a simple interface to tables of anomalous
+scattering factors.  Simply fill in an energy range and a value for
+the energy step and click on an element, and the f prime and double
+prime functions will be displayed in the canvas on the right.
+Alternatively, you can select an absorption edge and click on an
+element, and the anomalous scattering factors will be display 100
+volts above and below that edge.  You can even simply click on an
+element.  If the element is lighter than cerium, the scattering
+factors around the K edge will be shown, other wise the scattering
+factors around the L3 edge are shown.
+
+Below the widgets allowing you to specify the energy grid and the edge
+are two buttons.  The one labeled C<Save data> allows you to save the
+most recent calculation to a file.  By default the filename is
+C<fpfpp_XX.dat>, where XX is the symbol of the element for which the
+anomalous scattering was calculated.  You can change the name of the
+output file in the file dialog.
+
+The C<Clear range> button is a bit more complicated.  Because it is
+often useful to calculate the anomalous scattering factors of one
+element near the absorption edge of another element, the energy range
+is not cleared when you press on a new element button.  Instead, the
+energy range used for the prior calculation is used for the new
+calculation.  If, for example, you want the calculation made around an
+edge of the new element, you should hit the C<Clear range> button or
+the C<Clear> button at the bottom of the page.
+
+The button which converts between wavelengths and energies currently
+does nothing when the anomalous scattering notecard is displayed.
+
+While you certainly may specify very broad energy ranges, for example
+to see K and L edges for an element, do remember that perl is an
+interpreted language and that such a request will be rather time
+consuming even on a speedy computer.
+
+=head1 TO DO
+
+=over 4
+
+=item *
+
+More kinds of useful data about the elements
+
+=back
+
+=head1 ACKNOWLEDGMENTS
+
+Thanks to Stephane Grenier and Matt Newville for their helpful
+sugestions and beta testing.
+
+=head1 AUTHOR
+
+  Bruce Ravel, bruce@phys.washington.edu
+  http://feff.phys.washington.edu/~ravel
+  copyright (c) 1999 Bruce Ravel
+
+=cut

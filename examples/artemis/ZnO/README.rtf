@@ -1,0 +1,76 @@
+{\rtf1\ansi\ansicpg1252\deff0
+{\fonttbl
+{\f0\fnil\fcharset0\fprq0\fttruetype Arial;}
+{\f1\fnil\fcharset0\fprq0\fttruetype NULL;}
+{\f2\fnil\fcharset0\fprq0\fttruetype Dingbats;}
+{\f3\fnil\fcharset0\fprq0\fttruetype Symbol;}
+{\f4\fnil\fcharset0\fprq0\fttruetype Times New Roman;}
+{\f5\fnil\fcharset0\fprq0\fttruetype Courier New;}}
+{\colortbl
+\red0\green0\blue0;
+\red255\green255\blue255;}
+{\stylesheet
+{\s18\fi-431\li720\sbasedon19 Lower Roman List;}
+{\s20\tx431\sbasedon12\snext19 Numbered Heading 1;}
+{\s21\tx431\sbasedon13\snext19 Numbered Heading 2;}
+{\s22\tx431\sbasedon14\snext19 Numbered Heading 3;}
+{\*\cs8\sbasedon19 Endnote Text;}
+{\s6\fi-431\li720 Diamond List;}
+{\s23\fi-431\li720 Numbered List;}
+{\*\cs7\fs20\super Endnote Reference;}
+{\s29\fi-431\li720 Triangle List;}
+{\s26\fi-431\li720 Square List;}
+{\s5\fi-431\li720 Dashed List;}
+{\s31\fi-431\li720\sbasedon23 Upper Roman List;}
+{\s15\fi-431\li720 Heart List;}
+{\s30\fi-431\li720\sbasedon23 Upper Case List;}
+{\s3\fi-431\li720 Bullet List;}
+{\s11\fi-431\li720 Hand List;}
+{\*\cs10\fs20\sbasedon19 Footnote Text;}
+{\s12\sb440\sa60\f0\fs34\b\sbasedon19\snext19 Heading 1;}
+{\s13\sb440\sa60\f0\fs28\b\sbasedon19\snext19 Heading 2;}
+{\s14\sb440\sa60\f0\fs24\b\sbasedon19\snext19 Heading 3;}
+{\s28\fi-431\li720 Tick List;}
+{\s19\f4\fs24\lang1033 Normal;}
+{\s17\fi-431\li720\sbasedon23 Lower Case List;}
+{\s1\li1440\ri1440\sa120\sbasedon19 Block Text;}
+{\*\cs9\fs20\super Footnote Reference;}
+{\s25\tx1584\sbasedon20\snext19 Section Heading;}
+{\s16\fi-431\li720 Implies List;}
+{\s2\fi-431\li720 Box List;}
+{\s27\fi-431\li720 Star List;}
+{\s24\f5\sbasedon19 Plain Text;}
+{\s4\tx1584\sbasedon20\snext19 Chapter Heading;}}
+\kerning0\cf0\ftnbj\fet2\ftnstart1\ftnnar\aftnnar\ftnstart1{\info}\deftab720\viewkind1\paperw12240\paperh15840\margl1440\margr1440\widowctl
+\sectd\sbknone\colsx0\marglsxn1800\margrsxn1800\pgncont\ltrsect
+\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch Notes for ZnO Artemis demo:}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch This folder contains a demonstration of fitting oxide data of mediocre quality using Artemis.}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch The tutorial is meant for people who understand the rudiments of EXAFS analysis, but have little practical experience. In other words, I assume you know what a "path" is, but are unsure of how to know what paths to include in a fit.}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch As a secondary purpose, this tutorial will introduce some of the features of Artemis useful for fits of moderate complexity, but it is certainly not comprehensive in that area.}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch I have chosen data of iffy (but not downright bad) quality in part because that is what many users are faced with, for one reason or another. In training my own students, I have heard the complaint "When I practice on copper, it's too easy--it just works." Hopefully this example helps fill the gap between copper and whatever mysterious materials you're working on...}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch * * *}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch USE OF THIS TUTORIAL}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch Open Artemis and then use it to open the project ZnO1.apj. Under the "Edit" menu, choose "Write in journal." At that point a pallete will pop up which begins the tutorial.}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch Whenever the journal contains instructions proceeded by >>>, like}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch >>>Click the green fit button.}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch that is an instruction for you to perform. Please read the ENTIRE paragraph proceeded by >>> BEFORE attempting the operation, as sometimes there may be instructions on how to handle an error box which may appear and prevent you from getting back to the journal until you deal with it.}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch Bruce Ravel has added a couple of comments to the journals.  His comments are surrounded by guillemets, <<like so>>.}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch QUESTIONS OR COMMENTS}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch Please address questions or comments regarding this tutorial to SCalvin@mailaps.org.}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}
+\par}\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch --Scott Calvin}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}\abinodiroverride\ltrch Sarah Lawrence College}
+\par\pard\plain\ltrpar\ql\sl240\slmult1\itap0{\f0\fs20\lang1033{\*\listtag0}}}

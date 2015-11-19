@@ -1,0 +1,85 @@
+#!/usr/bin/perl
+#
+# This is a little script to list all the group labels in an Athena
+# project file and write it to STDOUT
+#
+# copyright (c) 2007 Bruce Ravel
+#
+# -------------------------------------------------------------------
+
+use warnings;
+use strict;
+
+use Safe;
+use Compress::Zlib;
+use Getopt::Long;
+
+my $help;
+GetOptions('h'    => \$help,
+	   'help' => \$help);
+if ($help or not $ARGV[0]) {
+  require Pod::Text;
+  $^W=0;
+  if ($Pod::Text::VERSION < 2.0) {
+    Pod::Text::pod2text($0, *STDOUT);
+  } elsif ($Pod::Text::VERSION >= 2.0) {
+    my $parser = Pod::Text->new;
+    open STDIN, $0;
+    $parser->parse_from_filehandle;
+  };
+  exit;
+};
+
+my $cpt   = new Safe;
+my %array = ();
+my $uhoh  = 0;
+
+foreach my $file (@ARGV) {
+  if (not -e $file) {
+    warn "$file is not a file\n";
+    next;
+  };
+  my $prj = gzopen($file, "rb") or ($uhoh=1);
+  if ($uhoh) {
+    warn "could not open $file as an Athena project\n";
+    $uhoh = 0;
+    next;
+  };
+  print "===> $file:\n\n";
+  my $line = q{};
+  my $count = 0;
+  while ($prj->gzreadline($line) > 0) {
+    next if ($line !~ /^\@args/);
+    ## read the array in a Safe compartment
+    @ {$cpt->varglob('array')} = $cpt->reval( $line );
+    %array = @ {$cpt->varglob('array')};
+    printf "     %3d: %s\n", ++$count, $array{label};
+    %array = ();
+  };
+  $prj->gzclose();
+  print "\n";
+};
+
+1;
+
+__END__
+
+=head1 NAME
+
+lsprj - list the contents of an Athena project
+
+=head1 SYNOPSIS
+
+   lsprj [-h] project_file(s)
+
+=head1 DESCRIPTION
+
+This little program lists the contents of one or more Athena project
+file and echos that list to the screen.
+
+=head1 AUTHOR
+
+  Bruce Ravel, bravel@anl.gov
+  http://cars9.uchicago.edu/~ravel
+
+=cut

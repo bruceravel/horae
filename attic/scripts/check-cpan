@@ -1,0 +1,246 @@
+#! /usr/bin/perl -w
+######################################################################
+## check-cpan.pl (-h for help)         copyright (c) 1998 Bruce Ravel
+##                                          ravel@phys.washington.edu
+##                            http://feff.phys.washington.edu/~ravel/
+##
+##	  The latest version of Atoms can always be found at
+##      http://feff.phys.washington.edu/~ravel/software/atoms/
+##
+## -------------------------------------------------------------------
+##     All rights reserved. This program is free software; you can
+##     redistribute it and/or modify it under the same terms as Perl
+##     itself.
+##
+##     This program is distributed in the hope that it will be useful,
+##     but WITHOUT ANY WARRANTY; without even the implied warranty of
+##     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##     Artistic License for more details.
+## -------------------------------------------------------------------
+######################################################################
+## $Id: check-cpan,v 1.8 1999/07/02 00:44:48 bruce Exp $
+######################################################################
+##  This script scan the state of the machines perl installation,
+##  searching for required modules and performing a few other check.
+##  It will generate a list of modules that must be installed.  If the
+##  user is privileged on a machine which can use CPAN, it goes ahead
+##  and downloads the modules.
+##
+##  Here is a list of all the check it performs:
+##    1. Check for platform and privilege of user
+##    2. Perl version number (looking for 5.004 or greater)
+##    3. Check to be sure version 3.0 of Text::ParseWords is not
+##       installed
+##    4. Check for each of the modules in %modules (but skip checks
+##       for Tk modules if the system is MacOS or VMS)
+######################################################################
+## Code:
+
+use Getopt::Std;
+use vars qw($opt_h);
+getopts('h');
+
+use Pod::Text;
+($opt_h) && do {
+  $^W=0;
+  pod2text($0, *STDOUT);
+  exit;
+};
+
+use strict;
+##                                          required  sort  needed
+##                                          version   order   by
+my %modules = ("Statistics::Descriptive" => ["2.2",      1, "all"],
+	       "Chemistry::Elements"	 => ["97.1102",  2, "all"],
+	       "File::Spec"		 => ["0.6",      3, "all"],
+	       "Storable"		 => ["0.603",    4, "all"],
+	       "Data::Dumper"		 => ["2.08",     5, "all"],
+	       ##"DB_File"		 => ["1.15"   ,],
+	       ##"MLDBM"		 => ["2.00"   ,],
+	       "Tk"			 => ["400.004",  6, "tkatoms"],
+	       "Tk::FileDialog"		 => ["1.3",      7, "tkatoms"],
+	       "Text::English"		 => ["0.01",     8, "Tk::Pod"],
+	       "Tk::Pod"		 => ["3.15",     9, "tkatoms"],
+	       "Math::Spline"            => ["0",       10, "Elam Tables"],
+	       "Math::Derivative"        => ["0",       11, "Elam Tables"],
+	       ##"foo::bar"                => ["0",       12, "nothing"],
+	      );
+
+my %found = ();
+my @need = ();
+my ($yes, $no) = ("installed", "not installed");
+
+## check for who and what is running this script
+print "$/Perl configuration checker for Atoms 3.0beta9.$/$/";
+print "This is a $^O computer";
+if (($^O eq 'VMS') or ($^O eq 'os2') or ($^O eq 'MacOS')
+    or ($^O eq 'MSWin32')) {
+  print ".", $/, $/;
+} else {
+  if ($>) {
+    print " and you are a normal user.$/$/";
+  } else {
+    print " and you are the privileged user.$/$/";
+  };
+};
+
+## check perl version number
+my $required = 5.004;
+print "Checking perl version number ... found $], require $required ... ";
+if ($] >= $required) {
+  print "ok", $/, $/;
+} else {
+  print "not ok$/";
+  die $/, "Atoms requires perl $required or later.  Quitting now.", $/, $/;
+};
+
+
+## check for the evil version 3.0 of Text::ParseWords
+require Text::ParseWords;
+if ($Text::ParseWords::VERSION == 3.0) {
+  print "Uh-oh!  I found version 3.0 of Text::ParseWords, which is buggy.
+I will add that to the list of things to install.$/$/";
+  push @need, "Text::ParseWords";
+};
+
+## check for CPAN modules
+print "Checking whether the modules required by Atoms can be found on$/",
+  "this computer...$/$/";
+
+my $format = "* %-25s\t%-7s\t\t%s\t   %s$/";
+
+printf $format, "   module", "found", "require", "needed by";
+print  "=" x 72, $/;
+foreach my $mod
+  (sort {$modules{$a}->[1] <=> $modules{$b}->[1]} (keys %modules)) {
+
+    ## skip Tk modules on systems that don't support it
+    next if ((($^O eq 'MacOS') or ($^O eq 'VMS')) and
+	     (($mod =~ /^Tk/)  or ($mod =~ /English/)));
+
+    my $vnum = join("", "\$", $mod, "::VERSION");
+    $found{$mod} = eval "require $mod;";
+    $vnum = eval "$vnum" || 0;
+				# the version number in Stats::Descr
+				# v. 2.2 was in the wrong place
+    if (($mod =~ /descriptive/i) and not $vnum) {
+      $vnum = join("", "\$", $mod, "::Sparse::VERSION");
+      $found{$mod} = eval "require $mod;";
+      $vnum = eval "$vnum" || 0;
+    };
+    if ($found{$mod}) {
+      printf $format, $mod, $vnum, $modules{$mod}->[0], $modules{$mod}->[2];
+    } else {
+      printf $format, $mod, "missing", $modules{$mod}->[0], $modules{$mod}->[2];
+    };
+    ((not $found{$mod}) || ($modules{$mod}->[0] > $vnum))
+      && push @need, $mod;
+  };
+
+(@need) || do {
+  print
+    "$/Looks like you have them all and they are all up to date.  Cool!$/$/";
+  exit;
+};
+
+use Text::Wrap qw($columns &wrap);
+$columns=66;
+print "$/You need to install the following modules$/";
+print wrap("\t", "\t", join(", ", @need)), $/;
+print <<EOH
+
+  Some modules are integral parts of Atoms and others are used only
+  by parts of the package.  This is indicated in the last column of
+  the table above.  If you are *certain* you will not be using those
+  parts of the package, then you are not obliged to install those
+  modules.
+EOH
+;
+
+## bail because this is not Unix and I don't know if the CPAN module
+## will work
+($^O =~ /^(macos|mswin32|os2|vms)$/i) && do {
+  print <<EOH
+
+  You are not on a Unix computer and so must install the missing
+  modules by hand.  If you are on a Macintosh or VMS computer, Don\'t
+  worry about the missing Tk modules, because TkAtoms won\'t run on
+  your computer in any case.
+
+  Mac Users:
+    You should download those modules from http://www.perl.com/CPAN/.
+    You might find precompiled Mac versions of some of these at
+    http://pudge.net/macperl/.  After unpacking the archives, move the
+    pm files and perform any autosplitting chores as described in
+    Chapter 11 of the MacPerl book.
+
+EOH
+; #  '
+  exit;
+};
+
+## bail because this is a normal user
+$> && do {
+  print <<EOH
+
+  You are not installing as root, thus this script cannot continue
+  with the installation using the CPAN module.  You will have to
+  install the missing modules by hand.  Don't fret, it's not hard.
+
+  You should download those modules from http://www.perl.com/CPAN/
+  After unpacking the archives and cd-ing to the new subdirectory,
+  type \`perl Makefile.PL\' then \`make\'.  After that, run the script
+  \"private-install\" for each new module.  That script can be found
+  in this directory.
+
+EOH
+;
+  exit;
+};
+
+## continue because this is the superuser on a unix machine
+print <<EOH;
+
+It is possible to download and install these using the CPAN module.
+This requires that your computer be connected to the internet.
+
+EOH
+;
+
+print "Do you want to proceed with the network installation? [y/n] > ";
+$_ = <STDIN>;
+($_ =~ /^y/i) || exit;
+
+require CPAN;
+# install stuff (lines taken from CPAN pod)
+for my $mod (@need) {
+  my $obj = CPAN::Shell->expand('Module',$mod);
+  $obj->install;		# will this work for Text::ParseWords?
+}
+
+__END__
+
+
+=head1 NAME
+
+  check-cpan.pl - check system for CPAN modules required by Atoms
+
+=head1 DESCRIPTION
+
+  This program checks your current perl installation to see which of
+  the CPAN modules required by Atoms are alreay installed.  At the
+  very least, this script will tell you which ones you should install
+  and will give you some hints about how to do so.  If you are running
+  this script as the privileged user on a system for which the CPAN
+  module works, it will fetch and install the needed modules for you.
+
+=head1 AUTHOR
+
+  Bruce Ravel <ravel@phys.washington.edu>
+  (http://feff.phys.washington.edu/~ravel/)
+
+=cut
+
+## Local Variables:
+## mode: cperl
+## End:

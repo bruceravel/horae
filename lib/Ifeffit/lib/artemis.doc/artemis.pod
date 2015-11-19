@@ -1,0 +1,219 @@
+=head1 NAME
+
+B<Artemis> - interactive EXAFS data analysis
+
+=head1 DESCRIPTION
+
+B<Artemis> is a program for analyzing EXAFS data using theoretical
+standards from B<Feff>.  B<Artemis> includes interfaces to B<Atoms>
+and B<Feff> as well as forms for defining parameters and applying
+those parameters to the paths from the B<Feff> calculation.
+B<Artemis> uses C<chi(k)> as it's input.  It does not handle any data
+processing chores, such as converting raw data to C<mu(E)> or doing
+background removal.  B<Artemis>'s sister program B<Athena> is the
+data processing program.
+
+=head1 SYNOPSIS
+
+B<Artemis> is a graphical and interactive program written in the perl
+programming language, using the Tk display engine, the B<Ifeffit>
+EXAFS library, and the PGPLOT plotting library.  (See below for a list
+of relevant URLs.)
+
+B<Artemis> helps you organize all aspects of a fitting project,
+including running the B<Feff> calculation, settings parameters for the
+Fourier transform and fitting of the data, parameterizing the paths
+from the B<Feff> calculation, running the fit, and plotting the
+results.  The B<Artemis> window is divided into three panels.  The
+largest panel is the space where most of the work happens.  Its
+content is model and depends on the state of the Data and Paths List.
+This list is in the center, skinny panel.  The other skinny panel
+contains the controls the are used to specify how plots are made.
+
+At the top of the window are the menubar and the project bar.  The
+project bar displays the name of the current project file.  It also
+contains an indicator that tells you if the project has been modified
+since the last time it was saved.  Clicking on the modified indicator
+will save the project (just like C-s or the "Save project" item in the
+File menu).  At the bottom of the screen is the echo area, where
+B<Artemis> writes all sorts of helpful messages as you use the
+program.
+
+The Data and Paths list contains a tree-like list of all of the
+objects that can be manipulated as you use B<Artemis>.  When the
+program starts, two such items are displayed.  As you run B<Feff>
+calculations, import B<Feff> paths and other data sets, and run fits,
+more items are added to this list.  In total, there are five kinds of
+entries in this list, each of which controls a diffferent aspect of
+B<Artemis>.  These five kinds of list entries are: (1) fitting
+parameters, (2) data, (3) fits, (4) B<Feff> calculation, or (5)
+B<Feff> path.  When you click on an item in the Data and Paths List,
+that item will be "selected" and "anchored".  A selected item is
+highlighted in orange.  An anchored item is outlined with a dashed
+line.  Only one item can be anchored.  0, 1, or more items can be
+selected.
+
+The anchored item determines the mode of the large panel.  For
+instance, when the "Guess, Def, Set" item is anchored, the main panel
+will display a page used for setting the fitting parameters.  When a
+data item is anchored, the main panel will display a page for setting
+Fourier tranform parameters, the fitting range, and other parameters
+associated with the data.  Many functions in B<Artemis> depend upon
+the mode of the main panel.  Some features are available only in
+certain modes.  Each of the modes is described in its own document
+section.  See L<SECTIONS OF THE DOCUMENT>.
+
+Plots in B<Artemis> are always made using the selected items.  To
+plot, for example, data, a fit, and several individual paths, it is
+necessary to select each of those items.  Many other functions in
+B<Artemis> also work on the set of selected items.
+
+Anchoring and setting paths is usually done by using the mouse in the
+Data and Paths List, although there are several other ways of changing
+the anchor and selection using the mouse or the keyboard.  Here is a
+list of mouse events useful in the Data and Paths List:
+
+=over 4
+
+=item B<Left mouse button>
+
+Clicking the left mouse button will clear all selections then select
+and anchor the item clicked.  The main panel will display the page
+apporpriate to the anchored item.
+
+=item B<Center mouse button>
+
+Clicking the center mouse button will anchor the item clicked without
+changing the selection.  The main panel will display the page
+apporpriate to the anchored item.
+
+=item B<Right mouse button>
+
+Clicking the right mouse button will anchor the item clicked without
+changing the selection.  It will also post a menu of functions
+appopriate to the item clicked.  These menus are the same as the menus
+in the menubar at the top of the window.  The main panel will display
+the page appopriate to the anchored item.
+
+=item CB<ontrol key + left mouse button>
+
+Clicking the left mouse button while holding down the control key will
+add the item clicked to the group of selected items.  The anchor is
+not changed.
+
+=item B<Shift key + left mouse button>
+
+Clicking the left mouse button while holding down the shift key will
+select all items between the anchor and the item clicked, inclusively.
+The anchor is not changed.
+
+=item  B<Left mouse button + mouse drag>
+
+Clicking the left mouse button then dragging the mouse while holding
+down the button will select all items that you drag the cursor over.
+The item initially clicked will be anchored and the main panel will
+display the page appopriate to the anchored item.
+
+=item B<Control-k, Control-j>
+
+Hitting the k or j keys while holdong the control key will move the
+anchor to the previous or next item in the list without changing the
+selection.  The main panel will display the page appopriate to the
+anchored item.  These two key sequences, behave differently when the
+Guess, Def, Set item is anchored.  See L<The Guess, Def, Set
+page|artemis_gds> for details
+
+=item B<Control-l>
+
+Hitting the l key while holding down the control key will put focus on
+the Data and Path List.  This allows you to navigate the list using
+the arrow keys.
+
+=back
+
+
+The color and font of the text in the Data and Paths List indicates
+the status of each item.  Any item written in black, upright text is
+an item that can be plotted.  When a data set or B<Feff> path is
+excluded from the fit, it will be written in brown text.  The Guess,
+Def, Set item and the B<Feff> calculation items are written in italic
+text.  The italic text indicates items that cannot be plotted.
+Although these non-plotable items can be selected, they will be
+ignored when a plot is made.
+
+
+
+
+=head1 SECTIONS OF THE DOCUMENT
+
+
+=head2 Modal views in the main window
+
+L<The data parameters|artemis_opparams> ||
+L<The Guess, Def, Set page|artemis_gds> ||
+L<The B<Atoms> page|artemis_atoms> ||
+L<B<Feff> and it's input file|artemis_feffinp> ||
+L<The B<Feff> interpretation page|artemis_intrp> ||
+L<Paths and path parameters|artemis_path> ||
+L<The log viewer|artemis_logview> ||
+
+=head2 Input and Output
+
+L<Importing B<Athena> project data|artemis_athena> ||
+Output files ||
+B<Artemis> project files ||
+
+=head2 Features of B<Artemis>
+
+L<Plotting in B<Artemis>|artemis_plot> ||
+Palettes ||
+Using the Data and Paths List ||
+L<The edit math expression dialog|artemis_editme> ||
+L<Quick first shell theory|artemis_afs> ||
+The Menubar ||
+The preferences dialog ||
+
+
+=head1 REFERENCES
+
+
+Here are the relevant URLs:
+
+=over 4
+
+=item IFEFFIT
+
+  http://cars.uchicago.edu/ifeffit
+
+=item PGPLOT
+
+  http://www.astro.caltech.edu/~tjp/pgplot/
+
+=item Perl
+
+  http://www.perl.com
+
+=item perl/Tk
+
+  http://www.lehigh.edu/~sol0/ptk/
+
+=back
+
+=head1 MISSING FEATURES
+
+You betcha!
+
+=head1 WHAT'S IN A NAME?
+
+B<Artemis> was the goddess of the hunt, an apt metaphor doing EXAFS
+analysis. B<ART>emis is also a pun on the nature of EXAFS analysis
+that works in English and in the romance languages.
+
+=head1 AUTHOR
+
+  Bruce Ravel <bravel@anl.gov> (c) 2001 - 2006
+  http://cars.uchicago.edu/~ravel/software/
+
+  Ifeffit is copyright (c) 1992 - 2006 Matt Newville
+  newville@cars.uchicago.edu
+  http://cars.uchicago.edu/ifeffit/

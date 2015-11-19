@@ -1,0 +1,123 @@
+This directory contains the crystallographic data for Silver Bromide
+along with a transmission scan of a solid solution of AgBr and AgCl
+taken at 20, 50, and 80 Kelvin at beamline X11A at the NSLS.  These
+data were taken from Bruce's master class course using the old
+versions of the codes at 
+     http://leonardo.phys.washington.edu/~ravel/course/
+
+This is sufficient information to begin a fitting project for solid
+solution sample.  In this readme file, I'll write steps to take to
+work through this example.  You should not consider this to be a
+recipe -- at each step you should play around with the setting in both
+Athena and Artemis to understand fully these data.
+
+These data are mixture of AgBr and AgCl.  Thus we expect to find both
+Br and Cl atoms in the first coordination shell.  We will, therefore
+need to include information from Feff for both kinds of scatterers in
+the fit.
+
+1.  Fire up Athena.  Import all the data.  Find good background
+    removal and Fourier transform parameters for each data set.
+    Align the data.  Make merged spectra at each temperature.
+
+2.  Save the project and export the chi(k) files (if necessary)
+    a. If you are using a version of Artemis that can read the Athena
+       project file, then it is unnecessary to save the chi(k) files.
+    b. If you are using a version of Artemis which cannot read Athena
+       project files, then you will need to save the chi(k) by
+       selecting the correct group in the Athena groups list and then
+       selecting "Save as chi(k)" form the File menu.
+
+3.  Fire up Artemis.
+
+4.  Import the chi(k) data for the 20 Kelvin data.
+    a. If you are using a version of Artemis that can read the Athena
+       project file, verify that you are still happy with the Fourier
+       transform parameters.
+    b. If you are using a version of Artemis which cannot read Athena
+       project files, set the Fourier transform and fit range
+       parameters to sensible values.
+
+5.  Import the crystallographic data contained in the file AgBr.inp.
+    Run Atoms.  Verify that the Feff input data is reasonable, then
+    run Feff.
+
+6.  When the path selection dialog comes up, choose to import only the
+    first path.
+
+7.  Import the crystallographic data contained in the file AgBr.inp
+    for a second time.  This will create a second Feff branch in the
+    Data and Paths List.
+
+8.  Click on the first Feff calculation in the Data and Paths List.
+    Select "Rename this Feff calculation" from the Theory menu.  At
+    the prompt enter "AgBr".  Do the same for the second Feff entry,
+    this time calling it "AgCl".  This step is not necessary, but
+    makes your project much easier to read.
+
+9.  Edit the atoms data, replacing the Br atom with a Cl atoms.  If
+    you know the AgCl lattice constant, change that as well.  If you
+    do not know the AgCl lattice constant, leave it untouched.  That
+    will result in Feff input data that is incorrect (the AgCl lattice
+    constant is considerably smaller than the AgBr constant).
+    However, the Feff calculation should be close enough that we can
+    begin to analyze the data.  It is common in doing EXAFS analysis
+    that we do not know best structure to use in Feff a priori.  It is
+    necessary then to start somewhere reasonable and see where the fit
+    takes us.  It is in that spirit that will use the AgBr lattice
+    constant for the Cl part of the fit.
+
+10. Run Atoms.  Verify that the Feff input data is reasonable, then
+    run Feff.
+
+11. When the path selection dialog comes up, choose to import only the
+    first path.
+
+12. When the second Feff calculation was started, a second set of
+    automatically generated parameters were inserted into the GDS
+    page.  In this fit, we will use a single amplitude term and a
+    single E0 parameter for both kinds of scatterer.  So discard the
+    parameters amp_1 and enot_1 from the GDS page.  Edit the Cl
+    scatterer path to use the same S02 and E0 parameters as the Br
+    path.
+
+13. Since the distance to the Br and Cl atoms might be different, we
+    should have separate parameters fir delta R for the two paths.
+    You can use the ones that were automatically generated or you
+    might edit them to have more mnemonic names, such as "dr_br" and
+    "dr_cl".
+
+14. Similarly we should have separate sigma^2 parameters for the two
+    kinds of scatterers.  You might again choose mnemonic names, such
+    as "ss_br".
+
+15. Now we need to consider the fact that the first coordination shell
+    contains a mixture of Br and Cl.  This sample was, ostensibly a
+    50/50 mixture.  On the GDS page create a new parameter called "x",
+    assign it a value of 0.5, and make it a set parameter.  Now click
+    on the Br scatterer.  Edit its S02 path parameter to read
+    "amp*x".  (That assumes that the amplitude parameter is called
+    "amp".)  Next edit the S02 path parameter for the Cl scatterer so
+    that it reads "amp * (1-x)".  Do you see how this accomplishes the
+    chore of populating the first shell with equal quantities of Br
+    and Cl?
+
+16. Run the fit.  How does it look?  Are the parameters reasonable?
+    You should see that the delta R for Br is slightly negative.  That
+    is reasonable given that these data are at 20K and the
+    crystallographic data were for room temperature.  The delta R for
+    the Cl scatterer should be considerably more negative.  This too
+    is reasonable since we used the AgBr lattice constant in the AbCl
+    Feff calculation, which we knew to be too large.
+
+17. How could you use this fitting model to measure the populations in
+    the first shell?  The answer should involve only one mouse click
+    before hitting the big green button.
+
+
+This strategy of using a mixing parameter as a set or guess parameter
+is a common one for situations that require two or more Feff
+calculations.  The mixing parameter is a convenient way of correctly
+mixing the contributions of different scatterers in a heterogeneous
+environment or in a situation involving multiple crystallographic
+sites for the absorber.

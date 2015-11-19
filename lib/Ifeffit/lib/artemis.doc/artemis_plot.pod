@@ -1,0 +1,129 @@
+=head1 ARTEMIS: Plotting Data
+
+B<ARTEMIS> - Plotting data
+
+Plots in B<Artemis> are made using the selected items in the Data and
+Paths List, which are the ones highlighted in orange.  See L<the main
+document section|artemis> for an explanation of how to selected items
+for plotting.
+
+At the top of the plot panel are three big, red buttons.  One is for
+making a plot in k-space, one is for R-space, and the third is for
+q-space (i.e. back-transformed k-space).
+
+=head2 k-Weighting
+
+Below the plot buttons are a set of radiobuttons for setting the
+k-weight to use in the plots.  The k-weight chosen will be used to
+weight a plot in k-space or to weight data for Fourier transforming.
+The same k-weight is used for each selected item.  The button marked
+"kw" needs some explanation.  When this button is chosen, the k-weight
+to use in the plot will be determined from the data being plotted.  If
+the arbitrary k-weight enabled for the data set,the value for the
+arbitrary k-weight will be used, other wise the smallest k-weight
+value enabled will be used.  There are two reason to use the "kw"
+button.  One is to plot using your arbitrary weight.  The other is to
+make a plot of two or more data sets using a different k-weight for
+each data set.
+
+Note that these k-weight controls are unrelated to the controls which
+set the k-weight used in the fit.  K-weighting for fitting and
+plotting are controlled independently.
+
+=head2 Selecting What Gets Plotted
+
+Below the k-weight radiobuttons are menus for choosing which part of
+the complex functions C<chi(R)> or C<chi(q)> to plot.  Plots involving
+multiple parts of the complex functions (e.g. real+envelope) are not
+currently possible.
+
+Below these menus are three checkbuttons used for plotting the Fourier
+transform window, the background function, and the residual.  If the
+window button is pressed, the appropriate window function will be
+plotted in any plot.  The background and residual functions are only
+plotted if one of the selected items is a fit.  The background will
+only be plotted if a background corefinement was made for that fit.
+If a fit is not among the selected items, the background and residual
+will not be plotted.  Note that a plot with more than one selected fit
+may be quite confusing if the background or residual buttons are
+depressed since the background and residual will be plotted for each
+fit.
+
+The ranges over which the plot will be made in the three spaces are
+controlled by the three sets of entry boxes.
+
+=head2 Extra Plotting Features
+
+The two additional tabs in the plotting panel contain the controls for
+the following utilities:
+
+
+=head3 Indicators
+
+Indicators are vertical bars that can be placed at user-chosen
+locations in k-, R-, or q-space.  These indicators will get displayed
+every time a plot is made.  The idea is that indicators are a guide to
+the eye, drawing attention to a place of interest as the data being
+plotted changes.
+
+Indicators selected in either k- or q-space will be plotted in both
+k- and q-space, but not in R-space.  Likewise, indicators selected in
+R-space will not be plotted in k- or q-space.
+
+Several characteristics of the indicators, including the number, the
+linetype, and the color, can be set in the Plot section of the
+preferences dialog.
+
+The indicators play well with each of the plotting options described
+below. 
+
+=head3 Stacking
+
+Stacking refers to a vertical displacement the various traces.  This
+is most useful for plotting the various path contributions in k-space,
+but is sometimes useful in other kinds of plots as well.  Stacking
+requires three parameters which are set in the stacking notecard.  The
+first control is series of radio buttons for choosing whether stacking
+happens in k-space, always, or never.  If the k-space option is
+chosen, then q-space plots of the real or imaginary parts will also be
+stacked.  (Basically, the "k-space" choice refers to any wiggly
+function of wavenumber.)  The other two controls set the initial
+offset value and the increment between staces.
+
+=head3 Inverting
+
+Inverting is a useful tool for displaying the path contributions in
+C<|chi(R)|> plots.  When this is selected, the C<|chi(R)|> from any
+paths included in the plot will be multiplied by -1 so that they stick
+down below the zero-axis.  Hopefully this kind of plot help reduce
+clutter while still helping to show which paths contribut where.  The
+radiobuttons on this notecard allow you choose between never
+inverting, inverting C<|chi(R)|>, or inverting both C<|chi(R)|> and
+C<|chi(q)|>.  The real and imaginary parts in R- or q-space are never
+inverted.  C<chi(k)> is also never inverted.  Inverting is turned off
+whenever stacking is selected and would effect the current plot
+(i.e. you cannot stack and invert at the same time).
+
+=head3 Data set offsets
+
+This feat ure is useful for multiple data set plots.  This is similar
+to stacking in that the parameter denotes a vertical offset for use i
+the plot.  Each trace associated with a particular data set is plotted
+at the same lavel, but the data sets will be offset by the amount
+specified by this control.  This provides a way of simultaneously
+visualizing all parts of a multiple data set fit.  Negative values are
+recommended, with a negative offset, the traces will be plotted in the
+same order from top to bottom as in the plot legend.
+
+Stacking is disabled when data set offsets are used.  Inverting is
+used with data set offsets, although I think this results in confusing
+plots.
+
+
+=over 5
+
+=item
+
+L<Back to the main document|artemis>
+
+=back

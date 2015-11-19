@@ -1,0 +1,10 @@
+These files are all the 60K Fe foil data.  The file extension
+indicates which end of line conventions is used.
+
+    unix     \n
+    mac	     \r
+    windows  \r\n
+
+These files should be imported identically and plot strictly on top of
+one another.  Thus, these files test that Athena treats line endings
+transparently.

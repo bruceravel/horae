@@ -1,0 +1,21 @@
+<atp -- Atoms Template File>
+<com> This file is part of the Atoms distribution.
+<com> Atoms is copyright (c) Bruce Ravel 1998-2006.
+<com> This is the atoms template file for an p1.inp file
+<com> Homepage: http://cars9.uchicago.edu/~ravel/software/
+<com>
+<meta :file "p1.inp file" :precision 9.5 :output "p1.inp">
+<meta :occupancy 1>
+<id :prefix "! ">
+<titles :prefix "title =	">
+space	p 1             ! original space group: <space>
+a =	<a>	b =	<b>	c =	<c>
+alpha =	<alpha>	beta =	<beta>	gamma =	<gamma>
+<com>
+<com> How do I specify the central atom in this context?
+<com>
+core =	<ctag>_1	edge =	<edge>	rmax =	<rmax>
+atoms
+! elem   x          y          z       tag             occ
+<list :style unit>
+  <elem>  <x>  <y>  <z>  <itag>  <occ>

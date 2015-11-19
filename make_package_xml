@@ -1,0 +1,74 @@
+#!/bin/sh
+
+## this is a convenience script for building the package.xml file
+## needed for the ActiveState-style perl package repository containing
+## horae and libperlxray
+##
+## the --upload flag will run scp to place the xml file in Bruce's
+## repository at CARS
+
+# the location of the horae and libperlxray repository images:
+base=~/codes
+version=0.1
+
+while [ "$#" -gt 0 ]
+do
+ case "$1"
+ in
+  --version) echo "make_package_xml script version $version"
+             exit 0;;
+  --upload) upload=1
+	    shift;;
+  --upload-all) upload_all=1
+	        shift;;
+  *) break;;
+ esac
+done
+
+
+#### Make the ppd files, fixing windows dependencies for horae
+cd $base/horae/
+perl Build ppd
+sed 's/<CODEBASE/<DEPENDENCY NAME="Win32Util" VERSION="0,0,0,0" \/>\n        <CODEBASE/' horae.ppd   > horae.1.ppd
+sed 's/<CODEBASE/<DEPENDENCY NAME="Chemistry-Formula" VERSION="0,0,0,0" \/>\n        <CODEBASE/' horae.1.ppd > horae.2.ppd
+sed 's/<CODEBASE/<DEPENDENCY NAME="Xray-Absorption" VERSION="0,0,0,0" \/>\n        <CODEBASE/' horae.2.ppd > horae.3.ppd
+sed 's/<CODEBASE/<DEPENDENCY NAME="Xray-Scattering" VERSION="0,0,0,0" \/>\n        <CODEBASE/' horae.3.ppd > horae.4.ppd
+sed 's/NumEntry/GBARR/' horae.4.ppd > horae.5.ppd
+mv horae.5.ppd horae.ppd
+rm -f horae.1.ppd horae.2.ppd horae.3.ppd horae.4.ppd
+
+cd $base/libperlxray/Absorption/
+perl Build ppd
+
+cd $base/libperlxray/Scattering/
+perl Build ppd
+
+cd $base/libperlxray/Formula/
+perl Build ppd
+
+
+#### cat together all the pieces of package.xml
+echo '<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORYSUMMARY ARCHITECTURE="MSWin32-x86-multi-thread-5.8">' > $base/head
+echo '</REPOSITORYSUMMARY>' > $base/tail
+cat $base/head                                       \
+    $base/horae/horae.ppd                            \
+    $base/libperlxray/Absorption/Xray-Absorption.ppd \
+    $base/libperlxray/Scattering/Xray-Scattering.ppd \
+    $base/libperlxray/Formula/Chemistry-Formula.ppd  \
+    $base/tail                                       > $base/package.xml
+rm -f $base/head $base/tail
+
+
+
+
+if [ $upload ]; then
+  scp $base/package.xml ravel@corvette.cars.aps.anl.gov:public_html/ppm/   
+fi
+
+## ppm files...
+if [ $upload_all ]; then
+  echo "Not uploading ppm files yet ..."
+  #scp $base/package.xml \
+  #    ravel@corvette.cars.aps.anl.gov:public_html/ppm/   
+fi

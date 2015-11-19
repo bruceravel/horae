@@ -1,0 +1,29 @@
+REVISION HISTORY:
+
+version 0.59 (released 08 Apr 2004):
+-----------------------------------
+1) Extended the DDL1 fix from 0.58 to 
+   items within loops
+2) Fatal parsing errors now cause the Parser to 
+   'die' instead of 'exit' to allow exception handling
+   with 'eval' statements in wrapper scripts.
+3) Included parseMulti.pl script, a wrapper script
+   which attempts to parse all cif files in a given
+   directory with multiple command line options.
+
+version 0.58 (released 10 July 2001):
+-------------------------------------
+1) Added limited compatibility with Data Defition Language 1 (DDL1).
+   Earlier versions assumed DDL2-style item names
+   with explict category names (_this_category.this_item).
+   Now, the category is assigned the default value "-" (minus sign),
+   if the item name does not contain a "." (period).
+2) Improved proper recognition of "data_" strings as either
+   data block headers or other legitimate text, depending on 
+   the position in the CIF file. 
+
+version 0.57 (released 15 May 2001):
+------------------------------------
+A closing semicolon after text that extended over several lines
+does not have to be on a line by itelf. This wrong assumption 
+from previous versions has been corrected.

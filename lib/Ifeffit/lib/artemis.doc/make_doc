@@ -1,0 +1,166 @@
+#!/usr/bin/perl -w
+
+
+use Getopt::Long;
+my ($all, $pdf, $html, $man, $text) = (0,0,0,0,0);
+GetOptions(all  => \$all,
+	   pdf  => \$pdf,
+	   html => \$html,
+	   text => \$text,
+	   man  => \$man,
+	  );
+
+($pdf, $html, $man, $text) = (1,1,1,1) unless ($pdf or $html or $man or $text);
+($pdf, $html, $man, $text) = (1,1,1,1) if $all;
+
+my $message = "\n-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-\n\n";
+$message .= "Made the following document types:\n\n";
+
+if ($html) {
+  opendir D, "./" or die "could not read this directory\n";
+  my @list = grep {/pod$/} readdir D;
+  closedir D;
+
+  print "making html from ";
+  foreach (sort @list) {
+    my @parts = split(/\./, $_);
+    my $command =
+      sprintf
+	"pod2html --htmlroot=. --podpath=. --outfile=%s.html --infile=%s.pod",
+	  $parts[0], $parts[0];
+    print "$_\n                 ";
+    system $command;
+  };
+  print $/;
+
+  ## what the heck are these anyway???
+  unlink qw(pod2htmd.x~~ pod2htmi.x~~);
+
+  $message .= "   html pages   artemis.html and artemis_*.html\n";
+};
+
+
+
+my @sections = (qw(
+		   opparams
+		   gds
+		   atoms
+		   feffinp
+		   intrp
+		   path
+		   logview
+		   artemis
+		   plot
+		   editme
+		   afs
+		  ));
+
+
+my $regex = join("|", sort(@sections));
+
+if ($pdf or $man or $text) {
+  print "Constructing monolithic pod file\n";
+  open POD, ">artemisdoc.pod";
+  open TOP, "artemis.pod";
+  my $found_back = 0;
+  while (<TOP>) {
+    next if (/=head1 SECTIONS OF THE DOCUMENT/);
+    next if (/=head2 Modal views in the main window/);
+    next if (/=head2 Input and Output/);
+    next if (/=head2 Features of B<Artemis>/);
+    unless (/^L.*(artemis_($regex)).*\|\|/) {
+      print POD;
+      next;
+    };
+    open SEC, "$1.pod";
+    $found_back = 0;
+    while (<SEC>) {
+      #($found_back=1), next if (/=back/ and not $found_back);
+      #next unless $found_back;
+      last if (/=over 5/);
+      print POD;
+    };
+    close SEC;
+  };
+
+
+  close TOP;
+  close POD;
+};
+
+if ($pdf) {
+  print "Converting pod to latex\n";
+  use Pod::LaTeX;
+  my $parser = Pod::LaTeX->new ( );
+  $parser->TableOfContents(1);
+  $parser->StartWithNewPage(1);
+  my $preamble = "";
+  map { $preamble .= $_; } (<DATA>);
+  $parser->UserPreamble($preamble);
+  $parser->parse_from_file ('artemisdoc.pod', 'artemisdoc.tex');
+
+  print "Running latex thrice\n";
+  system "pdflatex artemisdoc.tex";
+  system "pdflatex artemisdoc.tex";
+  system "pdflatex artemisdoc.tex";
+  rename "artemisdoc.pdf", "artemis.pdf";
+  $message .= "   PDF          artemis.pdf\n";
+};
+
+if ($man) {
+  print "Making man page\n";
+  use Pod::Man;
+  $parser = Pod::Man->new(section=>1);
+  $parser->parse_from_file('artemisdoc.pod', 'artemis.1');
+  $message .= "   man page     artemis.1\n";
+};
+
+if ($text) {
+  print "Making plain text page\n";
+  use Pod::Text;
+  $parser = Pod::Text->new();
+  $parser->parse_from_file('artemisdoc.pod', 'artemis.txt');
+  $message .= "   plain text   artemis.txt\n";
+};
+
+if ($pdf or $man or $text) {
+#  unlink "artemisdoc.pod";
+};
+
+$message .= "\n";
+print $message;
+
+
+__DATA__
+\documentclass{article}
+
+\usepackage{makeidx}
+\makeindex
+
+
+\begin{document}
+
+ \thispagestyle{empty}
+%%   \begin{center}
+%%     \includegraphics*[width=0.7\linewidth]{images/artemis_logo}
+%%   \end{center}
+  \vspace*{\stretch{1}}
+  \noindent\rule{\linewidth}{1ex}
+  \begin{flushleft}
+    \textsf{%
+      {\Huge U}{\huge sing} {\Huge A}{\huge ARTEMIS }}%
+  \end{flushleft}
+  \vspace{2ex}
+  \begin{flushright}
+    {\Large Bruce Ravel} \\
+    {\large \texttt{bravel\char64anl.gov} \\
+    \texttt{http://feff.phys.washington.edu/\char126ravel/software/exafs/} }
+  \end{flushright}
+  \noindent\rule{\linewidth}{1ex}
+  \vspace*{\stretch{2}}
+
+  \clearpage
+
+\tableofcontents
+
+\clearpage

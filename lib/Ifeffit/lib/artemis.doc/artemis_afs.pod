@@ -1,0 +1,121 @@
+=head1 ARTEMIS: Automated First Shell Theory
+
+B<ARTEMIS> - Automated first shell theory
+
+Sometimes thinking about a fitting model is more than a problem
+merits.  You just want a quick 'n' dirty stab at the first shell --
+perhaps to measure the centroid of the distribution, perhaps to tell
+if a sample is 4- or 6-coordinated.  Whatever.
+
+B<Artemis> is not extremely well suited to rapid-fire, first shell
+analysis.  By design, B<Artemis> tends to force the user to slow down
+and think hard about every step.  B<Artemis> is powerful, but she
+ain't simple.
+
+The quick first shell (QFS) theory tool is an attempt at addressing
+this shortcoming.  It works like this:
+
+=over 4
+
+=item 1.
+
+Import some data.  Set the Fourier transform and fitting parameters to
+suitable values.  Specifically, be sure to set the fitting range such
+that it encloses the first peak of the data.
+
+=item 2.
+
+Select "Quick first shell theory" from the Theory menu.  This will
+display the QFS dialog.
+
+=item 3.
+
+The QFS dialog provides spaces for selecting the parameters for a
+simple first shell theory.  These include the atomic species of the
+absorber and the scatterer, the absorption edge of the experiment, the
+approximate distance between the absorber and scatterer, and the
+coordination geometry to use in the B<Feff> calculation.
+
+Currently the following coordination geomatries are available:
+
+=over 4
+
+=item *
+
+4-coordinate crystal
+
+=item *
+
+6-coordinate crystal
+
+=item *
+
+octahedral molecule
+
+=item *
+
+tetrahedral molecule
+
+=item *
+
+square-planar molecule
+
+=back
+
+The QFS theory is probably not highly sensitive to the choice of
+coordination geometry.  Since the unknown sample is probably not well
+described by any of these geometries, they are all merely
+approximations for use in a quick 'n' dirty fit.
+
+=item 4.
+
+Once you have set up the parameters for the QFS theory, click the "Do
+it!" button.  This will step through the following without pausing:
+
+=over 4
+
+=item a.
+
+Build an input file for the B<Feff> calculation
+
+=item b.
+
+Run B<Feff>
+
+=item c.
+
+Import the first path from the B<Feff> calculation
+
+=item d.
+
+Create a set of guess parameters for the amplitude, the sigma^2, the
+e0, and the delta R.  Also created are set parameters for the third
+and fourth cumulants, but they are set to zero.  These higher cumulant
+set parameters are created to make it easy to consider higher
+cumulants in subsequent fits merely by changing them from set to
+guess.
+
+=back
+
+
+=back
+
+If you have a mixed first shell, you might choose to repeat steps 2
+through 4 two or more times.
+
+At the end of this sequence, you are left with B<Artemis> in its
+normal state.  You may need to adjust the parameters used in the fit.
+The QFS dialog is really just a tool for initially setting up the
+project.  It in no way changes the normal operation of B<Artemis>.
+
+If you import data from an B<Athena> project file, the species of the
+absorber and the edge will be set correctly when you start the dialog.
+
+
+=over 5
+
+=item
+
+L<Back to the main document|artemis>
+
+=back

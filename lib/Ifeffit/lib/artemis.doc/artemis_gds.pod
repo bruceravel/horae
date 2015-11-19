@@ -1,0 +1,311 @@
+=head1 ARTEMIS: Guess, Set, Def Parameters
+
+B<ARTEMIS> - Guess, set, def parameters
+
+
+This page is used to define the parameters of the fitting model.  In
+B<Artemis> there are six kinds of parameters:
+
+=over 4
+
+=item B<Guess>
+
+Guess parameters are the ones that are optimize during the course of
+the fit to best-fit the theory to the data.
+
+=item B<Def>
+
+Def parameters are typically expressed as math expressions which may
+be functionally dependant upon other parameters.  These math
+expressions are updated throughout the course of the fit.  As the
+guess parameters are update, so are the def parameters.
+
+=item B<Set>
+
+Set parameters are evaluated at the beginning of the fit and not
+updated throughout the fit.  This is the main difference between def
+and set parameters.  Set parameters can be numbers or math
+expressions.
+
+=item B<Restraint>
+
+Restraints are math expressions which, like def parameters, are
+updated throughout the course of the fit, but which take on a special
+role in the fit.  A restraint is evaluated and added in quadrature to
+the evaluation of the chi-square parameter.  A restraint, therefore,
+can be used to incorporate a a bias in the fitting result towards a
+piece of prior knowledge about the physical system.  See the
+B<Ifeffit> for a complete discussion of restraints.
+
+=item B<Skip>
+
+Skip parameters are maintained in the project but are not used in any
+capacity in the fit.  The point of a skip parameter is to maintain but
+not use a complicated parameter with a complicated math expression.
+
+=item B<After>
+
+An after is similar to a def parameter in that it may be a math
+expression dependent upon other parameters.  An after is not, however,
+a part of the fitting model.  Instead it is a parameter that will be
+evaluated upon completion of the fit using the best fit values.  The
+list of after parameters will be reported in the log file.  Using an
+after parameter anywhere in your fitting model will result in Artemis
+reporting an error in the model.  Afters can depend upon other afters,
+but you should take care in with the order that the afters appear in
+the list.  The after parameters will be evaulated only once after the
+fit, thus circular or out-of-order dependencies will not be resolved.
+
+=back
+
+The Guess, Def, Set page is divided into two sections.  At the top is
+a listbox containing the list of all defined parameters.  At the
+bottom is the edit area which contains the controls used to establish
+the parameters.
+
+=head2 The parameter listbox
+
+This area contains a four-column list of all the parameters defined in
+a project.  The left-most column counts the parameters.  The second
+column contains a tag identifying the type of the parameter.  The
+third column contains the parameter name.  The right-most column
+contains the parameter's math expression.
+
+Parameters are coded by color and by the tag in the second column.
+Guess parameters are written in purple text and have the "g:" tag.
+Def parameters are written in green text and have the "d:" tag.  Set
+parameters are written in black text and have the "s:" tag.
+Restraints are written in pink text and have the "r:" tag.  Skip
+parameters are written in grey text and have no tag.  After parameters
+are written in blue-grey text and have the "a:" tag.
+
+There are a large number of mouse clicks and key sequences that serve
+a purpose in the listbox:
+
+=over 4
+
+=item 1.
+
+A left mouse click selects a parameter and displays it in the edit area.
+
+=item 2.
+
+A double click of the left mouse button selects a parameter, displays
+it in the edit area, and prompts you for the parameter annotation.
+See L<Parameter annotations>.
+
+=item 3.
+
+A right mouse click selects a parameter, displays it in the edit area,
+and posts a contextual menu about that parameter.  The menu has
+several items in it.  The "Move" submenu is sued to reposition the
+current parameter in the list.  The "Make" submenu serves to change
+the type of the parameter.  The "Copy" item will replicate the
+anchored parameter, appending a few characters to the end of its name.
+The "Build restraint" item is discussed below.  The "Annotate" menu
+item prompts for the parameter annotation.  The "Find" menu item will
+search through all parameter and path parameter math expressions and
+show you how that parameter is used in the project.  The "Grab" menu
+item is only enabled for guess parameters and will insert the best-fit
+value from a fit as the value for that parameter.  Finally the
+"Discard" menu item will remove that parameter from the list after
+prompting for confirmation.
+
+=item 4.
+
+Control-d will define the parameter in the edit area.
+
+=item 5.
+
+Control-g will grab the current parameters best-fit value from a fit.
+
+=item 6.
+
+Control-e will show the editing area if it is hidden.
+
+=item 7.
+
+Control-k and control-j will move the selection up and down in the
+list.  Note that these two key-sequences serve to move the anchor up
+and down in the Data and Path List when the Guess, Def, Set page is
+not showing.
+
+=item 8.
+
+Control-n will clear the selection and focus on the parameter name
+entry box so that you can create a new parameter.
+
+=item 9.
+
+Control-y will prompt you to then hit any of the g, d, s, r, k or e
+keys to set the type of the parameter.  This is only way of setting
+the parameter type that does not involve the mouse.
+
+=back
+
+=head2 Extended selection
+
+Multiple items in the list of parameters can be selected using the
+control-click, shift-click, and click-drag sequences described for the
+Data and Paths List and for the log viewer.  Only the anchored list
+item (i.e. the one surreounded by a dashed line and displayed in the
+edit area) can have its name and math expression edited.
+
+The advantage of extended selection is that certain of the context
+menu options discussed above in item #3 can operate on many parameters
+at once.  By doing extended selection then clicking the right mouse
+button somewhere in the selected region, the context menu will be
+posted with options for the group of selected parameters.  Currently,
+groups of parameters can have their types set and can be discarded in
+this manner.
+
+If you right-click outside the selected region, the extended selection
+will be cleared and the parameter clicked on will be anchored and
+selected. 
+
+=head2 The edit area
+
+There are three rows of controls in the edit area.  The top row has
+two entry boxes.  The smaller one on the left is for entering the name
+of the parameter.  The larger one on the right is for entering the
+parameter's math expression.
+
+Below the entry boxes are a set of five radiobuttons for selecting the
+type of parameter being edited.
+
+At the bottom of the edit area are five buttons for acting upon the
+parameter being edited.  The "Undo edit" button clears the entry boxes
+and discards whatever changes were just made.  The "New" button is
+used to define a brand new parameter.  It clears the entry boxes,
+unselects parameters in the listbox, and gives focus to entry box for
+entering the parameter name.  The "Grab" button becomes enabled after
+a fit is run.  It inserts the best-fit value for a guess parameter.
+The "Discard" button deletes a parameter from the list.  A dialog pops
+up confirming deletion.  Finally, the "Hide" button removes the edit
+area from view to allow more parameters to be visible in the listbox.
+When the edit area is hidden, it is replaced by a button for restoring
+the edit area.
+
+Here are the details of the behavior of these controls:
+
+=over 4
+
+=item 1
+
+Hitting return in the parameter name entry box defines the parameter,
+inserts or updates it in the listbox, and puts focus on the math
+expression entry box.  If a math expression has not yet been defined,
+the parameter will be defined as 0.
+
+=item 2
+
+Hitting return in the math expression entry box defines the parameter,
+inserts or updates it in the listbox, and leaves focus on the math
+expression entry box.
+
+=item 3
+
+Clicking on any of the radiobuttons defines the the parameter,
+inserts or updates it in the listbox, and leaves the focus unchanged.
+
+=back
+
+=head2 Parameter annotations
+
+An annotation is a short text string that is associated with the
+parameter.  This string is written to the echo area whenever the
+parameter is selected in the listbox on the Guess, Def, Set page.  The
+purpose of he annotation is to write a little hint about the role
+played by the parameter in the fiting model.  If a guess parameters
+has no annotation when a fit is run, its annotation will be generated
+automatically.  The automatic annotation for a guess parameter is its
+best fit value +/- its error bar.  The automatic annotation for a def,
+after, or restrain parameter is its evaluated value after the fit.
+
+=head2 Building restraints
+
+One of the items in the context menu displayed when right-clicking on
+a parameter is for building restraints based on guess or def
+parameters.  This tool provides a dialog for constructing one
+particular type of restraint -- the type that coerces a parameter to
+stay within a boundries for its value.  The dialog prompts for a
+minimum and maximum value and for a term called the "amplifier".  The
+math expression constructed is this one:
+
+    restrain  param_res = penalty(param, min, max) * amp
+
+The penalty function evaluates to 0 when C<param> is between C<min>
+and C<max>, to C<abs(min-param)> when C<param> is less than C<min>,
+and to C<abs(param-max)> when C<param> is greater than C<max>.  This
+is added in quadrature to reduced chi-square as the fit is evaluated.
+
+The amplifier term determines the magnitude of the penalty.  A large
+value for C<amp> will force the fitted value of C<param> not to stray
+too far outside its bounds.  A small value will allow the fit more
+freedom to let C<param> deviate from your initial guess.
+
+See the B<Ifeffit> FAQ, question 8.1 for more discussion of
+restraints, including discussion of other ways to set restraints that
+do not involve the C<penalty()> function.
+
+A cautionary note: restraints are not always appropriate.  As an
+example, if a fit is returning a negative value for sigma^2, it may
+not be appropriate to apply a stiff restraint as a way of forcing that
+sigma^2 to be a value that you expect.  Often, a negative sigma^2 is
+indicative of some other problem in the fitting model such as
+excessive structural disorder, a coordination number that is forced to
+be too small, the incorrect atomic species for a backscatterer, or
+some such.  Using a restraint on sigma^2 in a case like this would not
+fix the problem.  Quite the opposite, it might foster a false sense of
+accomplishment by "fixing" the sigma^2 "problem" without actually
+addressing the actual problem in the fitting model.
+
+
+=head2 Highlighting
+
+There is an option in the GDS menu for highlighting parameters.  This
+prompts you for a text string.  Any parameter names or math
+expressions that match that string will be marked with a green
+background.  This is particularly useful for large parameter lists.
+The text string is interpreted as a perl regular expression and so any
+valid perl metacharacters can be used.  (This includes regular
+expressions using C<(?{ code })> and other similar constructions, a
+practice the author of B<Artemis> does not recommend, but does not
+prevent.)
+
+
+=head2 Importing and exporting text files
+
+For large, complex fitting models, it may be convenient to edit the
+parameter list with a text editor or even to write a program which
+generates the parameters and writes them to a text file.  In that
+case, it is convenient to be able to import and export a textual
+respresentation of the parameter list.  These files are of a simple
+format.  Any line like these:
+
+   guess  a   5
+   set    b   6
+   def    c   a+b
+
+can imported to and exported from the Guess, Def, Set page via the GDS
+menu.  In an imported file, any line beginning with any of C<guess>,
+C<def>, C<set>, C<restrain>, C<after>, or C<skip> will be imported as
+a parameter.  The second word on the line will be taken as the
+parameter name and the remaining words on the line will be
+concatinated to form the math expression.  On export lines will follow
+this format:
+
+   type name = math_expression
+
+Very little error checking is performed upon import to verify that the
+parameter is defined sensibly, so use this feature with caution.
+
+
+=over 5
+
+=item
+
+L<Back to the main document|artemis>
+
+=back
+

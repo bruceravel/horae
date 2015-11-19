@@ -1,0 +1,29 @@
+not_valid| is not a valid space group symbol.| is not a valid space group symbol.| is not a valid space group symbol.| ist kein gültiges Raumgruppensymbol.
+these_sites| These sites:| These sites:| These sites:| Diese Kristllgitterplätze:
+trigonal| trigonal| trigonal| trigonal| trigonal
+triclinic| triclinic| triclinic| triclinic| triklin
+cubic_desc| Cubic cells have equal axes and all angles = 90.| Cubic cells have equal axes and all angles = 90.| Cubic cells have equal axes and all angles = 90.| kubische Aufstellungen haben gleicheAchsen und alle Winkel betragen 90°.
+cubic| cubic| cubic| cubic| kubisch
+tainted_sgdb| Atoms detected tainted data among the crystallographydata for this space group.This is an emergency!  It means that the crystallography$/database has been corrupted and should be reinstalled.| Atoms detected tainted data among the crystallographydata for this space group.This is an emergency!  It means that the crystallography$/database has been corrupted and should be reinstalled.| Atoms detected tainted data among the crystallographydata for this space group.This is an emergency!  It means that the crystallography$/database has been corrupted and should be reinstalled.| Atoms hat ungültige kristallographische Daten für dieseRaumgruppe gefunden. Dies ist ein Notfall!!! Die Datenbank scheint zerstört zu sein und muss neuinstalliert werden.
+site_occ| Site occupancies must be between 0 and 1| Site occupancies must be between 0 and 1| Site occupancies must be between 0 and 1| Besetzungszahlen müssen zwischen 0 und 1 liegen.
+monoclinic_desc| Monoclinic cells have all unequal axes and one non-right angle.| Monoclinic cells have all unequal axes and one non-right angle.| Monoclinic cells have all unequal axes and one non-right angle.| Monokline Aufstellungen haben drei unterschiedlichenGitterkonstanten und nur einen nichtrechten Winkel.
+error| ERROR!| ERROR!| ERROR!| ERROR!
+monoclinic| monoclinic| monoclinic| monoclinic| monoklin
+occupied| generate one or more common positions and their occupanciessum to more than 1.| generate one or more common positions and their occupanciessum to more than 1.| generate one or more common positions and their occupanciessum to more than 1.| Eine oder mehrere kristallographische Lagen sind mehr als vollbesetzt.
+orthorhombic_desc| Orthorhombic cells have unequal axes and all angles = 90.| Orthorhombic cells have unequal axes and all angles = 90.| Orthorhombic cells have unequal axes and all angles = 90.| Orthorombische Zellaufstellungen habe ungleicheGitterkonstanten und alle Winkel betragen 90°.
+tetragonal_desc| Tetragonal cells have x=y<>z and all angles = 90.| Tetragonal cells have x=y<>z and all angles = 90.| Tetragonal cells have x=y<>z and all angles = 90.| Tetragonale Zellausfstellungen haben x=y<>z und alle Winkelbetragen 90°.
+orthorhombic| orthorhombic| orthorhombic| orthorhombic| orthorhombisch
+fatal_error| Fatal error(s) in cell parameters.| Fatal error(s) in cell parameters.| Fatal error(s) in cell parameters.| Fatale(r) Fehler in Zellparametern.
+tetragonal| tetragonal| tetragonal| tetragonal| tetragonal
+caution| caution| caution| caution| Achtung !
+positive| must be positive| must be positive| must be positive| muss positive sein
+warn_shift| appears in the International Tables with  multiple choices of origin.  If the atoms list seems wrong, you  should use a shift vector of:| appears in the International Tables with  multiple choices of origin.  If the atoms list seems wrong, you  should use a shift vector of:| appears in the International Tables with  multiple choices of origin.  If the atoms list seems wrong, you  should use a shift vector of:| Fuer diese Raumgruppe gibt es in den International Tables mehrereAufstellungen mit unterschiedlichem Ursprung. Wenn die Atomliste nicht richtig istsollten Sie folgende(n) Shiftvektor(en) ausprobieren:
+hexagonal_desc| Hexagonal cells have x=y<>z and alpha=beta=90 and gamma=120.| Hexagonal cells have x=y<>z and alpha=beta=90 and gamma=120.| Hexagonal cells have x=y<>z and alpha=beta=90 and gamma=120.| Hexagonale Zellaufstellungen haben x=y<>z, alpha=beta=90° undgamma=120°.
+warning| warning| warning| warning| Warnung!
+rhonbohedral_desc| Rhombohedral cells have x=y=z and alpha=beta=gamma<>90.| Rhombohedral cells have x=y=z and alpha=beta=gamma<>90.| Rhombohedral cells have x=y=z and alpha=beta=gamma<>90.| Rhombohedrische Zellaufstellungen haben x=y=z andalpha=beta=gamma<>90°.
+hexagonal| hexagonal| hexagonal| hexagonal| hexagonal
+monoclinic_unknown| Unknown setting for a monoclinic cell.| Unknown setting for a monoclinic cell.| Unknown setting for a monoclinic cell.| Unbekannte Aufstellung für eine monokline Zellaufstellung.
+cell_check| The axis lengths and angles specified are not appropriate for the  given space group.| The axis lengths and angles specified are not appropriate for the  given space group.| The axis lengths and angles specified are not appropriate for the  given space group.| Die Gitterkonstanten und (oder) Winkel sind für diese Raumgruppenicht geeignet.
+not_a_group| You have specified an unknown space group symbol.| You have specified an unknown space group symbol.| You have specified an unknown space group symbol.| Sie haben ein unbekanntes Raumgruppensymbol verwendet.
+trigonal_desc| Trigonal cells have x=y<>z and alpha=beta=90 and gamma=120.| Trigonal cells have x=y<>z and alpha=beta=90 and gamma=120.| Trigonal cells have x=y<>z and alpha=beta=90 and gamma=120.| Trigonale Zellaufstellungen haben x=y<>z, alpha=beta=90° andgamma=120°.
+triclinic_desc| Triclinic cells have all unequal axes and angles.| Triclinic cells have all unequal axes and angles.| Triclinic cells have all unequal axes and angles.| Trikline Zellaufstellungen haben unterschiedlicheGitterkonstanten und Winkel.

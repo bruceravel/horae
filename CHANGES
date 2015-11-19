@@ -1,0 +1,142 @@
+
+   +--------------------------------------------------------------+
+   |                      Change Log for Horae                    |
+   |                   --> the Ifeffit wrapper <--                |
+   |                   -->  Athena and Artemis <--                |
+   | http://leonardo.phys.washington.edu/~ravel/software/exafs/   |
+   +--------------------------------------------------------------+
+   |                         Bruce Ravel                          |
+   |                  ravel@phys.washington.edu                   |
+   +--------------------------------------------------------------+
+
+Sep 14 2005: This file is hopelessly out of date.
+
+
+2004.01.??
+  * release 029
+  * Athena 0.8.025
+  * Artemis 0.6.011
+  * updated updater
+  * include Atoms and Formula
+
+2003.11.02
+  * release 027
+  * Athena 0.8.024
+  * Artemis 0.6.010
+  * check version of Tk and install FBox.pm is Tk is in the 800 series
+    and not if it is in the 804 series
+
+2003.08.30
+  * release 023
+  * Athena  0.8.022
+  * Artemis 0.5.007
+  * added a fix_mac method to Tools.pm
+  * color comments in ifeffit buffer
+
+2003.05.07
+  * release 020
+  * Athena  0.8.019
+  * Artemis 0.5.004
+  * improved horae-update to compare current version number against
+    version on the web.  version number now stored in Ifeffit::Tools.
+    also, check to see if a tarball has already been downloaded
+    already
+  * added a thingie to Tools.pm to convert Matt's new X.Y.Z version
+    number into X.YZ (essentially) for numeric comparison
+
+2003.05.02
+  * release 019
+  * Athena  0.8.018
+  * Artemis 0.5.003
+
+2003.02.05
+  * release 013
+  * Athena  0.8.013
+  * Artemis 0.5.006
+  * added a MY::postamble to the Makefile.PL which gives the user a
+    clue as to what was just make-install-ed
+
+2003.01.30
+  * release 012
+  * Athena  0.8.012
+  * Artemis 0.5.006
+  * added horae_update to the distro.  it is installed into INSTALLBIN
+
+2003.01.28
+  * release 011
+  * Athena  0.8.011
+  * Artemis 0.5.006
+
+2003.01.10
+  * release 010
+  * Athena  0.8.010
+  * Artemis 0.5.004
+  * moved fallback for PGPLOT_DEV and PGPLOT_DIR to BEGIN block of
+    Makefile.PL and also grab actualy value of PGPLOT_DIR from ifeffit
+    Config.mak and insert it into BEGIN blocks of athena and artemis
+
+2003.01.09
+  * release 009
+  * Athena  0.8.009
+  * Artemis 0.5.004
+
+2002.12.13
+  * release 008
+  * Athena  0.8.008
+  * Artemis 0.5.004
+  * disposing of command lines is now done line-by-line so that
+    responses from ifeffit are displayed immediately after the command
+    that prompted the response
+  * removed gaussian from list of window choices
+  * Updated to Config::IniFiles 2.36
+
+2002.11.20
+  * release 007
+  * Athena  0.8.007
+  * Artemis 0.5.003
+  * added Ifeffit.pm and ifeffit_warp.c to the distribution
+  * updated MANIFEST
+  * fixed a bug in put_array in Ifeffit.pm
+  * updated Makefile.PL and ExtUtils::F77 to deal with OSX/darwin
+
+2002.11.7
+  * release 006
+  * Athena  0.8.005
+  * Artemis 0.5.002
+  * added Config::Inifiles to distro
+
+2002.10.23
+  * release 005
+  * Athena  0.8.004
+  * Artemis 0.5.001
+  * updated MANIFEST and Makefile.PL to accomodate broken-up Artemis
+
+<<oops, missed a few>>
+
+2002.09.12
+  * release 001
+  * first time packaging athena and artemis together
+  * wrote a new Makefile.PL and generated a new MANIFEST
+
+
+====================================================================
+
+Change log from wrappers/perl/ in the Ifeffit distribution
+
+Revision history for Perl extension Ifeffit.
+
+0.01  Tue Dec  2 23:02:37 1997
+	- original version; created by h2xs 1.18
+1.0  Fall 1998 -- works well, using array stuff borrowed from PGPLOT
+
+1.1  Feb 1999: removed typemap, array stuff from PGPLOT, and 
+                replaced with straight XS code
+
+1.2  Jun 1999: replace XS code with swig-generated ifeffit_wrap.c, 
+               altered Ifeffit.pm to use the swig pointer mechanism.
+               ifeffit_wrap.c was generated from ifeffit.i by:
+                   swig -perl5 -dnone ifeffit.i 
+               in the swig/ directory.  Note that this overwrites 
+               Ifeffit.pm, so don't try it in the main directory!
+
+1.3  Oct 2002: switched from swig1.1 to swig1.3.

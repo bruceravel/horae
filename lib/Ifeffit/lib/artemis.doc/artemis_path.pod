@@ -1,0 +1,97 @@
+=head1 ARTEMIS: The Path Page
+
+B<ARTEMIS> - The path page
+
+The path page is displayed whenever a B<Feff> path is selected from
+the Data and Paths List.  This page is used to establish the math
+expressions of the path parameters for this path.
+
+At the top of the page is a line identifying which B<Feff> calculation
+this path is from.  Below that are three toggles.  One is used to
+include of inlcude or exclude the path from use in the fit.  There are
+many other ways in B<Artemis> to include and exclude paths other than
+to use this toggle.  See L<The Feff interpretation page|artemis_intrp>
+and C<artemis_menubar> for more discussion of this.  Also
+Control-t is the same as clicking this toggle.
+
+The second toggle is used to specify paths that you would like plotted
+after a fit (or sum of paths) is finished.  By default, the data and
+the fit (or sum) is plotted after the fit (or sum) and no paths are
+plotted.  Any paths selected for plotting will be added to the plot
+after the fit (or sum) is finished.
+
+The third toggle is used to set which path is the default path for
+evaluation of Def parameters after the fit.  It is possible to write
+math expressions which evaluate differently for different paths.  An
+example might be a math expression using the C<reff> parameter.  For
+any such Def parameters, it is necessary to tell B<Artemis> which path
+should be used for the reporting of those parameters in the log file.
+The default is to use the first path listed in the Data and Paths
+List. 
+
+Below that is a box which summarizes the path.  This gives some
+statistics about the path as well as displaying a color-coded "map" of
+the scattering path.  The central atom is always displayed in red
+text.  Other atoms are in black text.  The grey text shows the length
+and scattering angle of each leg of the path.  In the case of a
+high-order multiple scattering path which has legs which have a
+non-zero Eulerian eta angle between them, the eta angle will be
+displayed as well.  If that last sentence was gibberish, it suffices
+to know that paths of that sort are almost never observable in real
+EXAFS data.
+
+At the bottom of the page is the list of path parameters.  This is the
+most important section of the page because it is here that the details
+of the fitting model are realized.  There is an entry box for each of
+the various types of path parameters.  The math expression
+approporiate for each parameter should be entered in the entry box.
+
+When a B<Feff> calculation is imported into B<Artemis>, a set of
+automatic parameters are generated, entered into the list on the
+Guess, Def, Set page, and entered into the path parameetr boxes for
+each path imported.  The default behavior of B<Artemis> is to generate
+a set of parameters appropriate for a simple, single scattering, first
+shell fit.  While it might be OK to immediately click the big green
+button, most fitting models will require substantial editing.
+
+The right mouse button serves many important purposes on the path
+page.  Clicking the right mouse button anywhere in one of the entry
+boxes will highlight the word underneath the cursor and post a menu.
+The entries in the menu are for for defining the word as a parameter
+on the Guess, Def, Set page.  For each parameter type there is the
+option of jumping or staying.  In either case, the parameter is
+defined and added to the list on the GDS page.  For jumping, the GDS
+page is then displayed.  For staying, the current path page remains
+displayed.
+
+Right clicking on one of the path parameter labels will post a menu of
+functions related to defining path parameter math expressions.  The
+"Edit" option will pop up a dialog used for entering a math expression
+and then optionally exporting its value to other paths.  The "Clear"
+option doies just that.
+
+The various "Export" options are ways of constraining path parameters
+to be the same for other paths.  The "Grab" options make the current
+path parameter the same as the path parameter in the previous or
+following path.
+
+The "sigma^2" label has some additional options.  These insert the
+syntactically correct text appropriate to using either the Correlated
+Debye or single frequency Einstein models for the sigma^2 of the
+path.
+
+To enable the display of spaces for the C<dphase>, C<k_array>,
+C<amp_array>, or C<phase_array> path parameters, you must click on the
+"Extended path parameters" button in the Paths menu.
+
+
+
+
+=over 5
+
+=item
+
+L<Back to the main document|artemis>
+
+=back
+

@@ -1,0 +1,258 @@
+
+   +--------------------------------------------------------------+
+   |                    Change log for Artemis                    |
+   |   http://leonardo.phys.washington.edu/~ravel/software/exafs  |
+   +--------------------------------------------------------------+
+   |                         Bruce Ravel                          |
+   |                  ravel@phys.washington.edu                   |
+   +--------------------------------------------------------------+
+
+
+Begin change log for version numbers starting at 0.5.  See CHANGES.1
+for earlier versions whose version numbers were the same as release
+dates. 
+
+Mar 6 2003 to Mar 27 2003 -- version 0.5.008
+  * made it so you could export a path before doing a fit
+  * fixed a typo preventing the saving of the bkg data
+  * "skip" is now a choice (along with guess, set, def) for defining a
+    parameter.  a skip is one you want to keep but do not want to
+    appear in any way in the ifeffit script
+  * including a path in a fit via the intrp menu does not redisplay
+    the intrp display
+  * for adding a path via the intrp menus, can now choose to just add
+    or add + jump-to.
+  * GSD page now displays correctly when the math expression right
+    click menu is used to define the first parameter
+  * weed out repeatedly defined parameters before reporting on error
+    bars and correlations
+  * added little up and down buttons for re-ordering the list of gds
+    parameters
+  * allow user to save multi-column data file for all selected paths
+  * use labels rather than groups names when saving paths to files
+  * in after-fit results palette, write the paths in a less surprising
+    order
+  * slightly more sensible behavior for state of certain save cascades
+    in file menu
+  * in the Paths tree, moved fit, bkg, and resid to branch positions
+    underneath the data.  This will be handy when multiple data set
+    fits come about.
+  * popup contextual menus by C-Mouse-3 or Mouse-2 clicking on a list
+    entry
+  * allow renaming data, feff, and paths
+  * implemented get_string from echo area as in athena.  use it for
+    renaming and for getting an R value for excluding/deleting paths
+  * fixed a bug plotting paths in k-space before a fit
+  * changes to how plot keys are generated to reflect new ability to
+    change names
+
+
+Feb 7 2003 to Feb 28 2003 -- version 0.5.007
+  * Clicking mouse-3 on a list entry changes the anchor to that entry
+    and changes the display to the entry but does not change the
+    selection.
+  * fixed a bug in deleting a project
+  * fixed a bug in right clicking on an empty path parameter entry box
+  * small change to how command line args are handled so that fully
+    resolved path finds its way into the MRU
+
+Jan 16 2003 to Jan 28 2003 -- version 0.5.006
+  * implemented the same configuration scheme using tied hashes as in
+    the recent release of athena
+  * implemented a similar MRU scheme as in the recent release of
+    athena 
+
+Jan 9 2003 -- version 0.5.005
+  * very minor (and incomplete) changes to how rcfiles are read when
+    the prograam starts.
+
+Dec 2 2002 to Dec 13 2002 -- version 0.5.004
+  * added a "browse" button to the files palette
+  * added a window_multiplier to the plot parameters from the rc file.
+    This specifies the height of the window function relative to the
+    data.
+  * added a view path file option to the intrp pop-up menu
+  * removed delay in displaying the dialog for editing math
+    expressions for many paths
+  * fixed a problem computing the window function for chi(k) plots for
+    different k-weights
+  * added an option to the GDS menu to "reset" all variables, which
+    means to use the initial guesses for plotting and showing
+
+
+Nov 14 2002 to Nov 20 2002 -- version 0.5.003
+  * fixed a bug in parameter verifier which failed to noticed
+    parameters used that were not defined in the case where no
+    parameters were defined.
+  * changed some of the default operational parameter values
+  * take care to mark guesses for updating when reading in a template
+  * if previous fit attempt generated error messages, clear those
+    messages from the files palette before running the current fit.
+  * deal with chi(k) data files that are not on a uniform grid
+  * do something sensible if "feff.bin" is selected for a feff calc
+    rather than "feff.inp"
+
+
+Oct 25 2002 to Nov 5 2002 -- version 0.5.002
+  * had to disable truncation of residual arrays to fitting range for
+    this version to avoid a problem I don't yet understand with
+    Ifeffit.pm's put::array().  Instead, I am replacing points outside
+    the fit range with 0 or very small numbers.
+  * use Config::IniFiles (big changes inside, nothing visible -- I
+    hope -- to the user)
+  * allow non-integer degeneracies
+  * many changes to the bookkeeping issues surrounding paths.
+    developed a new scheme for assigning and keeping track of path
+    indeces (i.e. the index for the path and fit commands).  this new
+    scheme is independent both of the N in feffNNNN, of the location
+    of the path in the list, and of the HList id of the entry.  this
+    has solved numerous problems related to deleting paths and
+    deleting feff calculations.  it also continues and strengthens the
+    solution to the vanishing-first-path problem mentioned below.
+  * use the sub from the old Ifeffit::IO for converting a list of
+    indeces like (3,1,14,5,15,2,13,7,8,6,12) to "1-3,5-8,12-15"
+  * added MUCH more information to the results palette.  this makes it
+    resemble much more closely a proper log file, á la feffit.log
+  * added some code so that when a project is read in that has the old
+    pcelem/pcedge buglet, the value for pcedge is interpreted and used
+    to set pcelem and pcedge.
+  * added a legend to the feff page explaining the colors in the intrp
+    box
+  * resolved an ambiguity as to what value of a parameter should be
+    used when plotting a path or doing an ff2chi.  in short, Artemis
+    now keeps track of whether a parameter has been altered.  if it
+    has, the new value in the widget is used, if not the value in
+    ifeffit's memory is used (if it exists) so that guesses and defs
+    have the most up-to-date values.  the flags marking an edited
+    parameter are unset whenever a plot, fit, or ff2chi happens.
+  * fixed a bug which triggered a spurious error message for a
+    pathparam or set/def math expression which started with a minus
+    sign
+  * include a check to compare the number of guess parameters to
+    2*deltak*deltr/pi.  Generate an error message and refuse to fit if
+    bigger.
+  * corrected some internal problems which prevented duplicated paths,
+    either by cloning or by re-reading the same feffNNNN.dat file.
+  * improved the scheme by which the labels displayed in the path list
+    are assigned to feff paths.
+  * a potentially fragile change -- changed some details about how
+    projects get written out and read in to accomodate the changes
+    related to replicated paths.  I have made an effort to correct
+    prior project files, but there may still be issues.
+  * new additions to the hints file
+  * fixed a couple problems determining paths to files, one related to
+    feffNNNN.dat files, one related to the default project file name
+  * protect label path param with quotes
+  * added a query to the Data menu to compute the number of
+    independent points using Nyquist + 0.
+  * display top of paths list after a fit or ff2chi
+  * the right click on word in a path param math expression would not
+    correctly add a new entry to the GDS list.  this is fixed.
+  * fixed palette so the big text boxes resize correctly as the window
+    is resized
+  * new scheme for labeling paths in the plot: F/NNNN where F is the
+    feff index and NNNN is from feffNNNN.dat.  If the path is
+    duplicated, then the key is F/NNNN:D where D is the duplication
+    index. 
+  * correctly update titles when switching data files
+  * use data file name rather than "Data" in the path list and as the
+    plot key.  also use this when constructing suggested filenames for
+    save_data.
+  * keyboard plotting shortcuts C-p k, C-p r, and C-p q
+  * C-a and C-u for selecting/deselecting all paths and data for
+    plotting
+  * in intrp box, pathlines change color as mouse passes over.  also
+    added menu functionality to all lines in the box.  the header pops
+    up a menu that replaces the View file buttons, lines that
+    correspond to paths in the paths list pop up the old menu, lines
+    that correspond to feffNNNN.dat files that exist but have not been
+    read in pop up a menu for adding that path, lines that correspond
+    to feffNNNN.dat files that do not exist (in the -e sense) pop up a
+    disabled menu that says just that
+  * removed the View buttons from the feff page, added a view cascade
+    to the Feff menu
+  * some cosmetic changes to main page and path page
+  * added edge energy to intrp header
+  * save central atom and edge (determined during intrp) to feff
+    object, use these to set PC parameters for the data object
+  * do PC FTs using the full phase shift from a selected path.  the
+    menu for selecting the is kept up to date each time the data page
+    is displayed
+  * intrp pop-up menu now allows you to select/deselect the path under
+    the cursor for plotting
+  * changed text of include checkbutton to contain the path lable from
+    the paths list
+    
+
+Sep 27 2002 to Oct 24 2002 -- version 0.5.001
+  * broke source code up into manageable bits 
+  * changed background color to antiquewhite3 and 2 to distinguish
+    from Athena
+  * changed text kmin/kmax/Rmin/Rmax to "k-range" and "R-range" to be
+    consistent with Athena
+  * deal with capital letters in the feff.inp filename
+  * enclose all path/file names in quotes in read_data() and path() --
+    those pesky folders with spaces in their names!
+  * added a little box for specifying the degeneracy and added the
+    degen argument to all path() calls.  also added items in the Feff
+    menu for setting all degeneracies to 1 (a la nodegen from feffit)
+    and resetting them to their feff-computed values
+  * fixed a bug that prevented the data from being read into ifeffit
+    is an Athena record was read as the data file in an Artemis
+    project
+  * there was a problem where the phase correction variables could get
+    set such that the edge parameter was something like "cu k" and the
+    element parameter was "H".  I do not know if this was an artemis
+    problem or an athena problem (I last noticed it in an artemis
+    project that read an athena k record), but it does not seem to be
+    there anymore
+  * fixed the time lag when raising a palette
+  * fixed the "vanishing first path" problem.  it is VERY confusing
+    trying to keep path indeces straight.  rather than doing so, I
+    decided to just always bring paths up to date for any plot, fit,
+    or whatever.  this is a little less efficient and fills up the
+    ifeffit buffer with lots of repetitive stuff, but so be it.
+  * add a button for saving ifeffit buffer to a file.  also limit
+    ifeffit buffer to 1000 lines of text.
+
+
+Sep 13 2002 -- version 0.5.000
+  * begin new versioning scheme and begin releasing Athena and Artemis
+    together
+  * fixed a minor problem in read_data that was giving a warning
+    message
+  * put version number in splashscreen
+  * if you read in a project file, that file name/path is the default
+    for saving a project
+  * can now read in an Athena record -- i.e. data + the relevant
+    opparams.  a check is made to verify that it is a chi(k) record.
+  * fixed a problem in how title lines were read from data and updated
+    as the display changes
+  * added some help text to the plot cards.
+  * made plotting k^kw the default plotting option in k-space
+  * use project_header method now in Tools.pm
+  * Altered Tk::DirSelect to allow title and text
+  * allow user to save all included paths in one swoop
+  * intrp pop-up menu now allows you to delete the path under the
+    cursor
+  * fixed (I think) the problem with PCFTs by removing the k= argument
+    to fftf, which triggers a bug in ifeffit in the case of PCFT (but
+    not otherwise).  (Why did I start using "k=" back on 2002.06.20?)
+  * deleting a project did not get rid of bkg, fit, or res and it did
+    not erase all those groups from ifeffit memory.  now it does.
+  * fixed a bug that damaged some functionality after deleting a
+    project (it was caused by re-evaluating %temp in clear_op rather
+    than resetting individual elements of the hash)
+  * startup messages run faster (all done after 5.5 sec rather than 9)
+  * made a temporary fix for an error reading templates which depended
+    upon the selected path.
+  * fixed a problem wherein the variable $n_gsd was reset to 0 when a
+    project was deleted when, in fact, it should always be equal to
+    the number of entries on the GDS page.  This was causing cryptic
+    failures reading in project files after another was deleted.
+  * mouse wheel bindings to scrolled text boxes
+  * most palette text boxes (not journal) are now ROText.  also
+    standard mouse-3 popup was disabled for all text boxes.
+  * put all three plot options, fit, and ff2chi in the Plot and Data
+    menus (i.e. all buttons are also menu items)
+  * "Prefernces" menu is now "Settings" menu

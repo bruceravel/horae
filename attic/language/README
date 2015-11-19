@@ -1,0 +1,69 @@
+BR Mar  9 2000
+
+This directory contains files related to the language data used by
+Atoms and TkAtoms.  Atoms is able to "speak" many different languages
+because all textual data (i.e. widget labels, warning messages, and so 
+on) is read from external files at startup time.  To make this process 
+efficient at run and easy to use when actually writing code, the
+language data is read by Atoms in the form of interpretable perl
+code.
+
+Because the perl code is not so easy to maintain when updating or
+translating the language data itself, the data is contained in simple
+database files which can maintained using a spreadsheet or some
+similar database utility.  The language data could be kept in a single
+file, but that seems a little unwieldy, given the quantity of data
+involved (over 360 entries at the time I am writing this).  Instead I
+have divided the data into several files and grouped the data
+conceptually.  For example, all help balloon entries are in one file,
+and all the strings used by the space group browser are in another,
+and so on.
+
+The data is contained in simple database files.  All text is ascii.
+Records are separated by a line break.  Fields in records are
+separated by a semicolon (;).  Literal newlines in text strings are
+represented by \n.
+
+This means that virtually any database program should be able to read
+and write these database files.  I personally use a little thing
+called Gaby (http://gaby.netpedia.net/).  It is not exactly good, but
+it works.  Use whatever program you like, but please observe the rules
+in the next paragraph.
+
+There are a few restrictions on the text data.  The semicolon may
+not be used in text data as it will be confused with the record
+separator.  Single quotes, dollar signs, at signs, and percent signs
+should be escaped using a backslash character.  Double quotes should
+never be used.  Beyond that, just about anything else is ok.  In
+particular, accented characters using the ISO-8859-1 encoding can be
+used -- this lets you use things like è, á, ñ, ç, «, », and ß.
+
+Once perl 5.6 is released, we can start using unicode.  This means
+that soon Atoms will be able to speak languages like Chinese,
+Japanese, Korean, Ethiopic, and so on.
+
+Each record in each file is organized like so:
+
+   keyword ; English ; Spanish ; French ; German (etc)
+
+At the time of this writing, those are the only languages supported.
+(German isn't actually supported.  There are entries in the German
+fields, but the entries are in English.) As I find more volunteers to
+do translations, I will append more fields to the end of each record
+and clearly explain the order.
+
+
+
+------------------------------------------------------------------------------
+
+			       MANIFEST
+
+table.labels		titles and labels in TkAtoms 
+table.help		help balloons
+table.dialogs		dialogs for Atoms and TkAtoms
+table.file_dialog	strings for file dialog widget
+table.sgb		strings for space group browser
+table.messages		warnings/errors for atoms and tkatoms
+table.config		strings for TkAtoms configuration frame
+
+README			this file

@@ -1,0 +1,303 @@
+#!/usr/bin/perl -w
+######################################################################
+my $ts = "Time-stamp: <2009-06-08 17:24:46 bruce>";
+######################################################################
+## Atoms version 3.0.1
+##                                copyright (c) 1998-2009 Bruce Ravel
+##                                                     bravel@anl.gov
+##                            http://feff.phys.washington.edu/~ravel/
+##
+##	  The latest version of Atoms can always be found at
+##      http://feff.phys.washington.edu/~ravel/software/atoms/
+##
+## -------------------------------------------------------------------
+##     All rights reserved. This program is free software; you can
+##     redistribute it and/or modify it under the same terms as Perl
+##     itself.
+##
+##     This program is distributed in the hope that it will be useful,
+##     but WITHOUT ANY WARRANTY; without even the implied warranty of
+##     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##     Artistic License for more details.
+## -------------------------------------------------------------------
+######################################################################
+## This file is the main program for Atoms (command line).
+##
+## This version of atoms is intended for running from the command
+## line.  It requires an input file that closely resembles the sort of
+## input file that was used with the Fortran versions of this program.
+## In fact, most old input will be processed correctly and produce the
+## desired output.  There are some semantic differences between this
+## version and the Fortran version.  The most important difference is
+## the semantic convention for specifying types and names of output
+## files.  Please read the documentation for details.  Also note that
+## several keywords recognized by the Fortran version are not used by
+## this version.  This includes all keywords used for anomalous
+## scattering features of the old code.
+######################################################################
+## Code:
+
+## =============================== load methods
+require 5.004;
+use strict;
+use Carp;
+use Xray::Xtal;
+$Xray::Xtal::run_level = 0;
+use Xray::Atoms qw(build_cluster rcfile_name);
+use Xray::ATP; # qw(parse_atp);
+use File::Basename;
+use File::Spec;
+use Cwd;
+##use diagnostics;
+
+## =============================== process command line switches
+use Getopt::Std;
+use vars qw(%opt);
+$opt{o} = "";
+getopts('f678pguaxsbTFDOvqhAr:t:o:c:', \%opt);
+
+my ($file, $inputdir);
+if ($ARGV[0] and ($ARGV[0] eq '-')) {		# read from STDIN
+  $file = '____stdin';		# an unlikely string (I hope)
+  $inputdir = cwd;
+} elsif ($opt{A}) {
+  my $inp = $ARGV[0];
+  unless ($inp =~ /\.inp$/) {
+    $inp .= ($inp =~ /\.$/) ? 'inp' : '.inp';
+  };
+  $file = $Xray::Atoms::meta{ADB_location} . $inp;
+  $inputdir = cwd;
+} else {
+  unless ($^O eq 'MacOS') {
+  INPUT: {
+      $file = "atoms.inp",       last INPUT if (not $ARGV[0]);
+      $file = $ARGV[0],          last INPUT if (-e $ARGV[0]);
+      $file = $ARGV[0] . ".inp", last INPUT if (-e "$ARGV[0].inp");
+      $file = $ARGV[0] . "inp",  last INPUT if (-e "$ARGV[0]inp");
+      die $ARGV[0] . ": " . $$Xray::Atoms::messages{'invalid_input'} . $/;
+    }
+  } else {
+    require Mac::StandardFile;
+    $file = Mac::StandardFile::StandardGetFile(0, 'TEXTclpt');
+    if ($file -> sfGood()) {
+      $file = $file->sfFile();
+    } else {
+      die "File opening canceled.  Atoms quitting.$/";
+    };
+  };
+  $inputdir = dirname($file);	# if write_to_pwd is false...
+}
+
+my @sites   = ();		# list of sites
+my @cluster = ();		# spherical cluster
+my @neutral = ();		# charge neutral rhomboidal cluster
+
+## =============================== run time screen messages
+use vars (qw($VERSION));
+$VERSION = '3.0.1';
+my $v = $VERSION;
+my $date    = substr((split(" ", $ts))[1], 1);
+my $scriptv = $VERSION; #(split(" ", $cvs_info))[2];
+my $screen_line = "=" x 71;
+
+if ($opt{h}) {
+  require Pod::Text;
+  $^W=0;
+  if ($Pod::Text::VERSION < 2.0) {
+    Pod::Text::pod2text($0, *STDOUT);
+  } elsif ($Pod::Text::VERSION >= 2.0) {
+    my $parser = Pod::Text->new;
+    open STDIN, $0;
+    $parser->parse_from_filehandle;
+  };
+  exit;
+};
+
+print STDOUT <<EOH
+$screen_line
+ Atoms $v ($^O) $date
+$screen_line
+EOH
+unless ($opt{'q'});
+
+my $absorption_resource = Xray::Absorption -> current_resource;
+print STDOUT <<EOH
+    by Bruce Ravel copyright (c) 1998-2005
+    <bravel\@anl.gov>
+
+    atoms.pl $scriptv
+    using Atoms.pm $Xray::Atoms::module_version, ATP.pm $Xray::ATP::module_version
+          Xtal.pm $Xray::Xtal::VERSION, space groups database $Xray::Xtal::sg_version
+          Absorption.pm $Xray::Absorption::VERSION
+          $absorption_resource
+    with perl $] on $^O.
+
+EOH
+and exit if ($opt{v});
+
+## =============================== define a cell, parse the input file,
+my $cell = Xray::Xtal::Cell -> new();
+my $keywords = Xray::Atoms -> new();
+$keywords -> make('identity'=>"Atoms $v", die=>0);
+$opt{'q'} && $keywords->make('quiet'=>1);
+$keywords -> parse_input($file, 0);
+die "\n" if $keywords->{cli_warn};
+($opt{c}) && $keywords->make(core=>$opt{c});
+
+## =============================== fill up the cell and the sites
+$cell -> make( Space_group=>$keywords->{'space'} );
+foreach my $param ('a', 'b', 'c', 'alpha', 'beta', 'gamma') {
+  $cell -> make( $param=>$keywords->{$param} );
+};
+($file eq '____stdin') and $file = 'the input data';
+( @{$keywords->{'sites'}} ) or
+  croak "$$Xray::Atoms::messages{no_sites} $file$/";
+
+my $nsites = 0;
+foreach my $this (@{$keywords->{'sites'}}) {
+  $sites[$nsites] = Xray::Xtal::Site -> new($nsites);
+  $sites[$nsites] -> make(Element=>$$this[0],
+			  X=>$$this[1]+$ {$keywords->{"shift"}}[0],
+			  Y=>$$this[2]+$ {$keywords->{"shift"}}[1],
+			  Z=>$$this[3]+$ {$keywords->{"shift"}}[2] );
+  ($$this[4]) && ( $sites[$nsites] -> make(Tag=>$$this[4]) );
+  ($$this[5]) && ( $sites[$nsites] -> make(Occupancy=>$$this[5]) );
+  ++$nsites;
+};
+
+## =============================== error check, populate the cell, set rmax
+#$cell -> make( Occupancy=>0 );
+#($atp =~ /(p1|unit)/) and $cell -> make( Occupancy=>1 );
+$cell -> verify_cell();
+$cell -> populate(\@sites);
+$keywords -> verify_keywords($cell, \@sites, 0);
+
+## =============================== override some stuff from the command line
+$keywords->{"rmax"} = $opt{r} || $keywords->{"rmax"};
+(($opt{f}) or ($opt{6}) or ($opt{7})) && $keywords -> make('atp'=>'feff');
+($opt{8})   && $keywords -> make('atp'=>'feff8');
+($opt{g})   && $keywords -> make('atp'=>'geom');
+($opt{p})   && $keywords -> make('atp'=>'p1');
+($opt{u})   && $keywords -> make('atp'=>'unit');
+($opt{a})   && $keywords -> make('atp'=>'alchemy');
+($opt{'x'}) && $keywords -> make('atp'=>'xyz');
+($opt{'s'}) && $keywords -> make('atp'=>'symmetry');
+($opt{b})   && $keywords -> make('atp'=>'pdb');
+($opt{T})   && $keywords -> make('atp'=>'test');
+($opt{t})   && do {
+  $keywords -> make('atp'   => $opt{t});
+  $keywords -> make('files' => $opt{t}, $opt{o});
+  $keywords->{"found_output"} ||= 1;
+  $opt{o} = "";
+};
+$keywords->{"found_output"} ||= ($opt{f} or $opt{8} or $opt{g}   or $opt{p}   or
+				 $opt{u} or $opt{a} or $opt{'x'} or $opt{'s'} or
+				 $opt{T} or $opt{6} or $opt{7}   or $opt{b});
+## this is the closest thing to backwards compatibity that I want to
+## do with regard to writing the feff6 file.
+if ((not $keywords->{"found_output"}) || ($keywords->{always_feff})) {
+  if ($keywords->{"prefer_feff_8"}) {
+    $keywords->make('atp'=>'feff8');
+  } else {
+    $keywords->make('atp'=>'feff');
+  };
+};
+
+## =============================== some error checking
+($opt{'q'}) or print $cell -> warn_shift(), $cell -> cell_check();
+
+## =============================== make spherical and rhomboidal clusters
+build_cluster($cell, $keywords, \@cluster, \@neutral);
+if ($opt{D}) {
+  use Data::Dumper;
+  print Data::Dumper->Dump([$keywords, $cell], [qw/*keywords *cell/]);
+  exit;
+};
+
+## =============================== write out all of the output files
+my $noutput = 0;
+foreach my $atp (keys %{$keywords->{'atp'}}) {
+  if ($keywords->{'atp'}{$atp}) {
+    next if (($atp eq "feff") && $opt{F});
+    next if ($atp =~ /dafs/);
+    ++$noutput;
+    my $contents = "";
+    my ($default_name, $is_feff) =
+      &parse_atp($atp, $cell, $keywords, \@cluster, \@neutral, \$contents);
+    next unless ($default_name);
+    my $outfile = defined($keywords->{'files'}{$atp}) ?
+      $keywords->{'files'}{$atp} : $default_name;
+    (($opt{o}) and ($noutput == 1)) and ($outfile = $opt{o});
+    if ($keywords->{'write_to_pwd'}) {
+      $outfile = $outfile;
+    } else {			# e.g. on Mac or Windows
+      $outfile = File::Spec -> catfile($inputdir, $outfile);
+    };
+    ($keywords->{"quiet"}) or
+      print STDOUT " $atp: ",
+      $$Xray::Atoms::messages{'writing'}, " ", $outfile, $/;
+    if ($opt{O}) {
+      print STDOUT $contents;
+    } else {
+      no warnings;
+      open OUTFILE, ">".$outfile || die $$Xray::Atoms::messages{cannot_write} . " " . $outfile . $/;
+      print OUTFILE $contents;
+      close OUTFILE;
+    };
+  };
+};
+
+## =============================== finish up
+($opt{'q'}) or print STDOUT $screen_line, $/, $/;
+1;
+##exit;
+
+######################################################################
+## End of main program atoms
+
+=head1 NAME
+
+Atoms - Make lists of atomic coordinates from crystallographic data
+
+=head1 SYNOPSIS
+
+   atoms [-fu8gpsbaxF] [-r#] [-qvh] [-t atptype -o file] input_file
+
+=head1 DESCRIPTION
+
+Take crystallographic data from the input file given on the command
+line and write output as indicated by their contents.  If no input
+file is given, F<atoms.inp> is used.  If the input file specified at
+the command line is '-', then input is read from STDIN.  If no output
+format is specified, an input file for feff will be written.  Several
+command line switches can be used to override the contents of the
+input files.
+
+ output file flags
+    -f    feff6 input file         -u    unit cell file
+    -8    feff8 input file         -g    geometry file
+    -p    P1 input file            -s    symmetry file
+    -a    alchemy atoms list       -x    xyz atoms list
+    -b    Protein Databank list
+    -F    do not write feff file   -O    write to STDOUT
+    -t s  user supplied template   -o f  output file name
+
+ operational flags
+    -r #  override the value of rmax with the given value
+    -A    use a named file from the Atoms Database
+    -q    suppress screen messages
+    -v    write version information and exit
+    -h    write this message and exit
+
+               # = number   f = file   s = string
+
+For complete information about Atoms, consult the documentation at
+  http://leonardo.phys.washington.edu/~ravel/software/doc/Atoms/
+
+=head1 AUTHOR
+
+  Atoms is copyright (c) 1998-2005 Bruce Ravel
+  bravel@anl.gov
+  http://feff.phys.washington.edu/~ravel
+
+=cut

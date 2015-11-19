@@ -1,0 +1,371 @@
+
+   +--------------------------------------------------------------+
+   |    Change log for the development branch & 0.8 of Artemis    |
+   |        http://cars9.uchicago.edu/~ravel/software/exafs       |
+   +--------------------------------------------------------------+
+   |                         Bruce Ravel                          |
+   |                       bravel@anl.gov                         |
+   +--------------------------------------------------------------+
+
+
+Begin development branch starting with 0.7.008 of Artemis.  Dev branch
+eventually became 0.8.
+
+August 4 - August ?? 0.8.011
+  * change mouse icon for mouse over of hot spots
+  * add a couple of items to the log file header as suggested by Dave
+    Barton.
+  * change default plotting kweight and use current plotting kweight
+    in Athena dialog
+  * fixed problems interpretting monoclinic space group symbols when
+    given as alternate settings or space group number
+  * fixed bugs under windows:
+     - cleaning up abandoned projects
+     - getSaveFile with only one argument
+     - context menu in intrp header
+
+Jan. 8 2007 - July 23 2007 0.8.010
+  * fixed a bug importing data from athena project files which uses a
+    background removale standard.  (nested use of bkg standard is not
+    tested but should work)
+  * if nothing plottable is selected, plot the first data and its fit
+    when clicking a plot button
+  * fixed the very buggy export path params cascade in the Paths menu
+  * file type in preferences, used for feff_executable, pops up a file
+    selection dialog
+  * fixed a problem with eol characters in log files and in the
+    display of various file types
+  * vast speedup in writing log file due to handling correlations in a
+    smarter manner
+  * import feffit.inp files
+  * convert comma to underscore when writing a file from an athena
+    record during athena import
+  * added some useful language to font preference descriptions
+  * check for site coordinates close to 1/3 and 2/3 and display
+    warnings
+  * explicitly set font for every Dialog
+
+Dec. 28 2006 0.8.009
+  * use chooseDirectory and disable anything that needs it in the
+    presence of perl/Tk < 804.
+
+Nov. 28 2006 0.8.008
+  * removed * as end of line comment character in gds2_import_text
+  * remove quotes from labels
+
+May 22 2006, 0.8.007
+  * import Athena's new compressed projects
+  * better autoname for bkgsub data
+  * write label first in ifeffit script, use path list label if label path
+    param not specified
+  * option to show x-zero axis in logviewer plots
+  * when chi(k) data is imported that needs to be placed on the correct grid,
+    save the project data on the grid.
+
+March 28 2006, 0.8.006
+  * check that rmin > Rbkg for data imported from an Athena project, also set
+    rmin to rbkg when importing from Athena project if bkg_rbkg>bft_rmin
+  * check that edge/absorber make sense together when running atoms
+  * implemented a pref for how the mru list is displayed
+  * persistent variable for remembering working directory between sessions
+    with a pref for turning it on and off
+  * Made the Attention and Running varients of Echo
+  * made a standard wrapper around Attention to run every time a
+    Dialog is posted
+  * fixed a bug writing a parameter report for an after param.
+
+February 6 2006, 0.8.005
+  * athena import did not respect clamp1
+  * fix_chik macro failed in situation where grid was correct but data did not
+    start at 0
+  * fixed 2 bugs in intrp method that made it deal incorrectly with
+    RMULTIPLIER
+  * when importing from an athena project file, there is now an option
+    to set parameters as specified in the athena project file, using
+    artemis' defaults, or (if replacing data) keeping the current
+    values
+  * feff warning about atoms being close together might be a red
+    herring if hydrogen is in the feff.inp file.  make this warning
+    one that does not stop the feff import process.
+  * fixed seprator annotations on GDS page (but not retroactively)
+  * fixed a bug in deleting a data set from the DPL
+
+January 2 2006 0.8.004
+  * disallow spaces in site tags on atoms page
+  * fixed problems with multi-component CIF files
+  * save a .inp file when the .cif is imported
+  * fixed a display problem when a project with atoms.inp and no
+    feff.inp is saved then imported
+  * preferences for charsize and charfont
+  * fixed a bad eof bug in dealing with the contents of the fit
+    directory inside a project.  this bug made it impossible to move a
+    project from windows to unix!
+  * fixed a bug renaming fits for MDS fits -- new name didn't make it
+    to all corresponding objects under all data sets
+  * fixed a bug in writing log files in the situation where a data
+    label contained meta characters
+  * work around a weird bug importing athena project data where the
+    spline sometimes is not done correctly the first time.  check
+    &status -- if it is 2 or more, redo the spline.  silly!
+  * avoid a name collision in global parameter name search and replace
+
+October 14 2005 0.8.003
+  * implemented weighting of bkg spline by window in bkg subtraction.
+    also made a pref to turn this one and off.
+  * warn against using variable names that are program variable names in
+    ifeffit 
+  * function for globally search and replace of a parameter name
+  * reorganized GDS context menu
+  * handle param guessed as a math expression correctly when parsing in
+    ArtemisLog 
+  * show nvar and nidp in the Statistical parameters report in log viewer 
+  * write after-fit warnings to fit directory and provide a function 
+    in Fit menu for redisplaying that file
+  * don't try to update fit comment string with current fit index --
+    it tended to damage comments with numbers that had nothing to do
+    with the fit count
+  * save GDS parameter when the big green button is hit while a
+    parameter is being edited but has not yet been explicitly saved
+  * fixed a problem with uninit values in the logviewer report having
+    to do with params guesse as math expressions.  now the report just
+    prints out the math exp.
+
+
+September 15 2005 0.8.002
+  * added project location and information content to Properties
+  * Properties expands to length of longets string.  Also put the
+    props on a Scrolled Pane.
+  * fixed a bug involving separators and the BrowseEntry on the log
+    viewer page
+  * introduced generic_name global so that save_from_palette can use
+    the default name from an atp as the initial file name
+  * for column view of log file, only write out ei/3rd/4th/dphase
+    table if at least one path uses one of those parameters
+  * fixed a bug where successive summations could concatinate paths
+    rather than actually use the included ones.
+  * fixed a problem where a single data set might have its "plot after
+    fit" button unchecked and disabled, resulting in no automatic plot
+    after the fit.
+  * nidp message no longer overwrites the fit warning message in the
+    echo area after a fit
+  * ability to show and change fit comment.  Put show/change into
+    cascade menus for FOM and Comment
+  * made an operational view of the log file for a quick view of fit
+    and FT parameters
+  * reporting the number of background spline parameters used in the
+    data section of the log file
+  * fixed the long-standing missing ipot problem in atoms by adding
+    fix_ipots to ATP.pm
+  * fixed an obscure bug in the log viewer where toggling between
+    prefer R-factor and chinu would spew errors if something
+    unplottable was in the palette
+
+September 3 2005 0.8.001
+  * recall palette size at start up
+  * always raise palette after fit or when encounter an error
+  * fit-time error dialog pups up under cursor
+  * use warning colors in echo area when feffing and fitting
+  * added a warning to ParseFeff for exceeding the heap limit in the
+    pathfinder
+  * export all path parameters in paths menu
+  * fixed a situation where the journal might be lost if restoring an
+    old fitting model
+  * added ^^ to the verify_operators regex (see DR010, item 4)
+  * better formatting in GDS show parameters
+  * added a resraint builder for guess and def parameters, get there
+    from the right click context menu
+  * made GDS text imported ignore end of line comments when parsing
+    for math expression
+  * show file and path geometry from unimported intrp context menu
+  * double click on log viewer list respects value of $config{log}{style}
+  * fixed intrp for situation where absorber is not at 000
+  * make sure that feff.inp is saved before saving a project
+  * finally figured out how to automatically zoom in on the pod text!
+  * fixed a bug discarding fits in an MDS fit in situation where some
+    fits were not using all the data sets
+  * refactored displaying of things in the main and gds HLists
+
+July 16 2005 0.8.000
+  * begin adding background tweaking page (commented out for 0.8.000
+    release)
+  * Added a ParseFeff entry for the situation of atoms too far apart 
+    for overlapping to work.
+  * reff check only done for a fit, not for a summation, properly sort
+    list of paths in warning
+  * change default kmax to -2 in artemis.config
+  * fixed a problem of not recognizing when ifeffit cannot interpret a
+    file as data.
+  * toggle modified when clicking the fit kweight checkbuttons
+  * remember screen location between sessions
+  * explicitly set line style to lines in athena_plot
+  * clear out indic and traces tabs when closing project
+  * put focus on math expression and cursor at end of text when
+    grabbing a mathexp from previous/next path
+  * tokenized labels for paths in the DPL.  Tokens for index, padded
+    index, amplitude, reff, nlegs, geometry, degeneracy
+  * showgrid preference for turning grid on and off
+  * show parameters in GDS menu
+  * added togles to the Fit menu for reusing fit entries and for
+    fdisplaying fit info dialog
+  * made a history buffer for renaming DPL entries
+  * fixed a bug setting the current fit when restoring an old fit
+    model
+  * make sure that one cannot reuse previous fit after discarding all
+    fits
+  * made loading STAR::Parser conditional on its installation for
+    Debian licensing reasons
+
+April 27 2005  DR 010
+  * new plotting features, indicators, stacking, inverting + saving
+    these new options in the project file
+  * several changes to the plotting options panel to accommodate the
+    new features
+  * fixed a bug responding to general->autosave_policy config param
+  * check math expressions for repeated binary operator symbols,
+    including: ++ -- // and ***
+  * fixed the macro for moving input chi(k) from a non-uniform grid
+    onto the canonical k grid
+  * make sure that the project file can be written before trying to
+    write it
+  * fixed an infinate loop bug in th gds2_copy
+  * added a check of Reffs v. Rmax, flag a warning if any are far
+    outside of the fitting range
+  * put quick first shell parameters in header of generated feff.inp
+    file. 
+
+January ? 2005  DR 008
+  * sum of selected paths regardless of whether it is included
+  * move summation cascade from Data menu to its own menu
+  * colors indicating SS and collinear in the DPL
+  * text indicating path geometry in DPL labels
+  * removed count tag from head of fit branch
+  * take care with Fit/Sum label at head of fit branch after removing
+    fits or when loading a saved project -- this is done with
+    $fit{recent} and a small file in the project
+  * fixed a bug between SGB and Tk804
+  * some geometry changes to the frame (fat is a bit skinnier, start
+    the program expanded in x so that DPL is a bit wider)
+  * disable/enable entries in the fit menu sensibly
+  * added show geometry to the intrp right click menu
+  * Added a message to ParseFeff for exceeding the limit of the number
+    of atoms in feff.inp
+  * fixed a problem parsing numbers from set and def lines in
+    ArtemisLog
+  * use background2 color for buttons that return from special views
+    like prefs and athena
+  * quick first shell theory functionality
+
+January 3 2005  DR 007
+  * use &max_output_cols for saving selected files
+  * make legend location parameters customizable, parameters are in
+    the plot section
+  * fix lists generated by methods in ArtemisLog so that they are in
+    the same order as in the raw log file.  also fixed a problem where
+    sets that were set to integers were not being recognized by the
+    ArtemisLog parser
+  * fixed GDS copy
+  * handle the strange sitation of a project with no data included in the fit
+    by including then toggling data0
+  * fixed a problem doing intrp with the central atom not at (000)
+  * fixed problems in intrp-ing keywords above ATOMS when those keywords do not
+    have leading spaces on their lines
+  * if a project is from a version of Artemis which writes a fit directory but
+    does not support fit histories, delete the fit folder as the project is
+    imported.
+  * fixed a problem reusing a prior fit -- needed to toggle imported,
+    imported_bkg, and imported_res flags for the fit so that the new fit would
+    get imported into the ifeffit group once the fit was done.  this was a
+    very serious problem when reusing right after importing a project.  in
+    that case, the fit would not get plotted at all!
+  * added radio buttons for chhosing between r-factor and chinu in the log
+    viewer, these are disabled unless a report on stat params is made.
+
+November 5 2004  DR 006
+  * restore a previous fit (via the Fit menu or the log viewer page)
+  * proper control over resizing of main window, can't get smaller,
+    can't get taller, if it gets wider the DPL expands to fill the
+    extra space
+  * get method returns empty string for unused path params
+  * fixed reset variables in GDS menu
+  * save count_full in the project as a true running tally of how many
+    times the fit button has been pressed
+  * fixed a bug in the intrp method for feff.inp files that are not
+    ordered by distance
+  * in delete_feff, compactify when discarding the feff calc, rmpath
+    when discarding entire project
+  * sort set variables by use to avoid ambiguous definition in ifeffit
+  * fixed a bug importing no paths from an existing, imported feff calc
+  * fixed a bug adding paths from the intrp page or from the menus
+  * added a button to the plot page for plotting a path along with the
+    data and fit after the fit finishes
+  * added an entry to the intrp context menu for setting paths to plot
+    after fit
+
+October 7 2004  DR 005
+  * the storage of FT and fit params with a fit was not dealing well
+    with the projects.  made a dataN.FT file in the fit folder and use
+    dataN params as a default when reading in old project files.
+
+September 7 2004  DR 004
+  * import of Athena project files and the dialog for doing it
+  * import done in a Safe compartment
+  * fixed a bug in ATP.pm in code for finding atp files
+  * C-a selects all in the palettes.
+  * Fixed a typo in a message during the dicarding of Feff calcs
+  * New kind of GDS parameter -- after is a parameter that is evaluate
+    upon completion of the fit and reported in the log file.  This is
+    like a def, but is not considered in Artemis's error checking
+    prior to the fit and is not re-evaluated during the fit.  Made
+    appropriate modifications to log file writer and parser, to the
+    GDS page, and to the GDS pod.
+  * no longer making text on data page change from grey to blue when
+    reading data.  just always blue
+  * trim the data controls box
+  * option to convert unused defs into skips or afters via a dialog
+    box that must be answered after the continue/abort dialog box
+  * bound mouse buttons to the modified box so that clicking any
+    button saves the project in the manner of C-s.
+  * redesigned atoms page using HList with extended selection and
+    editing area at the bottom of the page
+  * save the feff.inp page every time clicking away from the feff
+    calc.  this was necessary to not loose changes to the feff.inp
+    file when feff does not get run
+  * fit info dialog now uses language appropriate to summation when
+    making a sum
+  * choice of reusing fit slots
+  * fixed file type ordering (.chi comes first) for importing project
+    data
+  * use bestfit values when making a summation, also set bestfit to
+    mathexp for guesses by default
+  * copy GDS parameter added to context menu
+
+September 6 2004  DR 003
+  * increment fit count even in auto-generated labels and comments
+  * swapped locations of checkbuttons at top of path page
+  * fixed problems discarding fits
+  * fixed problems reading DR version number in open_project
+  * added some commentary to the fit script
+  * most of the Fit menu is now sensible regardless of what is
+    anchored -- the latest fit is used if a fit child is not
+    anchored. (svn r15)
+  * revamped to the feff interpretation page to use an HList, allowing
+    for functionality on the extended selection (svn r16)
+  * erased all references to chib, cleaned out some commented code
+  * fixed various bugs regarding reading project files, dealing with
+    log viewer, and cloning feff cacls
+  * extended selection and functionality on the GDS page
+  * made context menus in intrp and gds pages use anchored item for
+    some menu entries when extended selection is in play
+  * project compacting
+
+
+August 31 2004  DR 002
+  * fixed a bug in build script cause by Path_dev.pm file.  Changed it
+    to PathDev.pm and changed all calls to Ifeffit::Path methods to
+    Ifeffit::PathDev
+  * fixed save_fit subroutine so it works when something other than a
+    fit child is anchored
+
+August 30 2004  DR 001
+  * initial release, inmplemented most of fit history system
+

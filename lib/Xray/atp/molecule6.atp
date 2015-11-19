@@ -1,0 +1,36 @@
+<atp -- Atoms Template File>
+<com> This file is part of the Atoms distribution.
+<com> Atoms is copyright (c) Bruce Ravel 1998-2006.
+<com> This is the atoms template file for a feff6 input for a molecule
+<com> Homepage: http://cars9.uchicago.edu/~ravel/software/
+<com>
+<meta :precision 9.5 :file "feff input file" :output "feff.inp" :feff 6>
+<meta :occupancy 0>
+
+<id :prefix " * ">
+
+<titles :prefix " TITLE ">
+
+ HOLE <iedge>   1.0   *  <central> <edge> edge  (<eedge> eV), second number is S0^2
+
+ *         mphase,mpath,mfeff,mchi
+ CONTROL   1      1     1     1
+ PRINT     1      0     0     0
+
+ RMAX      <rmax>
+
+ *CRITERIA     curved   plane
+ *DEBYE        temp     debye-temp
+
+ POTENTIALS
+ *    ipot   Z  element
+<com> only ':ipots species' is reliable for a molecule
+<potentials :ipots species :mol 1>
+        <ipot>   <znum>   <elem>
+
+ ATOMS                          * this list contains <nclus> atoms
+ *   x          y          z      ipot  tag           distance
+<list :style cluster>
+  <x>  <y>  <z>  <ipot>    <tag>  <r>   <inc>
+<com> don't use itag for a molecule!!!
+ END

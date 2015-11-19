@@ -1,0 +1,19 @@
+<atp -- Atoms Template File>
+<com> This file is part of the Atoms distribution.
+<com> Atoms is copyright (c) Bruce Ravel 1998-2006.
+<com> This is the atoms template file for reproducing the atoms input file
+<com> Homepage: http://cars9.uchicago.edu/~ravel/software/
+<com>
+<meta :file "atoms input file" :precision 9.5 :output "atoms.inp">
+<meta :occupancy 1>
+<id :prefix "! ">
+<titles :prefix "title = ">
+space = <given>
+a =	<a>	b =	<b>	c =	<c>
+alpha =	<alpha>	beta =	<beta>	gamma =	<gamma>
+core =	<ctag>	edge =	<edge>	rmax =	<rmax>
+<shift>
+atoms
+! elem   x          y          z     tag           occ.
+<list :style atoms>
+  <elem>  <x>  <y>  <z>  <tag>  <occ>

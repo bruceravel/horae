@@ -1,0 +1,263 @@
+#!/usr/bin/perl -w
+######################################################################
+##  This program is copyright (c) 1999 Bruce Ravel
+##  <ravel@phys.washington.edu>
+##  http://feff.phys.washington.edu/~ravel/software/atoms/
+##
+## -------------------------------------------------------------------
+##     All rights reserved. This program is free software; you can
+##     redistribute it and/or modify it under the same terms as Perl
+##     itself.
+##
+##     This program is distributed in the hope that it will be useful,
+##     but WITHOUT ANY WARRANTY; without even the implied warranty of
+##     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##     Artistic License for more details.
+## -------------------------------------------------------------------
+######################################################################
+## Time-stamp: <99/04/20 22:00:15 bruce>
+######################################################################
+## This program generates the language files used in Atoms and TkAtoms
+## from database files.  The database files are flat text.  Record are
+## separated by newlines, fields are separated by vertical bar (|) and
+## newlines in fields are represented by control-K.  The fields are:
+##     hash-key | english | spanish | french
+## More fields can be added.
+##
+## There are several database files -- I broke all the language data
+## up into managable pieces.  All the data gets written to a single
+## (tk)atomsrc.?? file -- one for each language.
+######################################################################
+## Code:
+
+##use strict;			# use strict doesn't seem to play well
+##no strict qw/refs/;           # with all the eval's I use
+use Data::Dumper;
+use File::Spec;
+use IO::File;
+#use diagnostics;
+
+my $cvs_info = '$Id: language.PL,v 1.9 2000/03/30 08:11:11 bruce Exp $ ';
+my $cvs_version = (split(' ', $cvs_info))[2] || "pre_release";
+my $thisdir = &identify_self;
+
+print STDOUT
+  "Language file generation tool version $cvs_version for Atoms3.0beta9", $/;
+
+##  the anon array contains the file extension and the index of the
+##  language in the database files
+my %lingos = ("english"	 => ["en", 1],
+	      "spanish"	 => ["sp", 2],
+	      "french"	 => ["fr", 3],
+	      "german"	 => ["ge", 4],
+	     );
+my $sep = '\|'; # field separator in database files
+#gaby# my $sep = ';';			# field separator in database files
+my $nl = "\013"; #'';         # newline token (control-K, ascii 13)
+my @hashes = ("labels", "dialogs", "help", "file-dialog", "sgb",
+	      "messages", "config");
+my %written;			# this is a counter
+
+my $header;			# read the tkatomsrc header from __DATA__
+$header  = '# -*- mode: cperl -*-';
+$header .= "$/# Language file generation tool, version $cvs_version$/";
+while (<DATA>) {
+  $header .= $_;
+};
+
+my %fh = ();
+## open a file for each language and write out the header
+foreach my $lang (keys %lingos) {
+  my $ext = $lingos{$lang}->[0];
+  my $file = "tkatomsrc." . $ext;
+  #$file = File::Spec -> catfile($thisdir, 'language', $file);
+  $file = File::Spec -> catfile($thisdir, $file);
+  $fh{$ext} = IO::File -> new();
+  my $fh = $fh{$ext};
+  open ($fh, ">$file") or die "Failed to open $file for writing: $!";
+  print $fh $header;
+};
+
+## open each database file and parcel out each language's entries into
+## a hash named for the language.  The purpose of the eval's is to
+## construct names of hashes on the fly.  This allows me to not know
+## in advance what languages are in the data files.  (Well, that is
+## not strictly true -- I have to maintain %lingos by hand.)
+print STDOUT "  Reading language data for TkAtoms", $/;
+foreach my $hash (@hashes) {
+  my $file = $hash . ".dat";
+  #gaby# my $file = "table." . $hash;
+  #$file = File::Spec -> catfile($thisdir, 'language', $file);
+  $file = File::Spec -> catfile($thisdir, $file);
+  open DAT, "$file" or die $!;
+  while (<DAT>) {
+    next if /^\s*$/;
+    my @line = split($sep, $_);
+    #gaby# shift @line;
+    foreach my $i (0 .. $#line) { # clean up white space at ends
+      $line[$i] =~ s/^\s+//;	  # of words and convert the ^K
+      $line[$i] =~ s|$nl|$/|g;	  # characters to $/
+      $line[$i] =~ s/\s+$//;
+    };
+    foreach my $lang (keys %lingos) { # load up hashes for each language
+      my $index = $lingos{$lang}->[1];
+      eval "\$$lang\{\'$line[0]\'\} = \"$line[$index]\";";
+    };
+  };
+  close DAT;
+
+  ## now dump the hashes to their appropriate data files using
+  ## Data::Dumper.  This, too, requires the use of eval's.
+  foreach my $lang (keys %lingos) {
+    my $ext = $lingos{$lang}->[0];
+    unless ($written{$lang}) {
+      ++$written{$lang};
+      printf STDOUT "    Writing %-7s file : %15s$/", $lang, "tkatomsrc.$ext";
+    };
+    my $ref;
+    eval "\$ref = \\\%$lang;";	# dump each hash to each language file
+    my $hash_dump = Data::Dumper->Dump([$ref], [$hash]);
+    eval "undef \%$lang";
+    undef $ref;
+    my $fh = $fh{$ext};
+    ## having to change file_dialog to file-dialog was an unfortunate
+    ## aspect of switching to Gaby for managing these databases
+    $hash_dump =~ s/file-dialog/file_dialog/g;
+    print $fh $hash_dump, $/;
+  };
+};
+
+foreach my $lang (keys %lingos) { # close 'em up
+  my $ext = $lingos{$lang}->[0];
+  my $fh = $fh{$ext};
+  print $fh $/, "1;", $/;
+  close $fh;
+};
+
+####################################################################
+## now write out the atomsrc.?? files.  The procedure is the same as
+## above.
+
+## open a file for each language and write out the header
+foreach my $lang (keys %lingos) {
+  my $ext = $lingos{$lang}->[0];
+  my $file = "atomsrc." . $ext;
+  #$file = File::Spec -> catfile($thisdir, 'language', $file);
+  $file = File::Spec -> catfile($thisdir, $file);
+  my $fh = $fh{$ext};
+  open $fh, ">$file" or die $!;
+  print $fh $header;
+};
+
+print STDOUT "  Reading language data for Atoms", $/;
+my $file = "messages.dat";
+#gaby# my $file = "table.messages";
+#$file = File::Spec -> catfile($thisdir, 'language', $file);
+$file = File::Spec -> catfile($thisdir, $file);
+open DAT, "$file" or die $!;
+while (<DAT>) {
+  next if /^\s*$/;
+  my @line = split($sep, $_);
+  #gaby# shift @line;
+  foreach my $i (0 .. $#line) { # clean up white space at ends
+    $line[$i] =~ s/^\s+//;	  # of words and convert the ^K
+    $line[$i] =~ s|$nl|$/|g;	  # characters to $/
+    $line[$i] =~ s/\s+$//;
+    $line[$i] =~ s/\"/\"/;
+    #gaby# $line[$i] =~ s/\n$//;
+  };
+  foreach my $lang (keys %lingos) {
+    my $index = $lingos{$lang}->[1];
+    eval "\$$lang\{\'$line[0]\'\} = \"$line[$index]\";";
+  };
+};
+close DAT;
+
+%written = ();
+foreach my $lang (keys %lingos) {
+  my $ext = $lingos{$lang}->[0];
+  unless ($written{$lang}) {
+    ++$written{$lang};
+    printf STDOUT "    Writing %-7s file : %15s$/", $lang, "atomsrc.$ext";
+  };
+  my $ref;
+  eval "\$ref = \\\%$lang;";
+  my $hash_dump = Data::Dumper->Dump([$ref], [qw/messages/]);
+  eval "undef \%$lang";
+  undef $ref;
+  my $fh = $fh{$ext};
+  print $fh $hash_dump, $/;
+};
+
+foreach my $lang (keys %lingos) {
+  my $ext = $lingos{$lang}->[0];
+  my $fh = $fh{$ext};
+  print $fh $/, "1;", $/;
+  close $fh;
+};
+
+
+sub identify_self {
+  my @caller = caller;
+  use File::Basename qw(dirname);
+  return dirname($caller[1]);
+};
+
+
+__DATA__
+
+######################################################################
+## Atoms language configuration file
+##                                     copyright (c) 1999 Bruce Ravel
+##                                          ravel@phys.washington.edu
+##                            http://feff.phys.washington.edu/~ravel/
+##
+##	  The latest version of Atoms can always be found at
+##      http://feff.phys.washington.edu/~ravel/software/atoms/
+##
+## -------------------------------------------------------------------
+##     All rights reserved. This program is free software; you can
+##     redistribute it and/or modify it under the same terms as Perl
+##     itself.
+##
+##     This program is distributed in the hope that it will be useful,
+##     but WITHOUT ANY WARRANTY; without even the implied warranty of
+##     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##     Artistic License for more details.
+## -------------------------------------------------------------------
+######################################################################
+##
+## This is a language configuration file for atoms or for tkatoms.
+## This file is read after atoms starts running.  The contents of this
+## file are used to fill in labels on the screen, messages in help
+## balloons, and other uses of text in the programs.
+##
+## To make another language file, copy this file to "(tk)atomsrc.??"
+## where ?? is a two letter symbol for your language.  Translate all
+## of the hash values (but NOT the keys) and add an entry to the
+## %languages hash in Atoms.pm for the new language.  And please send
+## your translation to Bruce Ravel <ravel@phys.washingon.edu> so he
+## can include it with future distributions of Atoms.
+##
+## Some languages:
+##   en = English
+##   fr = French
+##   sp = Spanish
+## and so on...
+##
+## Here is an example from the "help" hash.  Pardon my crappy language
+## skills.  Note that the key doesn't get translated, only the value --
+## that is very important!
+##
+## English:
+## 'add' =>
+##  "Add one more site to the list of unique crystallographic sites",
+##
+## Spanish:
+## 'add' =>
+##  "Ponga un otro sitio en la lista de sitios crystalograficos",
+##
+## French: 'add' =>
+##  "Placez une autre site au liste des uniques sites cristalographiques",
+####################################################################
+## code:

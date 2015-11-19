@@ -1,0 +1,768 @@
+
+   +--------------------------------------------------------------+
+   |                    Change Log for Athena                     |
+   | http://leonardo.phys.washington.edu/~ravel/software/athena/  |
+   +--------------------------------------------------------------+
+   |                         Bruce Ravel                          |
+   |                  ravel@phys.washington.edu                   |
+   +--------------------------------------------------------------+
+
+2002.09.12
+  * several minor layout changes on the main window
+
+
+2002.09.06
+  * if a directory is specified at the command line, the extended
+    selection dialog opens immediately.
+  * added version number to the splashscreen
+
+
+2002.09.05
+  * Added the ability to reorder groups in the group list.  This is
+    done by M-u and M-d (mnemonic for up and down).
+  * All features of the code that use the group list for some purpose
+    (e.g. the background Standard menu) now uses a function that
+    returns a sorted list based on their actual positions on the
+    skinny canvas.  This was particularly important for keeping the
+    list sensible when deleting after reordering.
+  * Identify merged, difference, and background records in the
+    "identify group" thing in the Group menu.
+
+
+2002.09.04
+  * there remained some problems with non-monotonic data.  I would
+    prefer to use the sort option to read_data, but for the moment I
+    am sorting in perl.
+  * The bit that checks to see that ranges are in order for marked
+    plots was not considering that the bkg ranges are not relevant to
+    chi records.  This was causing chi records not to be plotted in
+    marked plots.
+  * Fixed a problem with Ctrl-3 not actually displaying the current
+    group's data as text.
+
+
+2002.08.26
+  * some minor aesthetic changes to how ifeffit command strings are
+    generated 
+  * remember preprocessing parameters between times reading in a
+    file.
+  * added a tex file to the distro to facilitate using pod2latex on
+    the athena.pod file to generate something for hardcopy
+  * identify OS, perl version, and ifeffit version in comments at top
+    of project file
+
+
+
+2002.08.23
+  * fixed a very tricky problem involving the way ifeffit deals with
+    unmatched open parens in text strings.  this situation in a title
+    line would cause ifeffit to wait endlessly for a close paren.  the
+    solution was to process title lines so that all open parens are
+    matched by appending close parens to the end of the offending
+    title string.  interestingly, unmatched close parens are not a
+    problem.
+  * can specify a data or project file from the command line
+  * Athena now remembers the most recent path and name of a project
+    file that was read in and offers that as the default when saving a
+    project.
+  * Athena now uses the e0 shift when saving mu(E) or norm(E) (as it
+    should!) 
+
+2002.08.22
+  * fixed a problem in the code that checks ranges (see 2002.08.05)
+    wherein pre-edge ranges were checked even for normalized groups
+    (of which xmu.dat files are an example)
+  * fixed a problem recognizing xmu.dat files in certain situations
+  * fixed another range check problem where energy ranges were checked
+    for a chi record
+
+
+2002.08.13
+  * fixed a display problem in the group list whereby a new group was
+    created with 7mm of vertical space but deleted by removing 6.8mm
+    of vertical space.  This resulted in a serious misalignment when
+    deleting many groups from the top of the list.
+  * identify OS, OS version, perl version, and ifeffit version in
+    comments at top of project file
+  * fixed a logic error in memory_check that caused it never to report
+    Ifeffit being out of memory
+  * perform the memory check after every plot, merge, and other chore
+    that may result in the creation of one or more new arrays.
+  * make the cursor Busy and Unbusy for long-duration chores such as
+    merging, reading many files, saving a project, etc.
+
+
+2002.08.12
+  * added the concept of background groups + associated Edit menu item
+    for creating it
+  * slight editing of the pod
+  * fixed some misbehavior in the interaction of PC and CL
+
+
+2002.08.08
+  * fixed the auto-align function to correctly account for the e0
+    shift of the standard
+  * made several of the dialog windows for diffs, align, etc. always
+    raise after doing a chore.  also do an update.  this is so windows
+    do not get buried on Windows.
+
+
+2002.08.07
+  * attempt to recognize transmission or fluorescence data based on
+    the column labels.  This is regex based and the regexes that
+    define the column labels corresponding to i0, it, and if channels
+    are set in the rc file.
+  * Echo a warning message when the plot multiplier is set to 0
+  * fixed a bug in the merge code intruduced 2 weeks ago where I was
+    adding the e0 shift to the x-array regardless of the merge space
+
+
+2002.08.05
+  * added a patch found on Usenet which removes much of the looooong
+    delay posting certain dialogs (see the end of misc.pl)
+  * added some logic and Echo messages to prevent problems due to
+    out-of-order energy-, k-, and R-ranges.  This is a bit confusing
+    for multiple data set plots.  If the first marked plot has a
+    problem, the display is shifted to that group and the same error
+    message as for a single plot is Echoed.  If another marked group
+    has a problem, it is simply not plotted.
+  * fixed a sprintf problem in Groups.pm that mostly resulted in some
+    harmless warning messages.
+
+
+2002.07.25
+  * added Tie::Watch to the distro, needed by Splashscreen
+  * force the e0 shift of a merged group to be 0 rather than the value
+    of the first group in the list.
+  * needed to use first groups e0 shift in the third argument to
+    qinterp in the merge of energy spectra
+
+2002.07.23
+  * added some new data to the examples directory
+  * fixed a typo in the hints file
+
+2002.07.22
+  * splash screen
+  * lots of key bindings + -accelerator tags in menus
+  * fixed a very serious bug in the code for merging mu(E) and norm(E)
+    spectra.  the e0 shifts were neglected in the summation.  also set
+    all parameters for the merged group to those of the first group in
+    the merge list.
+
+
+2002.07.19
+  * the plot buttons now raise the corresponding plotcard (kq raises
+    k)
+  * the plotting options buttons now immediately redisplay (the window
+    buttons redisplay the group plot rather than the marked plot)
+  * fixed a bug wherein the pre-edge line was possibly set before the
+    pre-edge slope and intercept were actually determined.
+
+
+2002.07.18
+  * changed default value of fft_kmax from 0 to 12
+
+
+2002.07.17
+  * fixed a bug in how markers get displayed in energy plots
+  * using the sort argument to read_data().  This requires doing
+    read_data twice -- once to set up the solumn dialog and again to
+    actually store the sorted data.
+  * disable "save as" menu items for spaces that do not make sense for
+    the current record
+  * added an item to the groups menu which identifies the current
+    record type and gives a little hint about how it may be plotted.
+  * fixed the Standards menu so that it only contains records that can
+    be plotted as chi(k).
+  * a few menu items did unreasonable things when invoked without any
+    data read into the program.  now they all say "No data!" in the
+    echo area.
+
+
+2002.07.16
+  * after column selection redesign on 2002.07.09, evkev widget was
+    accessed too soon in the case of chi(k) input data, resulting in a
+    spewy error message and inability to read those data.  fixed.
+
+
+2002.07.11
+  * fixed "Edit data as text" menu item
+
+
+2002.07.09
+  * swapping panels also changes scrollbar side in list of groups
+  * error dialog if no columns are selected in columns dialog
+  * display "1" in the scrolled entry widget which contains the math
+    expression for constructing mu(E) in the columns dialog
+  * data type and energy units in columns dialog are now optionmenus
+  * rearranged order of widgets somewhat in columns dialog
+  * added a check early in the execution of the code that the main
+    program and the Group.pm module have the same version number.
+    This should help when installation problems crop up.
+
+
+2002.07.08
+  * Fixed a bug preventing use of Tk::Pod on Windows -- now the doc is
+    available!
+  * added some stuff to the Tk::Widgets list so Pod works after
+    PerlApp-ing
+
+
+2002.07.05
+  * added a function for swapping fat and skinny panels.  it's in the
+    Prefs menu
+  * added an rc variable for stating whether the groups list is on the
+    right or the left.
+  * using the $plot_devices variable from Ifeffit to construct a "Save
+    image as ..." submenu on the fly
+  * the scroll area in the list of groups now resizes automatically as
+    new groups are read in.  If the list is larger than the viewable
+    area, the scroll area will always be just a bit bigger than the
+    list.  Also the view always follows the end of the list as data is
+    read in.  Scroll area also resizes when groups are deleted.
+  * use ifeffit's new &heap_free variable to check each time a new
+    group is read from a data file or from a project to see if memory
+    is running short.  a warning or error is issued when memory is
+    short or out.  the memory available can be queried from the Help
+    menu.
+    
+    
+2002.07.04
+  * bkg_fixstep added to list Ifeffit::Group::Keys
+  * fixed a bug where the value of variable containing the element
+    needed for CLnorm was getting set to either "CLnorm" or "autobk".
+    This was causing CLnorm to fail
+
+
+2002.05.28
+  * further refinement to how the main window gets laid out.  The
+    heights of the canvases containing the groups of parameters are
+    now computed based on the bounding box around all the widgets on
+    the canvas.
+  * altered how the vertical space in the skinny window gets
+    allocated. 
+  * fixed up some minor issues involving compiling with PerlApp.
+  * corrected a bug involving a mis-set value for the fixed edge step
+  
+
+2002.05.27
+  * added a button for fixing the edge step to a chosen value, also
+    changed the edge step widget from Label to Entry
+  * changed e0 shift from Label to Entry, allowing user to adjust e0
+    by hand or by using the alignment dialog
+  * included Chemitry/Elements.pm and Tk/FileDialog.pm in the distro
+    in response to some recent problems reported on the mailing list.
+    This should remove the need to also have atoms installed to get
+    athena to work.
+    
+
+2002.05.25
+  * use y-offset in merge+std plots
+  * explicitly plot with style=line and using the marker color in a
+    vertical line plot
+  * give user option of sorting or discarding non-monotonic data.  the
+    sorted data is also checked for repeated abscissae
+    
+  
+2002.05.19
+  * in deglitch.pl there was an instance of the pmarker macro where I
+    forgot to include $yoffset, so point-by-point deglitching did not
+    work
+
+
+2002.05.17
+  * fixed an alignment bug where background was not being updated
+    after e0 shift
+  * modified layout of align dialog
+  * modified content and layout of action menus
+
+
+
+2002.05.15
+  * added a check that data be monotonically increasing in energy or
+    wavenumber before reading in.  this is done after the backwards
+    data check.  data that is not monotonic in energy|wavenumber will
+    not be read in.
+  * added an example of non-monotonically increasing mu(E) data to the
+    distro
+  * added a y-offset plotting parameter and used it in all plot-types
+  * fixed a neat-o bug in Ifeffit::Group::plotk which set the suffix
+    of the x-axis array incorrectly, thus making it impossible to plot
+    anything except w=1 k-weighting
+  * reorganized the fat part of the main window to be five separate
+    canvases rather than 1 big canvas.  tidied up the widgets
+    somewhat, also eliminated the horizontal blue lines.
+  * fixed a buglet in the subroutine that validates numbers in entry
+    boxes that made it tricky to enter a negative number
+  * added several new hints
+  * disable red buttons when they cannot be plotted for a particular
+    group, e.g. disable red E button for a merged-in-k group
+  * added a crude automated alignment algorithm which is accessed by a
+    button labeled "auto align" in the alignment dialog or by
+    activating alignment in the the data preprocessing options.  it
+    varies a shift to align the derivative spectra.
+
+
+2002.05.09
+  * wrote a pod and activated the document item in the Help menu
+  * included files from Tk::Pod 0.99.06 in the distro
+    http://search.cpan.org/search?module=Tk::Pod
+  * modified column selection dialog so that text box expands in y
+    when the preprocessing button is pushed.
+  * added a Diff menu for difference spectra in all 5 spaces.  made a
+    dialog for plotting difference spectra and creating difference
+    groups
+  * added jounals to ga.prj and clamp.prj in the examples.  This makes
+    them more tutorial-like
+  * fixed space allocation in the skinny window so that the groups
+    list expands vertically to fill all the vertical space and the
+    echo area expands horizontally to fill all horizontal space
+
+2002.04.07
+  * plot chi(E) + related functionality   
+
+
+2002.03.27
+  * properties canvas now has selectcolor the same as the background
+    color
+  * fixed a bug in the point chooser for deglitching wherein it was
+    not plotting the correct data, but the incorrect marker
+  * give focus to entry box when renaming dialog pops up
+  * made it so the z-popup does not repeatedly pop up when clicking pc
+    or CL on and off.  an odd but not too serious problem remains with
+    a CLnorm-ed plot being displayed twice.
+  * added a multi-element detector scan to the examples
+
+
+2002.03.12
+  * zoom and cursor use the "show" argument so that cursor positions
+    are written in the ifeffit buffer.  but care is taken to suppress
+    cursor and zoom from macro recording.
+
+
+2002.03.11
+  * added some commentary to the tops and bottoms of the files in the
+    part/ directory
+  * lc arguments to pc_edge to avoid a bug in ifeffit 1.0069.  I'll
+    probably just leave it that way
+  * fixed a bug in z_popup which may incorrectly set update_bkg to 0
+    when PC is enabled
+
+
+2002.03.08
+  * fixed a k-weighting bug in plotting merge+stddev
+  * add widgets for spline clamps
+  * activate phase correction widgets
+  * use z_popup when pc selected, modified z_popup to work with pc or
+    cl
+  * bug in copy groups setting update_bkg flag
+
+
+2002.02.13
+  * bug hunt: fixed bug aligning by derivative on CLnorm-ed data.
+  * bug hunt: fixed bug that prevented writing normalized background
+    column to norm(E) output file
+  * bug hunt: it was possible for the properties window to not be tall
+    enough.  that should be fixed
+  * quote file name in all calls to read_data, this is needed for
+    paths/filenames with spaces in them.
+
+
+2002.02.07
+  * moved purple radio buttons to right of red check buttons in plot
+    options section
+  * fixed a bug in pmarker macro that would make plots ignore the emin
+    and emax values
+  * do not reset emin and emax when reading in a new data file
+  * allow aligning raw mu(E) as well as norm and deriv
+  * groups menu in deglitch dialog
+  * fixed a bug involving unspecified columns
+  * in the column selection dialog, changed the mu string from a label
+    to an entry and added scrollbar
+  * enabled markers and deglitching for Windows, tested, it works!
+  * added some more intelligence to the column selection dialog for
+    situations where the user neglects to completely specify the
+    columns 
+  * added a groups menu to the deglitch palette,
+  * fixed a bug in the save-on-exit query
+  * modified Makefile.PL to facilitate building athena on Windows
+
+2002.02.01
+  * rearranged the window, made the fat part smaller, put the plot
+    buttons in the skinny part, removed bkg_win, bkg_dk from the main
+    window 
+  * changed some of the default bkg and fft values.
+
+2002.01.28
+  * fixed a bug in Makefile.PL wherein the building of athena.pl was
+    incomplete due to a buffering problem (forgot to close A).
+  * explicitly specify the group name in do_bkg_cl to avoid a bug
+    triggered by project files (possibly in other situations, too)
+
+
+2002.01.25
+  * changed default for bkg_kw to 1
+  * for xmu.dat files, set bkg_e0 to the value in the header and
+    preselect the mu column in the file selection dialog.  also
+    removed the yes/no dialog for xmu.dat files
+  * mouse-over text only changes color (not size) and changes
+    background color.  the latter is done by drawing a rectangle at
+    the bounding box of the text then raising the text above the
+    rectangle
+  * reorganized layout to accomodate phase correction checkbutton
+  * added widgets for phase corrections, added a hook to do_fft method
+    for pc array text, waiting for pc database to be implemented
+  * Borrowed some code from Mastering Perl/Tk to enable Mouse Wheel
+    under linux and Windows wherever appropriate (except for the data
+    groups canvas, which did not work for some reason).  To make this
+    worthwhile, I force focus on scrolled text areas in NoteBooks when
+    their tabs are raised
+  * Fixed a layout problem in the ifeffit buffer palette
+  * fixed problem with command completion in the ifeffit command line
+    whereby the tab would move focus.  now the command line works
+    as I expect (see 2001.12.08)
+  * Use ROText and TextUndo in the palettes as appropriate.  Also use
+    ROText in column selection dialog and in the help card in the plot
+    features section
+  * Added a new record type: detector.  This is kind of like an xmu
+    record, but is flagged to never have analysis steps done.  It is
+    intended for plotting detector columns.  Added functionality to
+    the column selection widget for reading in data as detectopr data
+  * Added a function for making groups out of the numerator and
+    denominator of an xmu record.  If the parent is aligned, the e0
+    shift is also assigned to the detector groups
+  * reorganized distro -- broke main program into smaller files and
+    assembling at "perl Makefile.PL"
+  * suppress align palette with an Echo if there are less than 2 xmu
+    groups 
+
+
+2002.01.21
+  * disable all widgets until data is loaded.  this avoids a spewy
+    pile of scary-seeming but irrelevant error messages
+  * fixed a bug whereby resetting e0 would not set update_bkg to 1
+  * the column selection dialog now displays the data file.  That way
+    the user has more of a hint for selecting columns.  this idea was
+    lifted from Matt's gifeffit
+  * added a couple of example data files to the distro for testing
+    pre-edge glitches and backwards data
+
+2002.01.20
+  * set update_bkg for a group after doing alignment replot
+  * fix several bugs related to renaming merged records
+  * option to save only marked groups in a project file
+  * write bkg as third column in .xmu or .nor output files, drop
+    separate .bkg output file
+  * save standard deviation arrays in project files, restore from
+    projects 
+  * allow algorithmic deglitching in pre-edge as well as post-edge 
+  * added pluck buttons to the algorithm part of the deglitching
+    palette and replot when plucking a deglitching variable
+  * fixed a bug in editing title strings in the titles palette
+
+
+2002.01.17
+  * Undid all the changes related to the post-Xmas rpm building
+  * Added a save bkg option
+  * Fix a bug in save_chi regarding the check as to whether the record
+    is a merge
+  * Add some intelligence for detecting an xmu.dat file
+  * Use Matt's pmarker macro for plotting markers in E-space and in
+    deglitching.  Add some other macro related functionality.
+  * Fixed a bug computing standard deviation in a merge.  stddev is
+    now written when data is saved in merge space.
+  * Make a useful set of title strings for a merge
+  * For merge in e, n, or k, plot merge, merge+sdv, merge-sdv.
+  * Put an menu item in Plot menu for replotting merge+stddev
+  * Turn markers on in MS. (untested)
+
+
+2001.12.26
+  * 'Tis the day after Christmas and all through the lab, not a
+    creature is stirring ... except me and I am trying to get an
+    ifeffit rpm built.  I have made small modifications to athena.pl
+    and Makefile.PL so that the rpm can install perl stuff to
+    /usr/local/share/ifeffit/perl and all will work as expected.
+
+2001.12.13
+  * The mouse-3 pop-up for setting parameter values only pops up when
+    2 or more groups have been read in.
+  * Added the value of the edge step to the display in the fat panel.
+    This required some reorganization of widgets.
+
+2001.12.08
+  * Plot multiplier works for derivative of mu(E) in single and marked
+    plots and in alignment
+  * Files with names which would make group names disallowed in
+    Ifeffit are altered, usually by substituting the offending
+    character(s) with underscore(s).  Also make sure that group names
+    never exceed 32 characters and are always lower case.
+  * C-q and C-d are the equivalent of pressing the done button in all
+    pallettes that have one.
+  * Tab completion works in the ifeffit command line, but focus gets
+    lost.
+  * Put a 2 second time delay on displaying the hint so that the
+    Ifeffit copyright statement can be read.
+  * Markers now plotted using the groups e0 shift.
+
+2001.12.04
+  * Remove 'deglitch one point' option from menu, now only on
+    palette 
+  * Change deglitching palette to display point before performing
+    deglitch
+  * Improved the metric for determining which point was selected with
+    the mouse
+  * Remove Default Parameters from skinny window and Group menu
+  * Add a journal which gets saved with the project
+  * Mouse-3 popup menu on all parameter labels for fine-grained
+    control over setting parameter values between groups
+  * Parameter labels respond to a mouse-over event by changing color
+  * Improved memory for column selection between file read events --
+    now if a subsequent file has the same column headers, the
+    previous column selection will be the default
+  * Added a hint function bound to C-h and in the Help menu.  Also
+    display a hint upon startup
+  * Alignment no longer depends on marked groups -- the palette can be
+    used to align many groups be selecting them from menus
+  * Added +/-0.5 buttons to the alignment palette
+  * Added an About Ifeffit item to the Help menu
+  * Fixed a few presentation problems in the column selection dialog
+
+2001.11.26
+  * Do not remove e0 shift before saving a record or project and
+    retain value of e0 shift when reading in a record/project.  This
+    breaks some old project files!
+
+2001.10.26
+  * Call set_properties on $current one last time in read_file after
+    reading in all files.  This verifies that parameters set during
+    preprocessing are displayed properly.
+  * Fixed a bug in canceling a multi-file read by aborting
+    construct_xmu unless the group, energy string, and numerator and
+    denominator strings are all defined.
+  * Mention UNINST=1 in the unix installation instructions so that
+    Tk's FBox.pm gets replaced by my modified one.
+
+2001.10.24
+  * Control-q bound to withdraw in palette Toplevel
+  * changed order to truncate and deglitch in preprocessing palette
+    and subroutine
+  * Fixed interpolation method to avoid extrapolation problems
+
+2001.10.23
+  * real fix for yesterday's problem.  Now a running tally is
+    maintained for both mean and standard deviation.  Std. dev. is not
+    calculated correctly, however.
+  * added preprocessing options in the columns palette.  Now, if a
+    standard is chosen, a set of input data files can be deglitched,
+    truncated, interpolated, aligned and have parameters set as each
+    is read in.  Alignment does not yet work.
+  * Using a fixed width font in the variious palettes found under the
+    Edit menu.  Added fixed to the [fonts] options in the rc file.
+  * added is_merge to the Ifeffit::Groups object so that
+    std. dev. will be written out with a merge
+
+2001.10.22
+  * temporary fix to a problem in which the standard deviation string
+    exceeded the max string length in ifeffit
+
+2001.10.17
+  * is_nor flag to mark a normalized record.  this sets edge_step to 1
+    in spline and bkg_cl
+  * in columns palette, a file can be specified as already normalized
+  * in ifeffit, a dash in a file/group name is auto-converted to an
+    underscore.  observe this behavior in read_raw, fixing an
+    interaction buglet in files with names containing dashes
+  * save plot options in the project file, but they only get restored
+    after all the data is read in
+
+
+2001.10.10
+  * Drop use of sortcmd as in my modified use of FBox.  Since it gets
+    installed into the sitelib as root, the old FBox gets found by
+    perl first, leading to problems with -sortcmd.  Drat.
+
+
+2001.10.09
+  * Changed almost all file selection to use getOpenFile, but left a
+    menu option for opening many files which uses FileSelect.  This
+    interface inconsistency was necessary.  FileSelect has a critical
+    bug when creating a new file and getOpenFile has a better
+    interface.  However, getOpenFile does not have extended selection
+    -- an amazingly useful feature.  Hence the interface
+    inconsistency.
+  * Made sure that the current_directory variable is set properly with
+    every file selection event.
+
+
+2001.10.01
+  * Use "defined" rather than "exists" to check for hash and array
+    values (related to an odd bug report regarding a machine running
+    Lynx) 
+
+2001.09.24
+  * Fixed a deadly bug in reading multiple files wherein the
+    denominator of the first data file was used for *all* subsequent
+    files in the selection
+  * Fixed a display bug for chi(k) records
+  * Question upon quitting about whether to save project is sensitive
+    to whether it needs saving (i.e. if nothing has changed since the
+    last save, it does not query)
+
+2001.09.05
+  * Handle mu(E) data in eV  or in keV
+  * Guess central atom for CLnorm based on bkg_e0
+  * Gave scrollbars the correct background color
+
+2001.08.20
+  * Overplot chi(k) and Re[chi(q)] for a group.  This is called a "kq
+    plot". 
+
+2001.08.15
+  * Wrote a stab at a Windows installer, added win/ directory
+
+
+2001.08.12 (getting close to an actual beta release...)
+  * Deal well with titles.  Titles can be added and deleted from the
+    titles palette.  These alterations will be remembered the next
+    time the group is current and will be saved correctly in records,
+    projects, and write_data output files.  (This included patching an
+    obscure bug in Ifeffit.pm.)
+  * Correctly flag Default Parameters as unplottable in R and q
+    spaces. 
+  * Data editing palette now works on chi data (i.e. data for which
+    is_chi=1)
+  * Separate config files, athenarc and athena.ini for Unix and Win
+  * Colors and fonts fully configurable from athenarc/athena.ini
+  * Rewrote marker-plotting code for E-space
+
+
+2001.08.10
+  * Got my PerlApp license today.  Yay!  Time to conquer Windows.
+  * FileDialog was crashing athena on windows.  Use FileSelect
+    exclusively with -create=>1 and -initialfile=>'something'
+  * Fixed a bug in canceling a save project.
+  * Change checkbutton in front of Default Parameters to a frame.
+    This will look better on Windows.
+
+
+2001.08.03
+  * Added a global %colors hash
+  * Allow selection of different file types with an attempt to do the
+    "right" thing for each file in the list
+  * Use $column_label to flag non-data files and pop-up an error
+    dialog when on is detected.
+  * One plot_scale parameter rather than one for each space, made it
+    work in k, R, q, and deriv
+  * Made reading a record/project considerably safer, lines are parsed
+    before sending lvalue evals to a Safe compartment.
+  * Save chi(R) and chi(q) as, x, re, im, mag, pha (before I had cols
+    2/3 switched with 4/5 -- duh!)
+  * Fixed an obscure plotting bug in E-space for spectra of different
+    edges 
+  * Fixed a bug whereby only xmu groups could be copied
+  * Removed "Erase group" from Groups menu -- doesn't seem
+    sufficiently useful
+  * Apply wrap in command strings in a more legible fashion.
+  * Queries about saving project upon exit (but this is configurable,
+    whew!).
+  * Made Ifeffit::Tools.  Ifeffit::Groups now inherits from it.
+
+
+2001.07.26
+  * Many changes associated with getting it working on Windows
+  * Use Arial fonts throughout.  These look nice on both linux and
+    Windows
+  * Use lighter shade of red and purple for check and radiobuttons if
+    $^O is MSWin32 or cygwin.  Lighter is easier to read on Windows.
+  * Added a "print to STDOUT" option to the Ifeffit::Group::dispose
+    method as a debugging aid
+  * Disabled E-space markers with a logical flag since they are causing
+    problems on Windows (zero length arrays? repeated elements?)
+  * Set defaults for stuff read from athenarc file
+  * Move pluck.xbm into the code rather than using an external file.
+  * Explicitly state all widget modules used for the sake of PerlApp.
+  * Wrote a primitive .bat wrapper for setting ENV variables and
+    running on windows
+
+2001.07.03
+  * Some cosmetic changes
+  * Added standard for background removal
+  * Recognize when a chi.dat file is read
+  * Added plotting button bar
+  * Removed Replot button and plot commands from the Plot and Mark
+    menus (but left them in the M-3 menus)
+  * Added a help card in the plotting options panel
+  * Changed marked checkbuttons in plotting options panel to
+    radiobuttons
+  * Added a done echo in zoom command
+
+2001.06.25 
+  * Saving pre-edge slope at full precision (fixes a problem plotting
+    the pre-edge line in some situations)
+  * Y-axis label for mu(E) plots now reads xmu, rather than just mu
+  * When data is merged, the newly creaated group is marked and a
+    marked plot in the merge space is made.
+  * Merging can be done for mu(E) or norm(E).  e0 and spline
+    parameters are now properly set for merged data.
+
+
+2001.06.22
+  * Fix height of fat panel to be the same as the skinny panel
+  * Deglitch tolerance lines now are drawn with "style=lines"
+    explicitly
+  * Added variable $last_plot_params to enable "Replot" button and
+    added a Replot button to the right side of the echo bar
+  * Add alignment e0 shift to value of e0 and add the e0shift to the
+    energy array before saving an xmu record
+  * Save and read a project file (WARNING: project files are currently
+    a system security risk!)
+  * Save and read a chi(k) record
+  * Save mu(E) or norm(E) as a normal data file
+  * Checkbutton now gets reconfigured properly when renaming a group
+  * Click for help on widget labels in the fat panel
+  * Editing data as text works, albeit with some shortcomings
+  * Titles are saved to and read from records (however, title editing
+    is not yet supported)
+  * Fixed a bug in keeping track of line numbers of raw data files in
+    the Group list and a related bug in renaming groups 
+
+2001.06.19
+  * Some cosmetic appearence changes
+  * Plot ranges work in marked plots (which I forgot to do yesterday)
+  * Deglitching, alignment, file reading palettes all do grabs
+  * Fixed a bug in renaming groups that are not mu(E) data
+
+
+2001.06.18
+  * Read raw data and construct mu(E) from the columns using a column
+    selection palette.  Also read xmu data using this palette.
+  * Plot mu(E) and mu0(E) automatically upon reading in the data.  For
+    multi-file selection, read the first data file in the input list.
+  * Deglitching tolerance works now.  On the deglitching palette,
+    specify an energy range and a margin.  All data points ouside that
+    margin will be removed from the data.
+  * Read in chi(k) data using the column selection palette.
+  * Use ?min and ?max values from the Plot Options box  
+
+
+2001.06.13
+  * Use Tk::FileSelect configured to allow extended selection
+  * Move macro recording palette into the notebook palette
+  * Simplify plot and marked menus and...
+  * Made a notebook in the bottom part of the skinny window
+  * Dealt with normalization problems by doing a pre_edge before
+    the spline -- submit a bug report
+  * Split the Edit menu into two menus: Edit and Group
+  * Added entry boxes for specifying plot ranges
+  * Kooky scheme for specifying types of plots for group and
+    marked
+  * Crude stab at saving a project -- just a bunch of automatically
+    made records.  This needs more structure.
+  * Function for deglitching a point
+  * Beginnings of deglitching palette which uses tolerance lines above
+    and below post(E)
+  * Merging works in all four spaces
+
+
+Start keeping change log after 2001.06.06

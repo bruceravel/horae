@@ -1,0 +1,15 @@
+title YBCO: Y Ba2 Cu3 O7 
+space P M M M 
+rmax=5.2              a 3.823   b 3.886 c 11.681
+core=cu2
+atom
+! At.type   x        y       z      tag
+   Y       0.5      0.5     0.5   
+   Ba      0.5      0.5     0.184
+   Cu      0        0       0        cu1
+   Cu      0        0       0.356    cu2
+   O       0        0.5     0        o1
+   O       0        0       0.158    o2
+   O       0        0.5     0.379    o3
+   O       0.5      0       0.377    o4
+--------------------------------------------

@@ -1,0 +1,9 @@
+
+Sep 15 2005
+  * added fix_ipots to ATP.pm in an attempt to fix the long-standing
+    missing ipot problem.
+
+Jul 30 2004
+  * in calculation of corrections, handle zero values for xsec and
+    delta in ATP.pm
+  * fixed a bug in the atp search path in ATP.pm

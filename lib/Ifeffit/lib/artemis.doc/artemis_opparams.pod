@@ -1,0 +1,176 @@
+=head1 ARTEMIS: The Data Page
+
+B<ARTEMIS> - The data page
+
+The data page is displayed in B<Artemis>'s main panel when a data item
+is anchored in the Data and Paths List.  See L<the main document
+section|artemis> for an explanation of anchoring and selecting items
+in the Data and Paths List.
+
+The data page is divided into five sections.  At the top is a box
+containing the title lines associated with these data.  These are read
+from the input data file, but can be edited at any time by the user.
+When the data are written to output files, the contents of this box
+are written as headers.  Below the titles box is the name of the data
+file that was imported.  Below that are four boxes containing groups
+of related controls.
+
+=head2 Data toggles
+
+This box contains three toggles that control certain aspects of the
+fit.  The first two are only relevant in a multiple data set fit.
+When setting up a project containing a multiple data set fit, it is
+sometimes useful to exclude an entire data set from the fit without
+deleting it from the project.  This can be done with the first
+toggle.  When a data set is excluded, it and all items beneath it are
+shown in brown text in the Data and Paths List to indicate that they
+have been excluded from the fit.
+
+After the fit is complete, B<Artemis> wants to show off her handiwork
+and display a plot of the data and the just-finished fit.  In the case
+of a multiple data set fit, you might have a preference about which
+data set gets plotting.  Click this toggle on for your prefered data
+set.
+
+The third toggle tells B<Artemis> to do a corefinement of the
+background spline when it performs the fit.  This corefinement is,
+effectively, the same operation that was performed by B<Athena> to
+remove the background from the data.  The C<rmin> parameter serves the
+same purpose as B<Athena>'s C<rbkg> parameter.  When the fit is
+performed with the background corefinement, a spline is used to fit
+the Fourier components of the data below C<rmin> and the B<Feff> paths
+are used to fit the Fourier components between C<rmin> and C<rmax>.
+The number of parameters used to determine the spline is the number of
+independent points in that portion of the data:
+C<2*delta_k*delta_R/pi>, where C<delta_k> is the range of the Fourier
+transform and C<delta_R> is the range between 0 and C<rmin>.  The
+advantage of doing the background corefinement, other than the
+possibility of making the fit look nicer at low R, is that
+correlations between the background parameters and the fitting
+parameters can be measured.
+
+=head2 Fourier transform and fitting parameters
+
+This box contains the controls used to set the ranges of the forward
+Fourier transform and of the fit.  The fit range is also used as the
+backward Fourier transform range when a plot is q space is made.  See
+L<Pluck buttons> for a discussion of the little quare buttons marked
+with a blue x.
+
+Other controls are used to set the functional forms of the Fourier
+transform window used in k and R.  The widths of the sills of those
+functions are set usng the entry boxes labeled C<dk> and C<dr>.
+
+=head2 k-weight parameters
+
+The controls in this box are used to set the values of k-weight to be
+used in the fits.  There are togles for turning on k-weight of 1, 2,
+or 3.  There is also a toggle for specifying an arbitrary value of
+k-weight.
+
+These are the k-weight values used in the fit but not the k-weight
+used to plot the data.  These two purposes of k-weight are handled
+independently by B<Artemis>.  See L<Plotting in Artemis|artemis_plot>
+for a discussion of the plotting k-weight controls.
+
+People sometimes get confused by the concept of multipl k-weights for
+fitting.  The prupose of choosing a low or high value for k-weight is
+to attempt to emphasize either the low- or high-k end of the data.
+Because different regions of the data are sensitive to different kinds
+of parameters, one might choose a low or high value to increase the
+precision of measurement of certain parameters.  Doing multiple
+k-weight fits is a sort of compromise -- a way of emphasizing both
+ends of the data in the fit.
+
+The fit is determined by minimizing a quantity called chi-square.
+Chi-square is evaluated by summing the squares of the difference
+between the data and the theory.  Since the FT is complex, there is a
+real part and an imaginary part.  So chi-square is proporitional to:
+
+         /                                                    \
+    sum <   Re[ data(R) - th(R) ]^2 + Im[ data(R) - th(R)]^2   >
+     R   \                                                    /
+
+In a multiple k-weight fit, there are simply more terms in the sum.
+Let's take a kw=1&3 fit as an example.  This summation is made for the
+kw=1 data and theory.  B<And> the summation is made for the kw=3 data
+and theory.  The summations are added together and the full sum is
+used to evaluate chi-square.
+
+At the end of the day, there is only one set of guess parameters that
+have been optimized by the fit.  These guess parameters along with the
+set parameters are used to evaluate the def parameters and the path
+parameters.  The path parameters are used to evaluate the exafs
+equation for each path.  The exafs equations for the paths are summed
+up to make the best-fit theoretical C<chi(k)>.  You have a data
+C<chi(k)> and a best-fit C<chi(k)>.  Those can then be plotted however
+you like -- even using a k-weight that was not used in determining the
+fit.
+
+=head2 Other parameters
+
+The last box contains several controls that did not fit into theother
+boxes.  There is a menu for selecting the fitting space.  You can
+choose to fit the data in any of k, R, or q space.  The default is to
+fit in R.
+
+Epsilon is the uncertainty used to evaluate chi-square.  Normally it
+is fine to let B<Artemis> use the default value (which is determined
+from the RMS value of the data between 15 and 25 angstroms in
+R-space).  In some situations, you may find it useful to explicitly
+set a value for epsilon.
+
+After the fit, B<Artemis> writes a log file documenting the fit.
+Among the information in that log file are the correlations between
+all the fitting parameters.  You can set the level below which
+B<Artemis> will exclude a correlation from this report.
+
+Finally, there is a menu for selecting the path to use for phase
+corrected plots.  This menu contains the first five paths from each
+B<Feff> calculation used with the data set.  When a path is selected
+for phase corrected plots, the full phase shift of that path -- both
+the central atom and scattering atom portions -- will be subtracted
+from anything that is Fourier transformed before it is plotted.  If a
+path is selected for phase correction and you make a plot of, say, the
+data, the fit, and several paths, the selected phase shift will be
+subtracted from each item before it is plotted.  Phase correction is
+for plotting only.  Fits are always done on non-phase-corrected data.
+
+=head2 Pluck buttons
+
+Several of the controls on this page a have a small button with a blue
+x next to them.  These are called pluck buttons and are used for
+grabbing values from the plot window.  When you click on one of these
+buttons, a prompt will be written to echo area asking you to click on
+a pointin the plot.  When you do so, the value that you clicked on
+will be inserted into the entry box adjacent to the pluck button.
+B<Artemis> is careful not to let you pluck a k-value from a plot in R,
+or vice versa.
+
+=head2 Context menus
+
+As you pass the mouse over labels on the data page, the text under the
+mouse will change color.  This color change is an indication that mouse
+clicks will do something.  A left mouse click on one of these labels
+will cause a brief description of that parameter to be displayed in
+the echo area.  Many of these descriptions also suggest reasonable
+values for the parameter.
+
+Clicking the right mouse button on one of the labels will post a
+context menu of useful function.  One such function is restore that
+parameter to its default value.  If you have a muliple data set fit,
+the other menu options allow you to constrain the parameter between
+data sets.
+
+The labels at the top of the boxes are all sensitive to the left mouse
+button.  The labels atop the Fourier transform and fit range box and
+the k-weights box are also sensitive to the right mouse click.
+
+=over 5
+
+=item
+
+L<Back to the main document|artemis>
+
+=back
+

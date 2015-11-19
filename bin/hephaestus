@@ -1,0 +1,2683 @@
+#!/usr/bin/perl -w
+######################################################################
+## Hephaestus: a souped-up periodic table for the absorption
+##             spectroscopist
+##
+##                  Hephaestus is copyright (c) 2004-2008 Bruce Ravel
+##                                                     bravel@bnl.gov
+##                                  http://cars9.uchicago.edu/~ravel/
+##
+##                   Ifeffit is copyright (c) 1992-2007 Matt Newville
+##                                         newville@cars.uchicago.edu
+##                       http://cars9.uchicago.edu/~newville/ifeffit/
+##
+##	 The latest version of Hephaestus can always be found at
+##	       http://cars9.uchicago.edu/~ravel/software/
+##
+## -------------------------------------------------------------------
+##     All rights reserved. This program is free software; you can
+##     redistribute it and/or modify it provided that the above notice
+##     of copyright, these terms of use, and the disclaimer of
+##     warranty below appear in the source code and documentation, and
+##     that none of the names of Argonne National Laboratory, The
+##     Naval Research Laboratory, The University of Chicago,
+##     University of Washington, or the authors appear in advertising
+##     or endorsement of works derived from this software without
+##     specific prior written permission from all parties.
+##
+##     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+##     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+##     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+##     NONINFRINGEMENT.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+##     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+##     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+##     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+##     OTHER DEALINGS IN THIS SOFTWARE.
+## -------------------------------------------------------------------
+######################################################################
+## In his workshop he has handmaidens he has forged out of gold who
+## can move and who help him in his work. ...  With Athena, he [is]
+## important in the life of the city.  The two [are] the patrons of
+## handicrafts, the arts which along with agriculture are the support
+## of civilization.
+##
+##                          Mythology, Edith Hamilton
+######################################################################
+
+
+
+## BEGIN {
+##   ## make sure the pgplot environment is sane...
+##   ## these defaults assume that the pgplot rpm was installed
+##   $ENV{PGPLOT_DIR} ||= '/usr/local/share/pgplot';
+##   $ENV{PGPLOT_DEV} ||= '/XSERVE';
+## };
+
+use warnings;
+use strict;
+use File::Spec;
+use File::Basename;
+use File::Path;
+use Tk;
+## need to make PAR happy....
+use Tk::widgets qw(Wm Frame DialogBox Checkbutton Entry Label Photo
+		   LabFrame Scrollbar Pod Pod/Text Pod/Search Pod/Tree
+		   Menu More ROText Optionmenu Dialog BrowseEntry
+		   Splashscreen LabEntry DialogBox Pane NumEntry
+		   NumEntryPlain FireButton);
+use Tk::Pane;
+use Tk::Photo;
+use Tk::Pod;
+use Config::IniFiles;
+use Chemistry::Elements qw(get_name get_Z get_symbol);
+use Chemistry::Formula qw(parse_formula formula_data);
+use Xray::Absorption;
+##use Ifeffit::Tools;
+use Ifeffit::FindFile;
+use Tie::IxHash;
+use Storable;
+use Math::Spline;
+use Math::Derivative;
+use constant PI      => 4 * atan2 1, 1;
+use constant HBARC   => 1973.27053324;
+use constant EPSILON => 0.00001;
+
+use Cwd;
+use File::Basename;
+my $save_dir = Cwd::cwd || dirname($0) || $ENV{IFEFFIT_DIR};
+
+
+use vars qw($VERSION @LINELIST);
+$VERSION = '0.18';
+@LINELIST = qw(Ka1 Ka2 Ka3 Kb1 Kb2 Kb3 Kb4 Kb5
+	       La1 La2 Lb1 Lb2 Lb3 Lb4 Lb5 Lb6
+	       Lg1 Lg2 Lg3 Lg6 Ll Ln Ma Mb Mg Mz);
+
+my $is_windows = (($^O eq 'MSWin32') or ($^O eq 'cygwin'));
+## my $is_darwin  = (lc($^O) eq 'darwin');
+
+## this regex matches the utilities that use the periodic table
+my $uses_periodic_regex = '(?:absorption|data|f1f2)';
+
+## Initialization files
+my $horae_dir = Ifeffit::FindFile->find("other", "horae");
+(-d $horae_dir) or mkpath($horae_dir);
+
+## system-wide rc file (but check to see that it exists...
+my $system_rcfile = Ifeffit::FindFile->find("hephaestus", "rc_system");
+my %system_config;
+tie %system_config, 'Config::IniFiles', (-file=>$system_rcfile) if -e $system_rcfile;
+my $system_config_ref = tied %system_config;
+
+## if the user does not have a personal rc file, create one
+my $personal_rcfile = Ifeffit::FindFile->find("hephaestus", "rc_personal");
+if (! -e $personal_rcfile) {
+  open I, ">".$personal_rcfile;
+  print I "[general]\ndummy_parameter=1\n";
+  close I;
+};
+my %config;
+tie %config, 'Config::IniFiles', (-file=>$personal_rcfile, -import=>$system_config_ref);
+#my $config_ref = tied %config;
+
+## sanity check the config file and transfer the values into the %data hash
+my %data;
+verify_config(tied %config);
+
+if ($config{general}{ifeffit}) {
+  require Ifeffit;
+  import Ifeffit;
+};
+
+
+my $current = "";
+## absorption data
+my %energies = ();
+my %probs = ();
+## chemical data
+my %kalzium;
+my %userformulas;
+## formula data
+my (%formula, %density);
+&formula_data(\%formula, \%density);
+
+my $bgcolor = '#cdc7ba';
+
+my $hephaestus_lib = Ifeffit::FindFile->find("hephaestus", "hephaestus");
+my $aug_lib        = Ifeffit::FindFile->find("athena", "augpod");
+my $horae_lib = Ifeffit::FindFile->find("hephaestus", "horae");
+Tk::Pod->Dir($aug_lib);
+
+mkdir $horae_lib unless ($is_windows or (-e $horae_lib));
+
+if ((not -e Ifeffit::FindFile->find("hephaestus", "data")) and (-w $horae_lib)) {
+  open I, ">".Ifeffit::FindFile->find("hephaestus", "data");
+  print I "[data]\n^^^^=1\n";
+  close I;
+};
+
+if (-e Ifeffit::FindFile->find("hephaestus", "data")) {
+  tie %userformulas, 'Config::IniFiles', (-file=>Ifeffit::FindFile->find("hephaestus", "data"));
+  #    if (-e File::Spec->catfile($horae_lib, 'hephaestus.data'));
+  foreach my $k (keys %{$userformulas{data}}) {
+    next if ($k eq '^^^^');
+    if ($userformulas{data}->{$k} eq "^^remove^^") {
+      delete $formula{$k};
+      delete $density{$k};
+    } else {
+      my ($s, $d) = split(/\|/, $userformulas{data}->{$k});
+      $formula{$k} = $s;
+      $density{$k} = $d;
+    };
+  };
+};
+
+
+my  $top = MainWindow->new(-class=>'horae');
+$top -> withdraw;
+$top -> optionAdd('*font', $config{fonts}{small});
+
+my ($r, $g, $bl) = $top -> rgb($bgcolor);
+my $acolor = sprintf("#%4.4x%4.4x%4.4x", int($r*1.10), int($g*1.10), int($bl*1.10));
+($acolor = "#c000c000c000") if ($acolor eq "#ffffffffffff");
+
+my $splash = $top->Splashscreen();
+$splash -> Label(-image      => $top -> Photo(-file => File::Spec->catfile($hephaestus_lib, "vulcan.gif")),
+		 -background => 'white')
+  -> pack(qw/-fill both -expand 1 -side left/);
+$splash -> Label(-text       => " Hephaestus $VERSION\nis starting ...",
+		 -background => 'white',
+		 -font       => $config{fonts}{largebold},)
+  -> pack(qw/-fill both -expand 1 -side right/);
+$splash -> Splash;
+$top -> update;
+
+$top -> setPalette(foreground	  => 'black',
+		   background	  => $bgcolor,
+		   highlightColor => 'DarkSlateBlue',
+		   -font	  => $config{fonts}{smbold},
+		   );
+#my $iconbitmap = File::Spec->catfile($hephaestus_lib, "hephaestus_icon.xbm");
+#$top -> iconbitmap('@'.$iconbitmap);
+my $iconimage = $top -> Photo(-file => File::Spec->catfile($hephaestus_lib, "vulcan.gif"));
+$top -> iconimage($iconimage);
+$top -> bind('<Control-q>' => sub{exit});
+$top -> bind('<Control-Key-0>' => \&help);
+
+
+$top -> configure(-menu=> my $menubar = $top->Menu(-relief=>'ridge', -font=>$config{fonts}{smbold}));
+
+
+## common widget arguments
+my $l_text = $config{fonts}{smbold};
+my $b_text = $config{fonts}{smbold};
+my @label_args     = (-foreground       => 'blue4',
+		      -font             => $l_text);
+my @button_args	   = (-foreground	=> 'seashell',
+		      -background	=> 'darkslateblue',
+		      -activeforeground	=> 'seashell',
+		      -activebackground	=> 'slateblue',
+		      -font		=> $b_text),
+
+
+my @answer_args = (-foreground=>'black',
+		   -background=>$bgcolor,
+		  );
+
+
+my $buttonbox = $top -> Frame(-background=>'white',
+			      -width=>128,
+			      -relief=>'flat',
+			      -borderwidth=>2)
+  -> pack(-side=>'left', -padx=>8, -pady=>8, -fill=>'y', -ipady=>0);
+use vars qw($main);
+$main = $top -> Frame(-background=>$bgcolor)
+  -> pack(-side=>'right', -expand=>1, -fill=>'both');
+
+use vars qw($title);
+$title = $main -> Label(-foreground=>'#49007a',
+			#-background=>'white',
+			-font=>$config{fonts}{medbold},
+			-relief=>'ridge')
+  -> pack(-fill=>'x', -pady=>8, -padx=>4);
+
+my @colors = ('white', '#cac4ff');
+my @frame_props = (-height=>40, -relief=>'flat', -borderwidth=>2),
+my @frame_pack  = (-side=>'top', -padx=>1, -pady=>0, -fill=>'x', -anchor=>'n');
+my @button_pack = (-side=>'left', -padx=>0, -pady=>2);
+
+
+=for Explain:
+     IxHash allows this to be the master array for the layout of the
+     application.  The order specified here will be the order for an
+     loop over the keys.  Very handy.  To add a new utility, just put it
+     in the right position in this hash.  Forgetting to add to the label
+     hash should not cause the app to go klunk, but it will make for a
+     confusing button bar.  The functions associated with the utility
+     should be named according to the hash key, as should the image used
+     in the button bar.  Thus "formulas" has a sub called formulas and
+     an image called formulas.gif.
+
+=cut
+
+tie my %frames, "Tie::IxHash";
+my $count = -1;
+%frames  = (absorption => $buttonbox -> Frame(-background=>$colors[++$count%2], @frame_props)
+	    -> pack(@frame_pack),
+	    formulas => $buttonbox   -> Frame(-background=>$colors[++$count%2], @frame_props)
+	    -> pack(@frame_pack),
+	    data => $buttonbox       -> Frame(-background=>$colors[++$count%2], @frame_props)
+	    -> pack(@frame_pack),
+	    ion  => $buttonbox       -> Frame(-background=>$colors[++$count%2], @frame_props)
+	    -> pack(@frame_pack),
+	    trans => $buttonbox      -> Frame(-background=>$colors[++$count%2], @frame_props)
+	    -> pack(@frame_pack),
+	    find => $buttonbox       -> Frame(-background=>$colors[++$count%2], @frame_props)
+	    -> pack(@frame_pack),
+	    line => $buttonbox       -> Frame(-background=>$colors[++$count%2], @frame_props)
+	    -> pack(@frame_pack),
+	   );
+
+=for Explain:
+     This: $colors[++$count%2] runs a risk of being just too cute.
+     Its intent is to toggle between the two colors each time a %frame
+     entry is created.  The reason I want to toggle algorithmically is
+     so that the color of the document button comes out right
+     regardless of whether the f1f2 utility is displayed.  It'll also
+     be easier to add new utilities in the future.  $count%2 return 0
+     for even numbers and 1 for odd numbers.
+
+=cut
+
+my %label = (absorption	=> 'Absorption',
+	     formulas	=> "Formulas",
+	     data	=> "Data",
+	     ion	=> "Ion Chamber",
+	     trans	=> "Transitions",
+	     find	=> "Edge Finder",
+	     line	=> "Line Finder",
+	     );
+if ($config{general}{ifeffit}) {
+  $frames{f1f2} = $buttonbox -> Frame(-background=>$colors[++$count%2], @frame_props) -> pack(@frame_pack);
+  $label{f1f2}  = "f' & f\"";
+};
+$frames{help} = $buttonbox -> Frame(-background=>$colors[++$count%2], @frame_props) -> pack(@frame_pack);
+$label{help}  = "Document";
+
+
+$buttonbox -> Frame(-background=>$colors[0], -height=>0)
+  -> pack(-side=>"bottom", -fill=>'y', -anchor=>'s', -expand=>1);
+
+## load up the button bar
+my (%buttons, %text, %callbacks, @menuitems);
+my ($i, $c) = (1, "");
+foreach my $k (keys %frames) {
+  ## fallback, in case one forgets to fill the %label hash
+  $label{$k} ||= ucfirst(lc($k));
+
+  ## fill in the frames
+  $buttons{$k} = $frames{$k} -> Label(-image      => $frames{$k}->Photo(-file => File::Spec->catfile($hephaestus_lib, "$k.gif")),
+				      -background => $frames{$k}->cget("-background"),
+				     )
+    -> pack(@button_pack);
+  $text{$k}    = $frames{$k} -> Label(-text       => sprintf("%-11s",$label{$k}),
+				      -height     => 2,
+				      -background => $frames{$k}->cget("-background"),
+				      @label_args,
+				     )
+    -> pack(@button_pack);
+
+  ## turn these into image-text "buttons"
+  eval "\$callbacks{$k} = \\\&$k";
+  $buttons{$k} -> bind('<ButtonPress-1>',$callbacks{$k});
+  $text{$k}    -> bind('<ButtonPress-1>',$callbacks{$k});
+  $buttons{$k} -> bind('<ButtonPress-3>',$callbacks{$k});
+  $text{$k}    -> bind('<ButtonPress-3>',$callbacks{$k});
+
+  if ($label{$k} ne 'Document') {
+    ## bind Ctl-number sequences, but not to doc, which is C-0
+    ## use C-a, C-b, etc should the number of utilities exceeds 9
+    ## also build File menu items
+    if ($i<10) {
+      eval "\$top -> bind('<Control-Key-$i>' => \\\&$k)";
+      eval "push \@menuitems, [ command	=> \$label{$k},
+	                     -accelerator => \"Ctrl-\$i\",
+		             -command	=> \\\&$k]";
+    } else {
+      $c = chr(87+$i);
+      eval "\$top -> bind('<Control-Key-$c>' => \\\&$k)";
+      eval "push \@menuitems, [ command	=> \$label{$k},
+	                     -accelerator => \"Ctrl-\$c\",
+		             -command	=> \\\&$k]";
+    };
+    ++$i;
+  };
+};
+
+=for Explain:
+     so, you see, we are turning these label pairs into buttons because
+     perl/Tk buttons can have text or an image, but not both.  this is
+     sort of the functional equivalent to an image-text button but
+     without the additional bindings (activation, relief change, release
+     event, and input focus)
+
+=cut
+
+my $file_menu = $menubar ->
+  cascade(-label => '~File',
+	  -font => $config{fonts}{smbold},
+	  -menuitems =>[@menuitems,
+			"-",
+			[ command      =>'~Quit',
+			 -accelerator  =>'Ctrl-q',
+			 -command      => sub{exit}]
+		       ] );
+my $units_menu = $menubar ->
+  cascade(-label => '~Units',
+	  -menuitems => [
+			 [ radiobutton =>'Energies',
+			   -value      =>'Energies',
+			   -variable   =>\$data{units},
+			   -command    =>\&swap_energy_units],
+			 [ radiobutton =>'Wavelengths',
+			   -value      =>'Wavelengths',
+			   -variable   =>\$data{units},
+			   -command    =>\&swap_energy_units],
+			]
+	 );
+my $resource_menu = $menubar ->
+  cascade(-label => '~Resource',
+	  -menuitems => [
+			 [radiobutton => 'Elam',
+			  -variable   => \$data{resource},
+			  -command    => sub{Xray::Absorption -> load("elam");
+					     set_xsec("elam");
+					     &set_pt_explain; }],
+			 [radiobutton => 'McMaster',
+			  -variable   => \$data{resource},
+			  -command    => sub{Xray::Absorption -> load("mcmaster");
+					     set_xsec("mcmaster");
+					     &set_pt_explain; }],
+			 [radiobutton => 'Henke',
+			  -variable   => \$data{resource},
+			  -command    => sub{Xray::Absorption -> load("henke");
+					     set_xsec("henke");
+					     &set_pt_explain; }],
+			 [radiobutton => 'Chantler',
+			  -variable   => \$data{resource},
+			  -command    => sub{Xray::Absorption -> load("chantler");
+					     set_xsec("chantler");
+					     &set_pt_explain; }],
+			 [radiobutton => 'Cromer-Liberman',
+			  -variable   => \$data{resource},
+			  -state      => ($config{general}{ifeffit}) ? 'normal' : 'disabled',
+			  -command    => sub{Xray::Absorption -> load("cl");
+					     set_xsec("cl");
+					     &set_pt_explain; }],
+			 [radiobutton => 'Shaltout',
+			  -variable   => \$data{resource},
+			  -command    => sub{Xray::Absorption -> load("shaltout");
+					     set_xsec("shaltout");
+					     &set_pt_explain; }],
+			]
+	 );
+my $xsec_menu = $menubar ->
+  cascade(-label => '~Xsection',
+	  -menuitems => [
+			 [radiobutton => 'Total',
+			  -variable   => \$data{cross_section},
+			  -command    => sub{$data{xsec} = 'full'; &set_pt_explain;} ],
+			 [radiobutton => 'Photoelectric',
+			  -variable   => \$data{cross_section},
+			  -command    => sub{$data{xsec} = 'photo'; &set_pt_explain;} ],
+			 [radiobutton => 'Coherent',
+			  -variable   => \$data{cross_section},
+			  -command    => sub{$data{xsec} = 'coherent'; &set_pt_explain;} ],
+			 [radiobutton => 'Incoherent',
+			  -variable   => \$data{cross_section},
+			  -command    => sub{$data{xsec} = 'incoherent'; &set_pt_explain;} ]
+			]
+	 );
+
+my $About_text = "Hephaestus Version $VERSION.
+
+A souped-up periodic table for the X-ray absorption spectroscopist.
+
+You are using Perl $] and Perl/Tk $Tk::VERSION
+
+copyright © 2004-2008 Bruce Ravel
+http://cars9.uchicago.edu/~ravel/software/
+bravel\@anl.gov";
+my $help_menu = $menubar ->
+  cascade(-label => '~Help',
+	  -menuitems => [[ command=>'~Document',
+			   -accelerator=>'Ctrl-0',
+			   -command=> \&help],
+			 [ command=>'~About',
+			   -command=> sub{$top->Dialog(-title   => "About Hephaestus",
+						       -text    => $About_text,
+						       -font    => $config{fonts}{small},
+						       -buttons => ["OK"],
+						       -bitmap  => "info")
+					    -> Show;
+					}],
+			]
+	 );
+
+
+## set up the various frames needed by the utilities
+use vars qw($periodic_table %bottom);
+$periodic_table = periodic_table($main);
+$top -> packPropagate(1);
+foreach my $k (keys %frames) {
+  eval "\$bottom{$k} = setup_$k(\$main)";
+};
+## $bottom{help} = $main->PodText(-file => ($is_windows) ? "hephaestus.pod" : $0,
+##			       -scrollbars=>'ose');
+##$bottom{help} -> zoom_in;
+##$bottom{help} -> zoom_in;
+
+## display the absorption utility at startup, but make sure the window
+## is big enough for both the transition chart and the periodic table
+&trans;
+$top -> update;
+my @geom = ($top->width, $top->height);
+&ion;
+$top -> update;
+if (not $is_windows) {
+  ($geom[0] = $top->width)  if ($geom[0] < $top->width);
+  ($geom[1] = $top->height) if ($geom[1] < $top->height);
+  &ion;
+  $top -> update;
+  ($geom[0] = $top->width)  if ($geom[0] < $top->width);
+  ($geom[1] = $top->height) if ($geom[1] < $top->height);
+  &absorption;
+  $top -> update;
+  ($geom[0] = $top->width)  if ($geom[0] < $top->width);
+  ($geom[1] = $top->height) if ($geom[1] < $top->height);
+};
+$top -> geometry(join("x", @geom)) unless $is_windows;
+$top -> update;
+$top -> packPropagate(0);
+
+STARTUP: {
+  &absorption, last STARTUP if  (lc($config{general}{startup}) eq 'absorption');
+  &formulas,   last STARTUP if  (lc($config{general}{startup}) eq 'formulas');
+  &data,       last STARTUP if  (lc($config{general}{startup}) eq 'data');
+  &ion,	       last STARTUP if  (lc($config{general}{startup}) eq 'ion');
+  &trans,      last STARTUP if  (lc($config{general}{startup}) eq 'trans');
+  &find,       last STARTUP if  (lc($config{general}{startup}) eq 'find');
+  &line,       last STARTUP if  (lc($config{general}{startup}) eq 'line');
+  &f1f2,       last STARTUP if ((lc($config{general}{startup}) eq 'f1f2') and ($config{general}{ifeffit}));
+  &absorption;
+};
+
+
+$top -> title('Hephaestus');
+$top -> iconname('Hephaestus');
+$top -> update;
+$splash -> Destroy;
+#$top -> resizable(0,0);
+$top -> deiconify;
+$top -> raise;
+MainLoop();
+
+
+
+=for Explain:
+     this is a dispatcher for a click on the periodic table. what
+     happens depends on which utility is showing
+
+=cut
+sub multiplexer {
+ SWITCH: {
+    get_foils_data($_[0]),    last SWITCH if ($current eq 'absorption');
+    get_chemical_data($_[0]), last SWITCH if ($current eq 'data');
+    get_f1f2_data($_[0]),     last SWITCH if ($current eq 'f1f2');
+    warn "Yikes!  Hephaestus' multiplexer failed to catch a periodic table click event: $_[0] ($current)\n";
+  };
+};
+
+=for Explain:
+     build the periodic table and return the frame which contains it
+
+=cut
+sub periodic_table {
+  my $table = $_[0] -> Frame(-borderwidth=>2, -relief=>'ridge');
+  my $frame = $table -> Frame()
+    -> pack(-side=>'top', -fill=>'x', -padx=>2, -pady=>2);
+  my $trans = $table -> Frame()
+    -> pack(-side=>'bottom', -padx=>2, -pady=>2);
+
+
+  # columns: 0 -- 17    rows: 0 -- 8
+  # [ symbol, row, column, phase]
+  my @elements = (['H',  0, 0,  'g'],
+		  ['He', 0, 17, 'g'],
+		  ['Li', 1, 0,  'm'],
+		  ['Be', 1, 1,  'm'],
+		  ['B',  1, 12, 's'],
+		  ['C',  1, 13, 'n'],
+		  ['N',  1, 14, 'n'],
+		  ['O',  1, 15, 'n'],
+		  ['F',  1, 16, 'n'],
+		  ['Ne', 1, 17, 'g'],
+		  ['Na', 2, 0,  'm'],
+		  ['Mg', 2, 1,  'm'],
+		  ['Al', 2, 12, 'm'],
+		  ['Si', 2, 13, 's'],
+		  ['P',  2, 14, 'n'],
+		  ['S',  2, 15, 'n'],
+		  ['Cl', 2, 16, 'n'],
+		  ['Ar', 2, 17, 'g'],
+		  ['K',  3, 0,  'm'],
+		  ['Ca', 3, 1,  'm'],
+		  ['Sc', 3, 2,  'm'],
+		  ['Ti', 3, 3,  'm'],
+		  ['V',  3, 4,  'm'],
+		  ['Cr', 3, 5,  'm'],
+		  ['Mn', 3, 6,  'm'],
+		  ['Fe', 3, 7,  'm'],
+		  ['Co', 3, 8,  'm'],
+		  ['Ni', 3, 9,  'm'],
+		  ['Cu', 3, 10, 'm'],
+		  ['Zn', 3, 11, 'm'],
+		  ['Ga', 3, 12, 'm'],
+		  ['Ge', 3, 13, 's'],
+		  ['As', 3, 14, 's'],
+		  ['Se', 3, 15, 'n'],
+		  ['Br', 3, 16, 'n'],
+		  ['Kr', 3, 17, 'g'],
+		  ['Rb', 4, 0,  'm'],
+		  ['Sr', 4, 1,  'm'],
+		  ['Y',  4, 2,  'm'],
+		  ['Zr', 4, 3,  'm'],
+		  ['Nb', 4, 4,  'm'],
+		  ['Mo', 4, 5,  'm'],
+		  ['Tc', 4, 6,  'm'],
+		  ['Ru', 4, 7,  'm'],
+		  ['Rh', 4, 8,  'm'],
+		  ['Pd', 4, 9,  'm'],
+		  ['Ag', 4, 10, 'm'],
+		  ['Cd', 4, 11, 'm'],
+		  ['In', 4, 12, 'm'],
+		  ['Sn', 4, 13, 'm'],
+		  ['Sb', 4, 14, 's'],
+		  ['Te', 4, 15, 's'],
+		  ['I',  4, 16, 'n'],
+		  ['Xe', 4, 17, 'g'],
+		  ['Cs', 5, 0,  'm'],
+		  ['Ba', 5, 1,  'm'],
+		  ['La', 5, 2,  'm'],
+		  ['Ce', 7, 4,  'm'],
+		  ['Pr', 7, 5,  'm'],
+		  ['Nd', 7, 6,  'm'],
+		  ['Pm', 7, 7,  'm'],
+		  ['Sm', 7, 8,  'm'],
+		  ['Eu', 7, 9,  'm'],
+		  ['Gd', 7, 10, 'm'],
+		  ['Tb', 7, 11, 'm'],
+		  ['Dy', 7, 12, 'm'],
+		  ['Ho', 7, 13, 'm'],
+		  ['Er', 7, 14, 'm'],
+		  ['Tm', 7, 15, 'm'],
+		  ['Yb', 7, 16, 'm'],
+		  ['Lu', 7, 17, 'm'],
+		  ['Hf', 5, 3,  'm'],
+		  ['Ta', 5, 4,  'm'],
+		  ['W',  5, 5,  'm'],
+		  ['Re', 5, 6,  'm'],
+		  ['Os', 5, 7,  'm'],
+		  ['Ir', 5, 8,  'm'],
+		  ['Pt', 5, 9,  'm'],
+		  ['Au', 5, 10, 'm'],
+		  ['Hg', 5, 11, 'm'],
+		  ['Tl', 5, 12, 'm'],
+		  ['Pb', 5, 13, 'm'],
+		  ['Bi', 5, 14, 'm'],
+		  ['Po', 5, 15, 'm'],
+		  ['At', 5, 16, 's'],
+		  ['Rn', 5, 17, 'g'],
+		  ['Fr', 6, 0,  'm'],
+		  ['Ra', 6, 1,  'm'],
+		  ['Ac', 6, 2,  'm'],
+		  ['Th', 8, 4,  'm'],
+		  ['Pa', 8, 5,  'm'],
+		  ['U',  8, 6,  'm'],
+		  ['Np', 8, 7,  'm'],
+		  ['Pu', 8, 8,  'm'],
+		  ['Am', 8, 9,  'm'],
+		  ['Cm', 8, 10, 'm'],
+		  ['Bk', 8, 11, 'm'],
+		  ['Cf', 8, 12, 'm'],
+		  ['Es', 8, 13, 'm'],
+		  ['Fm', 8, 14, 'm'],
+		  ['Md', 8, 15, 'm'],
+		  ['No', 8, 16, 'm'],
+		  ['Lr', 8, 17, 'm'],
+		  ['Rf', 6, 3,  'm'],
+		  ['Ha', 6, 4,  'm'],
+		  ['Sg', 6, 5,  'm'],
+		  ['Bh', 6, 6,  'm'],
+		  ['Hs', 6, 7,  'm'],
+		  ['Mt', 6, 8,  'm'],
+		 );
+
+  my @metal_args     = (-foreground       => 'seashell',
+			-background       => 'darkslategrey',
+			-activeforeground => 'black',
+			-activebackground => 'slategrey',
+			-font             => $config{fonts}{smbold});
+  my @semimetal_args = (-foreground       => 'seashell',
+			-background       => 'khaki4',
+			-activeforeground => 'black',
+			-activebackground => 'khaki3',
+			-font             => $config{fonts}{smbold});
+  my @nonmetal_args  = (-foreground       => 'seashell',
+			-background       => 'cadetblue4',
+			-activeforeground => 'black',
+			-activebackground => 'cadetblue3',
+			-font             => $config{fonts}{smbold});
+  my @gas_args	     = (-foreground       => 'seashell',
+			-background       => 'goldenrod4',
+			-activeforeground => 'black',
+			-activebackground => 'goldenrod3',
+			-font             => $config{fonts}{smbold});
+
+  ## -------------------------------------------------------------------
+  ## set up periodic table
+  my $label = $trans -> Label(-text=>'Lanthanides ', @label_args)
+    -> grid(-column=>0, -columnspan=>3, -row=>0, -sticky=>'e');
+  $label = $trans -> Label(-text=>'Actinides ', @label_args)
+    -> grid(-column=>0, -columnspan=>3, -row=>1, -sticky=>'e');
+  my %arg_refs = ('m'=>\@metal_args,
+		  's'=>\@semimetal_args,
+		  'n'=>\@nonmetal_args,
+		  'g'=>\@gas_args);
+  foreach my $e (@elements) {
+    my ($s, $r, $c, $p) = ($e->[0], $e->[1], $e->[2], $e->[3]);
+    my @button_args = @{$arg_refs{$p}};
+    if ($r < 7) {			# s p and d atoms
+      my $button = $frame -> Button(-text    => $s,
+				    -width   => ($is_windows) ? 3 : 1,
+				    @button_args,
+				    -command => [\&multiplexer, $s])
+	-> grid(-column=>$c, -row=>$r, -sticky=>'ew');
+      $button -> bind('<ButtonPress-3>' =>
+		      sub {
+			return if ($current ne "absorption");
+			$data{abs_filter} = $s;
+		      });
+    } else {			# lanthandes and actinides
+      my $button = $trans -> Button(-text    => $s,
+				    -width   => ($is_windows) ? 3 : 1,
+				    @button_args,
+				    -command => [\&multiplexer, $s])
+	-> grid(-column=>$c, -row=>$r-7, -sticky=>'ew');
+      $button -> bind('<ButtonPress-3>' =>
+		      sub {
+			return if ($current ne "absorption");
+			$data{abs_filter} = $s;
+		      });
+    };
+  };
+
+  $data{pt_resource} = $frame -> Label(-textvariable=>\$data{pt_explain}, @label_args)
+    -> grid(-column=>3, -columnspan=>7, -row=>0, -rowspan=>3, -sticky=>'w');
+
+  return $table;
+};
+
+
+sub verify_config {
+  my ($config_ref) = @_;
+  delete $config{general}{dummy_parameter};
+
+  ## general
+  $data{resource} = (lc($config{general}{resource}) =~ /^(elam|mcmaster|henke|chantler|cl)$/)
+    ? ucfirst(lc($config{general}{resource})) : 'Elam';
+  ($data{resource} = 'McMaster') if ($data{resource} eq 'Mcmaster');
+  $data{units}    = (lc($config{general}{units}) =~ /^(energies|wavelengths)$/)
+    ? ucfirst(lc($config{general}{units}))    : 'Energies';
+  $data{xsec}     = (lc($config{general}{xsec}) =~ /^(full|photo|coherent|incoherent)$/)
+    ? lc($config{general}{xsec})          : 'full';
+  ($data{cross_section} = 'Total')         if ($data{xsec} eq 'full');
+  ($data{cross_section} = 'Photoelectric') if ($data{xsec} eq 'photo');
+  ($data{cross_section} = 'Coherent')      if ($data{xsec} eq 'coherent');
+  ($data{cross_section} = 'Incoherent')    if ($data{xsec} eq 'incoherent');
+
+  # absorption
+  $data{abs_linewidth} = ($config{absorption}{linewidth} > 0)
+    ? $config{absorption}{linewidth} : 30;
+  $data{abs_offset} = ($config{absorption}{offset} > 0)
+    ? $config{absorption}{offset} : 3;
+
+  # formulas
+  $data{form_energy} = ($config{formulas}{energy} > 0)
+    ? $config{formulas}{energy} : 9000;
+
+  # data
+
+  # ion
+  $data{ion_energy}   = ($config{ion}{energy} > 0)
+    ? $config{ion}{energy}            : 9000;
+  $data{ion_length}   = ($config{ion}{length} =~ /^(3.3|6.6|10|15|30|45|60)$/)
+    ? $config{ion}{length}            : 15;
+  $data{ion_gas1}     = (lc($config{ion}{gas1}) =~ /^(he|n2|ar|ne|kr|xe)$/)
+    ? $config{ion}{gas1}              : 15;
+  $data{ion_pressure} = ((lc($config{ion}{pressure}) > 0) and (lc($config{ion}{pressure}) < 2300))
+    ? int($config{ion}{pressure})     : 760;
+  $data{ion_gain}     = (lc($config{ion}{pressure}) > 0)
+    ? int($config{ion}{gain})         : 8;
+
+  # trans
+
+  # find
+  $data{find_energy} = ($config{find}{energy} > 0)
+    ? $config{find}{energy} : 9000;
+  $data{find_harmonic} = ($config{find}{harmonic} =~ /^[123]$/)
+    ? $config{find}{harmonic} : 1;
+
+  # line
+  $data{line_energy} = ($config{line}{energy} > 0)
+    ? $config{line}{energy} : 8047;
+
+  # f1f2
+  $data{f1f2_emin} = ($config{f1f2}{emin} > 0)
+    ? $config{f1f2}{emin} : 3000;
+  $data{f1f2_emax} = ($config{f1f2}{emax} > 0)
+    ? $config{f1f2}{emax} : 7000;
+  $data{f1f2_grid} = ($config{f1f2}{grid} > 0)
+    ? $config{f1f2}{grid} : 5;
+
+  $data{sample_energy} = 9000;
+  $data{pt_explain}    = "Using Elam database\nComputing total cross-section";
+  $data{ion_resource}  = "Using Elam database";
+  $data{abs_odd_value} = 40;
+  if ($data{units} eq 'Wavelengths') {
+    map {$data{$_} = &e2l($data{$_})} (qw(form_energy ion_energy));
+    $data{sample_energy} = e2l(9000);
+  };
+  Xray::Absorption -> load($data{resource});
+
+  ## fallbacks for font settings
+  $config{fonts}{small}	    ||= 'Helvetica 10';
+  $config{fonts}{smfixed}   ||= 'Courier 10';
+  $config{fonts}{fixed}	    ||= 'Courier 11';
+  $config{fonts}{largebold} ||= 'Helvetica 14 bold';
+  $config{fonts}{medbold}   ||= 'Helvetica 12 bold';
+  $config{fonts}{smbold}    ||= 'Helvetica 10 bold';
+
+  ## use Data::Dumper;
+  ## print Data::Dumper->Dump([$config_ref], [qw(*config)]);
+
+  $config_ref -> WriteConfig(Ifeffit::FindFile->find("hephaestus", "rc_personal"));
+};
+
+sub help {
+  my $podfile = File::Spec->catfile(Ifeffit::FindFile->find("athena", "augpod"),
+				    "hephaestus.pod");
+  if (-e $podfile) {
+    ## redisplay the pod file every time in case the user has clicked elsewhere
+    ## in the Athena User's Guide
+    $bottom{help} = $main->PodText(-file => "hephaestus.pod", -scrollbars=>'ose');
+    $periodic_table -> packForget() if $current =~ /$uses_periodic_regex/;
+    switch({page=>"help", text=>'Hephaestus Document'});
+    $top -> title('Hephaestus'); # Tk::Pod overwrites top's title, grrr...!
+  } else {
+    my $info = <<'EOH'
+It seems that you have not installed the Athena User's Guide, which includes
+the Hephaestus document.
+
+The User's Guide is distributed separately from the rest of the horae
+software.  Go to
+
+http://cars9.uchicago.edu/iffwiki/BruceRavel/AthenaUsersGuide
+
+and follow the simple installation instructions.
+
+EOH
+      ;
+    $info =~ s{\n}{ }g;		## tidy up for display
+    $info =~ s{ }{\n\n}g;
+    my $dialog =
+      $top -> Dialog(-bitmap         => 'info',
+		     -text           => $info,
+		     -title          => 'Hephaestus: Missing document',
+		     -buttons        => [qw/OK/],
+		     -default_button => 'OK');
+    my $response = $dialog->Show();
+  };
+};
+#! /usr/bin/perl -w
+
+## ===========================================================================
+##  This is the absorption portion of hephaestus
+
+sub absorption {
+  $periodic_table -> pack(-side=>'top', -padx=>4, -pady=>4, -fill=>'x')
+    if $current !~ /$uses_periodic_regex/;
+  switch({page=>"absorption", text=>'Periodic Table of Absorption Data'});
+  $data{pt_resource} -> grid(-column=>3, -columnspan=>7, -row=>0, -rowspan=>3, , -sticky=>'w');
+};
+
+
+sub setup_absorption {
+  my $frame = $_[0] -> Frame(-borderwidth=>2, -relief=>'flat');
+
+  ## energy and thickness entry widgets
+##   $data{abs_energy_label} = $frame -> Label(-text=>'Energy', @label_args)
+##     -> grid(-column=>0, -row=>4, -sticky=>'w');
+##   my $entry = $frame -> Entry(-width=>9, -textvariable=>\$data{abs_energy},
+## 			      -validate=>'key', -validatecommand=>\&set_variable)
+##     -> grid(-column=>1, -row=>4, -sticky=>'ew');
+##   $data{abs_units_label} = $frame -> Label(-text=>"eV", @label_args)
+##     -> grid(-column=>2, -row=>4, -sticky=>'w');
+##
+##   my $label = $frame -> Label(-text=>'Thickness', @label_args)
+##     -> grid(-column=>0, -row=>5, -sticky=>'w');
+##   $entry = $frame -> Entry(-width=>9, -textvariable=>\$data{abs_thickness},
+## 			   -validate=>'key', -validatecommand=>\&set_variable)
+##     -> grid(-column=>1, -row=>5, -sticky=>'ew');
+##   $label = $frame -> Label(-text=>'µm', @label_args)
+##     -> grid(-column=>2, -row=>5, -sticky=>'w');
+##
+
+  my $r = -1;
+  foreach my $l ('Name', 'Number', 'Weight', 'Density',) {
+    ##		 'Absorption Length', 'Transmitted Fraction') {
+    ##$r=5 if ($l eq 'Absorption Length');
+    my $label = $frame -> Label(-text=>$l, @label_args)
+      -> grid(-column=>0, -row=>++$r, -sticky=>'w', -padx=>2);
+    my $entry = $frame -> Label(-relief=>'flat', -textvariable=>\$data{"abs_$l"},
+			     -width=>12, -anchor=>'w', -font=>$config{fonts}{small}, @answer_args)
+      -> grid(-column=>1, -row=>$r, -sticky=>'e', -padx=>2);
+  };
+  my $label = $frame -> Label(-text=>'Filter', @label_args)
+    -> grid(-column=>0, -row=>++$r, -sticky=>'w');
+  $data{abs_entry} = $frame -> Entry(-width=>3, -textvariable=>\$data{abs_filter},)
+    -> grid(-column=>1, -row=>$r, -sticky=>'w');
+  $data{abs_plot} = $frame -> Button(-text    => 'Plot filter',
+				     -width   => 20,
+				     @button_args,
+				     -command => \&plot_filter,
+				     -state   => 'disabled')
+    -> grid(-column=>0, -columnspan=>2, -row=>++$r, -sticky=>'ew');
+
+
+  ## Table of Edge energies
+  my $edges = $frame -> Scrolled("HList",
+				 -columns    => 2,
+				 -header     => 1,
+				 -scrollbars => 'oe',
+				 -background => $bgcolor,
+				 -selectmode => 'single',
+				 #-selectbackground => $bgcolor,
+				 -highlightcolor => $bgcolor,
+				 -width      => 15,
+				 -relief     => 'ridge',
+				 -browsecmd  => \&highlight_lines,
+				 )
+      -> grid(-column=>4, -row=>0, -rowspan=>9, -padx=>3);
+  my @header_style_params = ('text', -font=>$config{fonts}{smbold}, -anchor=>'center', -foreground=>'blue4');
+  my @label_style_params  = ('text', -font=>$config{fonts}{small}, -anchor=>'center', -foreground=>'blue4');
+  my $header_style = $edges -> ItemStyle(@header_style_params);
+  my $label_style  = $edges -> ItemStyle(@label_style_params);
+  $edges -> headerCreate(0, -text	   => "Edge",
+			 -style		   => $header_style,
+			 -headerbackground => $bgcolor,
+			 -borderwidth	   => 1);
+  $edges -> headerCreate(1, -text          => "Energy",
+			 -style            => $header_style,
+			 -headerbackground => $bgcolor,
+			 -borderwidth	   => 1,);
+  $edges -> columnWidth(0, -char=>6);
+  $edges -> columnWidth(1, -char=>8);
+  $edges -> Subwidget("yscrollbar")
+    -> configure(-background=>$bgcolor, ($is_windows) ? () : (-width=>8));
+  foreach my $e (qw(K L1 L2 L3 M1 M2 M3 M4 M5 N1 N2 N3 N4 N5 N6 N7
+		    O1 O2 O3 O4 O5 P1 P2 P3)) {
+    $edges -> add($e);
+    $edges -> itemCreate($e, 0, -text=>$e, -style=>$label_style);
+    $edges -> itemCreate($e, 1);
+  };
+  $energies{edges} = $edges;
+
+
+  ## Table of Line energies
+
+  my $lines = $frame -> Scrolled("HList",
+				 -columns    => 4,
+				 -header     => 1,
+				 -scrollbars => 'oe',
+				 -background => $bgcolor,
+				 -selectmode => 'single',
+				 #-selectbackground => $bgcolor,
+				 -highlightcolor => $bgcolor,
+				 -width      => 36,
+				 -relief     => 'ridge',
+				 )
+      -> grid(-column=>5, -row=>0, -rowspan=>9, -padx=>3, -sticky=>'ew');
+  $header_style = $lines -> ItemStyle(@header_style_params);
+  $label_style  = $lines -> ItemStyle(@label_style_params);
+  $lines -> headerCreate(0, -text	   => "Line",
+			 -style		   => $header_style,
+			 -headerbackground => $bgcolor,
+			 -borderwidth	   => 1);
+  $lines -> headerCreate(1, -text	   => "Trans.",
+			 -style		   => $header_style,
+			 -headerbackground => $bgcolor,
+			 -borderwidth	   => 1);
+  $lines -> headerCreate(2, -text	   => "Energy",
+			 -style		   => $header_style,
+			 -headerbackground => $bgcolor,
+			 -borderwidth	   => 1);
+  $lines -> headerCreate(3, -text	   => "Prob.",
+			 -style		   => $header_style,
+			 -headerbackground => $bgcolor,
+			 -borderwidth	   => 1);
+  $lines -> columnWidth(0, -char=>9);
+  $lines -> columnWidth(1, -char=>10);
+  $lines -> columnWidth(2, -char=>9);
+  $lines -> columnWidth(3, -char=>7);
+  $lines -> Subwidget("yscrollbar")
+    -> configure(-background=>$bgcolor, ($is_windows) ? () : (-width=>8));
+  foreach my $e (@LINELIST) {
+    $lines -> add($e);
+    $lines -> itemCreate($e, 0, -text=>Xray::Absorption -> get_Siegbahn_full($e), -style=>$label_style);
+    $lines -> itemCreate($e, 1, -text=>Xray::Absorption -> get_IUPAC($e),         -style=>$label_style);
+    $lines -> itemCreate($e, 2);
+    $lines -> itemCreate($e, 3);
+  };
+  $energies{lines} = $lines;
+
+  my $hash;
+  do {
+    no warnings;
+    $hash = $$Xray::Absorption::Elam::r_elam{energy_list};
+  };
+  my @k_list = ();
+  foreach my $key (keys %$hash) {
+    next unless exists $$hash{$key}->[2];
+    next unless (lc($$hash{$key}->[1]) eq 'k');
+    push @k_list, $$hash{$key};
+  };
+  ## and sort by increasing energy
+  @k_list = sort {$a->[2] <=> $b->[2]} @k_list;
+  $data{k_list} = \@k_list;
+  $data{abs_linewidth} = 30;
+
+  return $frame;
+};
+
+
+
+
+
+sub get_foils_data {
+  my $elem = $_[0];
+  my $in_resource = Xray::Absorption -> in_resource($elem);
+  map {$probs{$_} = ''} keys(%probs);
+  ## enable writing in the entry widgets
+  #map {$_ -> configure(-state=>'normal')} @all_entries;
+  $data{abs_Name}    = get_name($elem);
+  $data{abs_Number}  = get_Z($elem);
+  $data{abs_Symbol}  = get_symbol($elem);
+  my $z              = $data{abs_Number};
+  $data{abs_Weight}  = Xray::Absorption -> get_atomic_weight($elem);
+  $data{abs_Weight}  = ($data{abs_Weight}) ? $data{abs_Weight} . ' amu' : '' ;
+  my $density    = Xray::Absorption -> get_density($elem);
+  $data{abs_Density} = ($density) ? $density . ' g/cm^3' : '' ;
+
+  ## vanadium is the first element for which a reasonable filter works
+  ##if ($data{abs_Number} < 23) {
+  ##  $data{abs_filter} = q{};
+  ##  $data{abs_plot}  -> configure(-state=>'disabled');
+  ##};
+  if ($config{general}{ifeffit}) {  #and ($data{abs_Number} > 22)) {
+    $data{abs_filter} = ($data{abs_Number} <  24) ? q{}
+                      : ($data{abs_Number} == 37) ? 35     ## Kr is a stupid filter material
+                      : ($data{abs_Number} <  39) ? $z - 1 ## Z-1 for V - Y
+                      : ($data{abs_Number} == 45) ? 44     ## Tc is a stupid filter material
+                      : ($data{abs_Number} == 56) ? 53     ## Xe is a stupid filter material
+                      : ($data{abs_Number} <  57) ? $z - 2 ## Z-2 for Zr - Ba
+		      : l_filter($elem);                   ## K filter for heavy elements
+    $data{abs_filter} = get_symbol($data{abs_filter});
+    $data{abs_plot}  -> configure(-state=>($data{abs_filter}) ? 'normal' : 'disabled');
+    $data{abs_entry} -> configure(-background=>$bgcolor);
+  };
+
+  my @edges = (qw(K L1 L2 L3 M1 M2 M3 M4 M5 N1 N2 N3 N4 N5 N6 N7
+		    O1 O2 O3 O4 O5 P1 P2 P3));
+
+  foreach my $e (@edges, @LINELIST) {
+    $energies{$e} = Xray::Absorption -> get_energy($elem, $e);
+    $energies{$e} ||= '';
+    unless ($e =~ /^(K|([LMNOP][1-7]))$/) {
+      next unless $energies{$e};
+      if ($Xray::Absorption::resource eq 'elam') {
+	$probs{$e} =
+	  sprintf "%6.4f", Xray::Absorption -> get_intensity($elem, $e);
+      };
+    };
+  };
+
+  if (($z >= 22) and ($z <= 29)) {
+    $energies{M4} = '';
+    $energies{M5} = '';
+  };
+  if ($z <= 17) {
+    $energies{M1} = '';
+    $energies{M2} = '';
+    $energies{M3} = '';
+  };
+  if ($data{units} eq "Wavelengths") {
+    foreach (keys(%energies)) {
+      next if ($_ eq 'lines');
+      next if ($_ eq 'edges');
+      $energies{$_} = &e2l($energies{$_});
+    };
+  };
+
+  ## fill Edge and Line tables with these values
+  my @label_style_params  = ('text', -font=>$config{fonts}{small}, -anchor=>'center', -foreground=>'blue4');
+  my @data_style_params = ('text', -font=>$config{fonts}{small}, -anchor=>'e', -foreground=>'black');
+  my $data_style   = $energies{edges} -> ItemStyle(@data_style_params);
+  foreach my $e (@edges) {
+    $energies{edges} -> itemConfigure($e, 1, -text=>$energies{$e}, -style=>$data_style);
+  };
+  $energies{edges} -> selectionClear;
+  $energies{edges} -> anchorClear;
+  my $label_style   = $energies{lines} -> ItemStyle(@label_style_params);
+  $data_style   = $energies{lines} -> ItemStyle(@data_style_params);
+  foreach my $l (@LINELIST) {
+    $energies{lines} -> itemConfigure($l, 0, -style=>$label_style);
+    $energies{lines} -> itemConfigure($l, 1, -style=>$label_style);
+    $energies{lines} -> itemConfigure($l, 2, -text=>$energies{$l}, -style=>$data_style);
+    $energies{lines} -> itemConfigure($l, 3, -text=>$probs{$l},    -style=>$data_style);
+  };
+  $energies{lines} -> selectionClear;
+  $energies{lines} -> anchorClear;
+
+
+  my $is_gas = ($elem =~ /\b(Ar|Cl|H|He|Kr|N|Ne|O|Rn|Xe)\b/);
+
+##   $data{'abs_Absorption Length'} = '';
+##   $data{'abs_Transmitted Fraction'}       = '';
+##   my $bail = 0;
+##   if ($data{abs_energy} and $in_resource) {
+##     if ((lc($data{resource}) eq "henke") and ($data{abs_energy} > 30000)) {
+##       my $dialog =
+## 	$top -> Dialog(-bitmap         => 'info',
+## 		       -text           => "The Henke tables only include data up to 30 keV.",
+## 		       -title          => 'Hephaestus warning',
+## 		       -buttons        => [qw/OK/],
+## 		       -default_button => 'OK')
+## 	  -> Show();
+##       return;
+##     };
+##     if (($data{abs_energy} < $data{abs_odd_value}) and ($data{units} eq "Energies")) {
+##       my $dialog = $top -> DialogBox(-title=>"Hephaestus warning!",
+## 				     -buttons=>['OK', 'Cancel'],);
+##       $dialog -> add("Label", qw/-padx .25c -pady .25c -text/,
+## 		     "You have chosen a very low energy.  Should I$/" .
+## 		     "try to calculate the absorption length?$/" .
+## 		     "(There might be no data at that energy!)",)
+## 	-> pack(-side=>'left');
+##       my $answer = $dialog -> Show;
+##       ($answer eq 'Cancel') and $bail = 1;
+##     } elsif (($data{abs_energy} > $data{abs_odd_value}) and ($data{units} eq "Wavelengths")) {
+##       my $dialog = $top -> DialogBox(-title=>"Hephaestus warning!",
+## 				     -buttons=>['OK', 'Cancel'],);
+##       $dialog -> add("Label", qw/-padx .25c -pady .25c -text/,
+## 		     "You have chosen a very large wavelnegth.  Should I$/" .
+## 		     "try to calculate the absorption length?$/" .
+## 		     "(There might be no data at that wavelength!)",)
+## 	-> pack(-side=>'left');
+##       my $answer = $dialog -> Show;
+##       ($answer eq 'Cancel') and $bail = 1;
+##     };
+##     unless ($bail) {
+##       my $conv   = Xray::Absorption -> get_conversion($elem);
+##       ($data{units} eq "Wavelengths") and $data{abs_energy} = &e2l($data{abs_energy});
+##       my $barns  = Xray::Absorption -> cross_section($elem, $data{abs_energy}, $data{xsec});
+##       ($data{units} eq "Wavelengths") and $data{abs_energy} = &e2l($data{abs_energy});
+##       my $factor = ($is_gas) ? 1 : 10000;
+##       my $abslen = ($conv and $barns and $density) ?
+## 	$factor/($barns*$density/$conv) : 0;
+##       $data{'abs_Absorption Length'} = '';
+##       if ($abslen) {
+## 	$data{'abs_Absorption Length'}  = 	sprintf "%8.2f", $abslen;
+## 	$data{'abs_Absorption Length'} .= ($is_gas) ? ' cm' : ' µm';
+## 	$data{'abs_Absorption Length'} =~ s/^\s+//;
+##       };
+##
+##       $data{'abs_Transmitted Fraction'} = '';
+##       ##print join("  ", $conv, $barns, $density, $thickness, $abslen, $is_gas, $/);
+##       if ($data{abs_thickness} and $abslen) {
+## 	my $factor = $data{abs_thickness} / $abslen;
+## 	$data{'abs_Transmitted Fraction'} = sprintf ("%6.4g", exp(-1 * $factor));
+##       };
+##     };
+##   };
+
+  ## and disable writing in the entry widgets once again
+  #map {$_ -> configure(-state=>'disabled')} @all_entries;
+
+  ## set items on formulas and data utilities
+  return if ($current eq "data");
+  get_chemical_data($elem);
+  return 0;
+};
+
+sub l_filter {
+  my $elem = $_[0];
+  return q{} if (get_Z($elem) > 98);
+  my $en = Xray::Absorption -> get_energy($elem, 'la1') + 3*$data{abs_linewidth};
+  my $filter = q{};
+  foreach (@{$data{k_list}}) {
+    $filter = $_->[0];
+    last if ($_->[2] >= $en);
+  };
+  my $result = get_Z($filter);
+  ++$result if ($result == 36);
+  return $result;
+};
+
+sub plot_filter {
+  my $znum = get_Z($data{abs_filter});
+  if (not $znum) {
+    $data{abs_entry} -> configure(-background=>'indianred1');
+    return;
+  };
+  $data{abs_entry} -> configure(-background=>$bgcolor);
+  my $e  = ($data{abs_Number} < 57) ? "K"   : "L3";
+  my $l1 = ($data{abs_Number} < 57) ? "Ka1" : "Lb2";
+  my $l2 = ($data{abs_Number} < 57) ? "Ka2" : "La1";
+  my $l3 = ($data{abs_Number} < 57) ? q{}   : "La2";
+  my $l1key = ($data{abs_Number} < 57) ? "K \\ga1" : "L \\gb2";
+  my $l2key = ($data{abs_Number} < 57) ? "K \\ga2" : "L \\ga1";
+  my $l3key = ($data{abs_Number} < 57) ? q{}       : "L \\ga2";
+  my ($edge_energy, $e1, $e2) = (Xray::Absorption -> get_energy($data{abs_Number}, $e),
+				 Xray::Absorption -> get_energy($data{abs_Number}, $l1),
+				 Xray::Absorption -> get_energy($data{abs_Number}, $l2));
+  my ($h1, $h2) = (Xray::Absorption -> get_intensity($data{abs_Number}, $l1),
+		   Xray::Absorption -> get_intensity($data{abs_Number}, $l2));
+  my ($e3, $h3) = (0, 0);
+  ($e3 = Xray::Absorption -> get_energy($data{abs_Number}, $l3)) if $l3;
+  ($h3 = Xray::Absorption -> get_intensity($data{abs_Number}, $l3)) if $l3;
+  my $third = q{};
+  if ($l3) {
+    $third  = "set line.3 = $h3*300*gauss(f1f2.energy, $e3, $data{abs_linewidth})\n";
+    $third .= "plot(f1f2.energy, line.3, key='$data{abs_Symbol} $l3key')\n";
+  };
+
+  my ($emin, $emax, $z) = ($e2-400, $edge_energy+300, $znum);
+  my $commands = "
+f1f2.energy = range($emin, $emax, 10)
+f1f2(energy=f1f2.energy, z=$z, width=-2)
+newplot(f1f2.energy, f1f2.f2, key='$data{abs_filter} filter', title='Filter plot', xlabel='Energy (eV)', ylabel='filter and lines', key_x=0.15)
+set line.1 = $h1*300*gauss(f1f2.energy, $e1, $data{abs_linewidth})
+set line.2 = $h2*300*gauss(f1f2.energy, $e2, $data{abs_linewidth})
+plot(f1f2.energy, line.1, key='$data{abs_Symbol} $l1key')
+plot(f1f2.energy, line.2, key='$data{abs_Symbol} $l2key')
+$third
+set top = ceil(f1f2.f2)*1.2
+plot_arrow(x1=$edge_energy, y1=0, x2=$edge_energy, y2=top, no_head=1)
+plot_text(x=$edge_energy+10, y=1, text='  $data{abs_Symbol} $e edge')
+";
+  Ifeffit::ifeffit($commands);
+};
+
+
+sub highlight_lines {
+  my ($edge, $position) = @_;
+  clear_lines_styles();
+  my @label_style_params  = ('text', -font=>$config{fonts}{small}, -anchor=>'center', -foreground=>'blue4', -background=>$acolor);
+  my @data_style_params = ('text', -font=>$config{fonts}{small}, -anchor=>'e', -foreground=>'black', -background=>$acolor);
+  my $label_style  = $energies{lines} -> ItemStyle(@label_style_params);
+  my $data_style   = $energies{lines} -> ItemStyle(@data_style_params);
+  foreach my $e (@LINELIST) {
+    my $iupac = Xray::Absorption->get_IUPAC($e);
+    my $is_m45 = ( ($edge =~ m{M[45]}) and ($e eq 'Mz') );
+    next if ((not $is_m45) and ($iupac !~ m{$edge\-}));
+    map {$energies{lines} -> itemConfigure($e, $_, -style=>$label_style) } (0, 1);
+    map {$energies{lines} -> itemConfigure($e, $_, -style=>$data_style) } (2, 3);
+  }
+};
+sub clear_lines_styles {
+  my ($lines) = @_;
+  my @label_style_params  = ('text', -font=>$config{fonts}{small}, -anchor=>'center', -foreground=>'blue4', -background=>$bgcolor);
+  my @data_style_params = ('text', -font=>$config{fonts}{small}, -anchor=>'e', -foreground=>'black', -background=>$bgcolor);
+  my $label_style  = $energies{lines} -> ItemStyle(@label_style_params);
+  my $data_style   = $energies{lines} -> ItemStyle(@data_style_params);
+  foreach my $e (@LINELIST) {
+    map {$energies{lines} -> itemConfigure($e, $_, -style=>$label_style) } (0, 1);
+    map {$energies{lines} -> itemConfigure($e, $_, -style=>$data_style) } (2, 3);
+  };
+};
+#! /usr/bin/perl -w
+
+## ===========================================================================
+##  This is the formulas portion of hephaestus
+
+sub formulas {
+  $periodic_table -> packForget() if $current =~ /$uses_periodic_regex/;
+  switch({page=>"formulas", text=>'Absorption Lengths of Compounds'});
+};
+
+
+sub setup_formulas {
+  my $frame = $_[0] -> Frame(-borderwidth=>2, -relief=>'flat');
+
+  $data{form_energy} ||= 9000;
+
+  my $left = $frame -> Frame()
+    -> pack(-side=>'left', -expand=>1, -fill=>'both');
+  my $right = $frame -> Frame()
+    -> pack(-side=>'right', -expand=>1, -fill=>'both', -pady=>2, -padx=>6);
+
+  my $labframe = $left -> LabFrame(-label=>'Known materials',
+				   -labelside=>'acrosstop', @label_args)
+    -> pack(-expand=>1, -fill=>'both');
+  $data{form_lb} = $labframe
+    -> Scrolled('Listbox',
+		-font	    => $config{fonts}{small},
+		-selectmode => 'single',
+		-scrollbars => 'e',
+		-width	    => 25,
+		-height	    => 10)
+      -> pack(-expand=>1, -fill=>'both');
+  $data{form_lb} -> Subwidget("yscrollbar") -> configure(-background=>$bgcolor);
+  BindMouseWheel($data{form_lb});
+
+  $data{form_lb} -> insert('end', '-- none --');
+
+  my $userformulas = Ifeffit::FindFile->find("hephaestus", "data");
+  tie %userformulas, 'Config::IniFiles', (-file=>$userformulas) if (-e $userformulas);
+  foreach my $s (sort(keys %formula)) {
+    next if ($s eq '^^^^');
+    $data{form_lb} -> insert('end', $s);
+  };
+
+  $data{form_lb} -> bind('<ButtonRelease-1>' =>
+	      sub{
+		my $s = $data{form_lb}->get('active');
+		(($data{form_name}, $data{form_string}, $data{form_density}) =
+		 ("", "", "")), return if ($s =~ /none/);
+		$data{form_name}    = $s;
+		$data{form_type}    = "Density";
+		$data{form_string}  = $formula{$s};
+		$data{form_density} = $density{$s};
+	      });
+
+
+  my $frm = $right -> Frame()
+    -> pack(-side=>'top', -anchor=>'w', -padx=>8);
+  $frm -> Label(-text=>'Formula:', @label_args)
+    -> grid(-row=>0, -column=>0, -sticky=>'w');
+  $data{form_formula_entry} =
+    $frm -> Entry(-width=>35, -textvariable=>\$data{form_string})
+      -> grid(-row=>0, -column=>1, -sticky=>'w', -columnspan=>4, -padx=>2);
+
+  $data{form_type} = 'Density';
+  $frm -> Optionmenu(-options	       => ['Density', 'Molarity'],
+		     -command	       => sub{$data{form_density_units} -> configure(-text=>($data{form_type} eq 'Density') ? 'gram/cm^3' : 'mole/liter');
+					      $data{form_density}="";
+					      if ($data{form_type} eq 'Density') {
+						$data{form_add_button}    -> configure(-state=>'normal');
+						$data{form_remove_button} -> configure(-state=>'normal');
+					      } else {
+						$data{form_add_button}    -> configure(-state=>'disabled');
+						$data{form_remove_button} -> configure(-state=>'disabled');
+					      };
+					    },
+		     -textvariable     => \$data{form_type},
+		     -font             => $config{fonts}{smbold},
+		     -foreground       => 'blue4',
+		     -activeforeground => 'blue4',
+		     -borderwidth      => 1,)
+    -> grid(-row=>1, -column=>0, -sticky=>'w');
+  $data{form_density_entry} =
+    $frm -> Entry(-width=>7, -font=>$config{fonts}{smfixed}, -textvariable=>\$data{form_density},
+		  -validate=>'key', -validatecommand=>\&set_variable)
+    -> grid(-row=>1, -column=>1, -sticky=>'w', -padx=>2);
+  $data{form_density_units} = $frm -> Label(-text=>'gram/cm^3', @label_args)
+    -> grid(-row=>1, -column=>2, -sticky=>'w');
+  $data{form_add_button} = $frm -> Button(-text=>'Add', @button_args,
+					  -command=>\&user_formulas_add)
+    -> grid(-row=>1, -column=>3, -sticky=>'e', -pady=>2);
+  $data{form_remove_button} = $frm -> Button(-text=>'Remove', @button_args,
+					     -command=>\&user_formulas_remove)
+    -> grid(-row=>1, -column=>4, -sticky=>'e', -pady=>2);
+
+  $data{form_energy_label} = $frm -> Label(-text=>'Energy:', @label_args)
+    -> grid(-row=>2, -column=>0, -sticky=>'w');
+  $data{form_energy_entry} =
+    $frm -> Entry(-width=>7, -font=>$config{fonts}{smfixed}, -textvariable=>\$data{form_energy},
+		  -validate=>'key', -validatecommand=>\&set_variable)
+      -> grid(-row=>2, -column=>1, -sticky=>'w', -padx=>2);
+  $data{form_energy_units}= $frm -> Label(-text=>'eV', @label_args)
+    -> grid(-row=>2, -column=>2, -sticky=>'w');
+
+  $frm -> Button(-text=>'Compute', @button_args,
+		 -width=>9,
+		 -command=>\&get_formula_data)
+    -> grid(-row=>3, -column=>0, -columnspan=>5, -sticky=>'ew', -pady=>4);
+
+
+  $labframe = $right -> LabFrame(-label=>'Results',
+				 -labelside=>'acrosstop', @label_args)
+    -> pack(-expand=>1, -fill=>'both');
+#  $right -> Button(-text=>'Plot information depth', @button_args,
+#		   -width=>9,
+#		   -command=>\&plot_information_depth)
+#    -> pack(-fill=>'x');
+
+  $data{form_results} = $labframe -> Scrolled("ROText",
+					      -scrollbars=>'osoe',
+					      -height=>1, -width=>1,
+					      -relief=>'sunken',
+					      -wrap=>'none',
+					      -font=>$config{fonts}{smfixed},
+					     )
+    -> pack(-fill=>'both', -expand=>1);
+  $data{form_results} -> Subwidget("xscrollbar") -> configure(-background=>$bgcolor);
+  $data{form_results} -> Subwidget("yscrollbar") -> configure(-background=>$bgcolor);
+  $data{form_results} -> tagConfigure('margin',   -lmargin1=>4, -lmargin2=>4);
+  $data{form_results} -> tagConfigure('molarity', -lmargin1=>4, -lmargin2=>4, -foreground=>'blue4');
+  $data{form_results} -> tagConfigure('error',    -lmargin1=>4, -lmargin2=>4, -foreground=>'red3');
+  $data{form_results} -> tagConfigure('xsec',     -lmargin1=>4, -lmargin2=>4, -foreground=>'black');
+  ## disable mouse-3
+  my @swap_bindtags = $data{form_results}->Subwidget('rotext')->bindtags;
+  $data{form_results}->Subwidget('rotext') -> bindtags([@swap_bindtags[1,0,2,3]]);
+  $data{form_results}->Subwidget('rotext') -> bind('<Button-3>' => sub{$_[0]->break});
+
+  $data{form_formula_entry} -> bind("<KeyPress-Return>"=>\&get_formula_data);
+  $data{form_density_entry} -> bind("<KeyPress-Return>"=>\&get_formula_data);
+  $data{form_energy_entry}  -> bind("<KeyPress-Return>"=>\&get_formula_data);
+
+  return $frame;
+};
+
+
+sub get_formula_data {
+  if ((lc($data{resource}) eq "henke") and ($data{form_energy} > 30000)) {
+    my $dialog =
+      $top -> Dialog(-bitmap         => 'info',
+		     -text           => "The Henke tables only include data up to 30 keV.",
+		     -title          => 'Hephaestus warning',
+		     -buttons        => [qw/OK/],
+		     -default_button => 'OK')
+	-> Show();
+    return;
+  };
+  $data{form_results} -> delete(qw/1.0 end/);
+  my %count;
+  unless ($data{form_string}) {
+    $data{form_results} -> insert('end', "\nNo formula.\n", ['error']);
+    return;
+  };
+  $data{form_density} ||= 0;
+  if (($data{form_type} eq 'Molarity') and not ($data{form_density} > 0)) {
+    $data{form_results} -> insert('end', "\nMolarity was not given.\n", ['error']);
+    return;
+  };
+
+  my @edges = ();
+
+  my $ok = parse_formula($data{form_string}, \%count);
+  my $energy  = ($data{units} eq 'Energies') ? $data{form_energy} : e2l($data{form_energy});
+  my $units   = ($data{units} eq 'Energies') ? 'eV' : 'Å';
+  my $density = $data{form_density};
+  if ($data{form_type} eq 'Molarity') {
+    ## 1 mole is 6.0221415 x 10^23 particles
+    ## 1 amu = 1.6605389 x 10^-24 gm
+    ## mole*amu = 1 gram/amu  wow!
+    $density = 0;
+    foreach my $k (keys(%count)) {
+      $density += Xray::Absorption -> get_atomic_weight($k) * $count{$k};
+    };
+    ## number_of_amus * molarity(moles/liter) * 1 gram/amu = density of solute
+    $density *= $data{form_density};
+  };
+  # molarity is moles/liter, density is g/cm^3, 1000 is the conversion
+  # btwn liters and cm^3
+  ($density /= 1000) if ($data{form_type} eq 'Molarity');
+  if ($ok) {
+    my ($weight, $xsec, $answer, $dens) = (0,0,"\n",$density);
+    #$dens = ($density =~ /^(\d+\.?\d*|\.\d+|\d\.\d+[eEdD][-+]?\d+)$/) ? $density : 0;
+    $dens = ($density > 0) ? $density : 0;
+    $answer .= "  element   number   barns/atom     cm^2/gm\n";
+    $answer .= " --------- ----------------------------------\n";
+    my ($barns_per_formula_unit, $amu_per_formula_unit) = (0,0);  # 1.6607143
+    foreach my $k (sort (keys(%count))) {
+      $weight  += Xray::Absorption -> get_atomic_weight($k) * $count{$k};
+      my $scale = Xray::Absorption -> get_conversion($k);
+      my $this = Xray::Absorption -> cross_section($k, $energy, $data{xsec});
+      $barns_per_formula_unit += $this * $count{$k};
+      $amu_per_formula_unit += Xray::Absorption -> get_atomic_weight($k) * $count{$k};
+      if ($count{$k} > 0.001) {
+	$answer  .= sprintf("    %-2s %11.3f %11.3f  %11.3f\n",
+			    $k, $count{$k}, $this, $this/$scale);
+      } else {
+	$answer  .= sprintf("    %-2s      %g      %g      %g\n",
+			    $k, $count{$k}, $this, $this/$scale);
+      };
+      ## notice if any of this atoms edges are within 100 eV of the given energy
+      foreach my $edge (qw(k l1 l2 l3)) {
+	my $enot = Xray::Absorption -> get_energy($k, $edge);
+	push @edges, [$k, $edge] if (abs($enot - $data{form_energy}) < 100);
+      };
+    };
+    ## 1 amu = 1.6605389 x 10^-24 gm
+    $xsec = $barns_per_formula_unit / $amu_per_formula_unit / 1.6605389;
+    $answer .= sprintf("\nThis weighs %.3f amu.\n", $weight);
+    if ($xsec == 0) {
+      $answer .= "\n(Energy too low or not provided.\n Absorption calculation skipped.)";
+    } else {
+      my $xx = $xsec;
+      $xsec *= $dens;
+      if ($xsec > 0) {
+	if (10000/$xsec > 1500) {
+	  $answer .=
+	    sprintf("\nAbsorbtion length = %.3f cm at %.2f %s",
+		    1/$xsec, $data{form_energy}, $units);
+	  $answer .= ($data{form_type} eq 'Molarity') ? "\nfor a $data{form_density} molar sample.\n" : ".\n";
+	  $answer .=
+	    sprintf("\nA sample of 1 absorption length with area of\n1 square cm requires %.3f milligrams of sample\nat %.2f %s\n",
+	  	    1000*$density/$xsec, $data{form_energy}, $units) if ($data{form_type} eq 'Density');
+	} elsif (10000/$xsec > 500) {
+	  $answer .=
+	    sprintf("\nAbsorbtion length = %.3f cm at %.2f %s",
+		    1/$xsec, $data{form_energy}, $units);
+	  $answer .= ($data{form_type} eq 'Molarity') ? "\nfor a $data{form_density} molar sample.\n" : ".\n";
+	  $answer .=
+	    sprintf("\nA sample of 1 absorption length with area of\n1 square cm requires %.3f miligrams of sample\nat %.2f %s.\n",
+	  	    1000*$density/$xsec, $data{form_energy}, $units) if ($data{form_type} eq 'Density');
+	} else {
+	  $answer .=
+	    sprintf("\nAbsorbtion length = %.1f micron at %.2f %s",
+		    10000/$xsec, $data{form_energy}, $units);
+	  $answer .= ($data{form_type} eq 'Molarity') ? "\nfor a $data{form_density} molar sample.\n" : ".\n";
+	  $answer .=
+	    sprintf("\nA sample of 1 absorption length with area of\n1 square cm requires %.3f miligrams of sample\nat %.2f %s.\n",
+		    1000*$density/$xsec, $data{form_energy}, $units) if ($data{form_type} eq 'Density');
+	}
+      } else {
+	$answer .=
+	  "\n(The absorption length calculation\n requires a value for density.)";
+	$answer .=
+	  sprintf("\n\nA sample of 1 absorption length with area of\n1 square cm requires %.3f miligrams of sample\nat %.2f %s.\n",
+		  1000/$xx, $data{form_energy}, $units);
+      };
+    };
+    ## compute unit edge step lengths for all the relevant edges in this material
+    foreach my $e (@edges) {
+      my $enot = Xray::Absorption -> get_energy(@$e);
+      my @abovebelow = ();
+      foreach my $step (-50, +50) {
+	my ($bpfu, $apfu) = (0, 0);
+	my $energy = $enot + $step;
+	foreach my $k (keys(%count)) {
+	  my $this = Xray::Absorption -> cross_section($k, $energy, "full");
+	  $bpfu   += $this * $count{$k};
+	  $apfu   += Xray::Absorption -> get_atomic_weight($k) * $count{$k};
+	};
+	## 1 amu = 1.6605389 x 10^-24 gm
+	push @abovebelow, $bpfu / $apfu / 1.6605389;
+      };
+      my $xabove = $abovebelow[1] * $density;
+      my $xbelow = $abovebelow[0] * $density;
+      my $step   = 10000 / ($xabove - $xbelow);
+      $answer .= sprintf "\nUnit edge step length at %s %s edge (%.1f eV)\nis %.1f microns\n",
+	ucfirst($e->[0]), uc($e->[1]), $enot, $step;
+    };
+
+    $data{form_results} -> insert('end', $answer, ['margin']);
+    if ($data{form_type} eq 'Molarity') {
+      $data{form_results} -> insert('end', "\n\nRemember that a molarity calculation only\nconsiders the absorption of the solute.\nThe solvent also absorbs.",
+				    ['molarity']);
+    };
+    my $which = "photoelectric";
+    if ((lc($data{resource}) eq "mcmaster") or (lc($data{resource}) eq "elam")) {
+      ($which = "total")      if ($data{xsec} eq "full");
+      ($which = $data{xsec})  if ($data{xsec} =~ /coherent/);
+    } elsif (lc($data{resource}) eq "chantler") {
+      ($which = "total")      if ($data{xsec} eq "full");
+      ($which = "scattering") if ($data{xsec} =~ /coherent/);
+    };
+    $data{form_results} -> insert('end', "\n\nThe $data{resource} database and the $which cross-sections\nwere used in the calculation.",
+				  ['xsec']);
+  } else {
+    $data{form_results} -> insert('end', "\nInput error:\n\t".$count{error}, ['error']);
+  };
+  $data{form_results} -> yviewMoveto(1);
+};
+
+
+##  algorithm for finding unit edge step length
+##
+## foreach my $e (-50, +50) {
+##   my $energy = $enot + $e;
+##   foreach my $k (sort (keys(%count))) {
+##     $weight  += Xray::Absorption -> get_atomic_weight($k) * $count{$k};
+##     my $scale = Xray::Absorption -> get_conversion($k);
+##     my $this = Xray::Absorption -> cross_section($k, $energy, "xsec");
+##     $barns_per_formula_unit += $this * $count{$k};
+##     $amu_per_formula_unit += Xray::Absorption -> get_atomic_weight($k) * $count{$k};
+##   };
+##   ## 1 amu = 1.6605389 x 10^-24 gm
+##   push @xsec, $barns_per_formula_unit / $amu_per_formula_unit / 1.6605389;
+## };
+##
+## my $answer = 10000/(($xsec[1]-$xsec[0])*$density);
+## printf "%.3f microns\n", $answer;
+
+
+
+sub user_formulas_remove {
+  return unless ($data{form_name});
+
+  my $answer = $top -> Dialog(-title=>"Remove a formula?",
+			      -text=>"Really remove $data{form_name} from the list?",
+			      -buttons=>["Remove", "Cancel"],
+			      -default_button=>'Cancel',
+			      -bitmap=>'questhead') -> Show();
+  return if ($answer eq 'Cancel');
+
+  ## remove in this session
+  my $which = $data{form_lb} -> curselection();
+  $data{form_lb} -> delete($which);
+  $data{form_lb} -> selectionSet(0);
+
+  ## remove for future sessions
+  my $ini_ref = tied %userformulas;
+  $userformulas{data}{$data{form_name}} = "^^remove^^";
+  my $userformulas = File::Spec->catfile($horae_lib, 'hephaestus.data');
+  $ini_ref -> WriteConfig($userformulas);
+
+  ($data{form_name}, $data{form_string}, $data{form_density}) = ("", "", "");
+
+};
+
+sub user_formulas_add {
+  return unless ($data{form_string} and $data{form_density});
+  my $db = $top -> DialogBox(-title=>"Add a formula",
+			     -buttons=>[qw(OK Cancel)],
+			     -default_button=>'OK');
+  $db -> add('Label', -text=>"Formula: $data{form_string}") -> pack();
+  $db -> add('Label', -text=>"Density: $data{form_density}") -> pack();
+  $db -> add('LabEntry', -label=>'Name: ', -textvariable=>\$data{form_name},
+	     -labelPack=>[-side=>'left']) -> pack();
+  my $answer = $db -> Show;
+  return if ($answer eq 'Cancel');
+  #print $data{form_name} if ($answer eq 'OK');
+  $data{form_lb} -> insert('end', $data{form_name});
+  $data{form_lb} -> see('end');
+  $data{form_lb} -> selectionSet('end');
+
+  ## for use in this session
+  $formula{$data{form_name}} = $data{form_string};
+  $density{$data{form_name}} = $data{form_density};
+
+  return 0 if ($data{form_name} =~ /^\s*$/);
+  return 0 if ($data{form_string} =~ /^\s*$/);
+  ## for use in future sessions
+  my $ini_ref = tied %userformulas;
+  $userformulas{data}{$data{form_name}} = join("|", $data{form_string}, $data{form_density});
+  my $userformulas = Ifeffit::FindFile->find("hephaestus", "data");
+  $ini_ref -> WriteConfig($userformulas);
+};
+
+sub plot_information_depth {
+  my $energy  = ($data{units} eq 'Energies') ? $data{form_energy} : e2l($data{form_energy});
+  if ((lc($data{resource}) eq "henke") and ($energy > 30000)) {
+    my $dialog =
+      $top -> Dialog(-bitmap         => 'info',
+		     -text           => "The Henke tables only include data up to 30 keV.",
+		     -title          => 'Hephaestus warning',
+		     -buttons        => [qw/OK/],
+		     -default_button => 'OK')
+	-> Show();
+    return;
+  };
+  my %count;
+  my $ok = parse_formula($data{form_string}, \%count);
+  my $units   = ($data{units} eq 'Energies') ? 'eV' : 'Å';
+  my $density = $data{form_density};
+
+  my @edges;
+  foreach my $el (keys(%count)) {
+    foreach my $edge (qw(k l1 l2 l3)) {
+      my $enot = Xray::Absorption -> get_energy($el, $edge);
+      if (abs($enot - $energy) < 1000) {
+	my $line = ($edge eq 'k')  ? "kalpha1"
+	         : ($edge eq 'l3') ? "lalpha1"
+	         : ($edge eq 'l2') ? "lbeta1"
+		 :                   "lbeta3";
+	push @edges, [$el, $line, $edge];
+      };
+    };
+  };
+  my ($angle_in, $angle_out) = (45, 45);
+  my $efluo = (@edges) ? Xray::Absorption->get_energy(@{$edges[0]}) : 0;
+
+  my ($barns, $amu) = (0,0);
+  foreach my $el (keys(%count)) {
+    $barns += Xray::Absorption -> cross_section($el, $efluo) * $count{$el};
+    $amu   += Xray::Absorption -> get_atomic_weight($el) * $count{$el};
+  };
+  my $muf = sprintf("%.6f", $barns / $amu / 1.6607143);
+  my $angle_ratio = sprintf("%.6f", sin(PI*$angle_in/180) / sin(PI*$angle_out/180));
+
+  my @e;
+  foreach my $i (-100 .. 100) {
+    push @e, $i*10 + $energy;
+  };
+  my (@mut, @muf);
+  foreach my $e (@e) {
+    my ($barns, $amu) = (0,0);
+    foreach my $el (keys(%count)) {
+      ##next if (lc($el) eq lc(get_symbol($groups{$current}->{bkg_z})));
+      $barns += Xray::Absorption -> cross_section($el, $e) * $count{$el};
+      $amu   += Xray::Absorption -> get_atomic_weight($el) * $count{$el};
+#      if ($e > Xray::Absorption -> get_energy($edges[0]->[0], $edges[0]->[2])) {
+	push @muf, $muf;
+#      } else {
+#	push @muf, 0;
+#      };
+    };
+    ## 1 amu = 1.6607143 x 10^-24 gm
+    push @mut, $barns / $amu / 1.6607143;
+  };
+
+  Ifeffit::ifeffit("## inserted d___epth.mut into ifeffit's memory...");
+  Ifeffit::put_array("d___epth.energy", \@e);
+  Ifeffit::put_array("d___epth.mut", \@mut);
+  Ifeffit::put_array("d___epth.muf", \@muf);
+  my $sets = "set(d___epth.alpha = d___epth.mut + $angle_ratio*d___epth.muf,";
+  $sets   .= "    d___epth.info = 10000*sin(pi*$angle_in/180) / d___epth.alpha)";
+  Ifeffit::ifeffit($sets);
+  my $command = "newplot(d___epth.energy, d___epth.info, xmin=$e[0], xmax=$e[$#e], ";
+  $command   .= "xlabel=k (\\A\\u-1\\d), ylabel=\"Depth (\\gmm)\", ";
+  $command   .= "fg=black, bg=white, grid, gridcolor=grey82, ";
+  $command   .= "style=lines, color=blue, key=\"depth\", title=\"Information Depth\")\n";
+  #$command    = wrap("newplot", "       ", $command) . $/;
+  Ifeffit::ifeffit($command);
+  $top -> Unbusy;
+};
+#! /usr/bin/perl -w
+
+## ===========================================================================
+##  This is the chemical data portion of hephaestus
+
+sub data {
+  $periodic_table -> pack(-side=>'top', -padx=>4, -pady=>4, -fill=>'x')
+    if $current !~ /$uses_periodic_regex/;
+  switch({page=>"data", text=>'Periodic Table of Chemical Data'});
+  $data{pt_resource} -> gridForget;
+};
+
+
+sub setup_data {
+  my $frame = $_[0] -> Frame(-borderwidth=>2, -relief=>'flat');
+
+
+  tie %kalzium, 'Config::IniFiles', (-file=>File::Spec->catfile($hephaestus_lib, 'kalziumrc'));
+
+  my $r = 0;
+  foreach my $l ('Name', 'Number', 'Symbol', 'Atomic Weight',
+		 'Orbit Configuration', 'Oxidation states', 'Mossbauer') {
+    my $ll = ($l =~ /Orbit/) ? 'Orbital Configuration' : $l;
+    $frame -> Label(-text=>$ll, @label_args)
+      -> grid(-column=>0, -row=>$r, -sticky=>'e', -padx=>4);
+    $frame -> Label(-textvariable=>\$data{"data_$l"}, -font=>$config{fonts}{smfixed}, -width=>20, -justify=>'left')
+      -> grid(-column=>1, -row=>$r, -sticky=>'w');
+    ++$r;
+  };
+  $frame -> Label(-width=>5)
+      -> grid(-column=>2, -row=>$r);
+  $r = 0;
+  foreach my $l ('Melting Point', 'Boiling Point', 'Electronegativity',
+		 'Ionization Energy', '2nd Ion. Energy',
+		 'Atomic Radius') {
+    $frame -> Label(-text=>$l, @label_args)
+      -> grid(-column=>3, -row=>$r, -sticky=>'e', -padx=>4);
+    $frame -> Label(-textvariable=>\$data{"data_$l"}, -font=>$config{fonts}{smfixed}, -width=>20, -justify=>'left')
+      -> grid(-column=>4, -row=>$r, -sticky=>'w');
+    ++$r;
+  };
+
+  return $frame;
+};
+
+
+sub get_chemical_data {
+  my $s = $_[0];
+  my $z = get_Z($_[0]);
+  $data{data_Name}                  = get_name($s);
+  $data{data_Number}                = $z;
+  $data{data_Symbol}                = $s;
+  $data{'data_Atomic Weight'}	    = $kalzium{$z}{Weight};
+  $data{'data_Orbit Configuration'} = $kalzium{$z}{Orbits};
+  $data{'data_Oxidation states'}    = $kalzium{$z}{Ox};
+  $data{'data_Melting Point'}	    = $kalzium{$z}{MP} ? $kalzium{$z}{MP} . ' K' : "";
+  $data{'data_Boiling Point'}	    = $kalzium{$z}{BP} ? $kalzium{$z}{BP} . ' K' : "";
+  $data{'data_Electronegativity'}   = $kalzium{$z}{EN};
+  $data{'data_Ionization Energy'}   = $kalzium{$z}{IE}  ? $kalzium{$z}{IE} . ' eV' : "";
+  $data{'data_2nd Ion. Energy'}	    = $kalzium{$z}{IE2} ? $kalzium{$z}{IE2} . ' eV' : "";
+  $data{'data_Atomic Radius'}	    = $kalzium{$z}{AR}  ? $kalzium{$z}{AR}/100 . ' Ang' : "";
+  $data{'data_Mossbauer'}           = join(",", split(" ",  $kalzium{$z}{Mossbauer}));
+
+  ## set items on formulas utility
+  $data{form_string}  = $s;
+  $data{form_density} = Xray::Absorption -> get_density($s);
+  $data{form_type}    = "Density";
+  $data{form_density_units} -> configure(-text=>'gram/cm^3');
+  $data{form_add_button}    -> configure(-state=>'normal');
+  $data{form_remove_button} -> configure(-state=>'normal');
+
+  ## set items on absorption utility
+  return if ($current eq "absorption");
+  get_foils_data($s);
+  return 0;
+};
+
+## ===========================================================================
+##  This is the anomolous scattering portion of hephaestus
+
+
+sub f1f2 {
+  $periodic_table -> pack(-side=>'top', -padx=>4, -pady=>4, -fill=>'x') 
+    if $current !~ /$uses_periodic_regex/;
+  switch({page=>"f1f2", text=>'Periodic Table of Complex Scattering Factors'});
+  $data{pt_resource} -> gridForget;
+};
+
+sub setup_f1f2 {
+  my $frame = $_[0] -> Frame(-borderwidth=>2, -relief=>'flat');
+
+  $data{f1f2_emin}  ||= 3000;
+  $data{f1f2_emax}  ||= 7000;
+  $data{f1f2_egrid} ||= 5;
+  $data{f1f2_width} = 0;
+  $data{f1f2_plot}  = 'new';
+  $data{f1f2_function} = 'both';
+  $data{f1f2_naturalwidth} = 1;
+
+  my $fr = $frame -> Frame() -> pack(-side=>'top', -pady=>3);
+  $fr -> Label(-text=>'Starting energy', @label_args,)
+    -> pack(-side=>'left');
+  $fr -> Entry(-width=>12,
+	       -textvariable=>\$data{f1f2_emin},
+	       -validate=>'key', -validatecommand=>\&set_variable)
+    -> pack(-side=>'left', -padx=>4);
+  $fr -> Label(-text=>'Ending energy', @label_args,)
+    -> pack(-side=>'left');
+  $fr -> Entry(-width=>12,
+	       -textvariable=>\$data{f1f2_emax},
+	       -validate=>'key', -validatecommand=>\&set_variable)
+    -> pack(-side=>'left', -padx=>4);
+  $fr -> Label(-text=>'Energy grid', @label_args,)
+    -> pack(-side=>'left');
+  $fr -> Entry(-width=>12,
+	       -textvariable=>\$data{f1f2_egrid},
+	       -validate=>'key', -validatecommand=>\&set_variable)
+    -> pack(-side=>'left', -padx=>4);
+
+  $fr = $frame -> Frame() -> pack(-side=>'top', -pady=>3);
+  my $w_label = $fr -> Label(-text=>'Convolution with',
+			     -font=>$config{fonts}{small},
+			     -foreground=>'grey50',)
+    -> pack(-side=>'left');
+  my $w_entry = $fr -> Entry(-width=>12,
+			     -foreground=>'grey50',
+			     -textvariable=>\$data{f1f2_width},
+			     (($Tk::VERSION > 804) ? (-disabledbackground=>$bgcolor) : ()),
+			     -validate=>'key',
+			     -validatecommand=>[\&set_variable, 'width'],
+			     -state=>'disabled')
+    -> pack(-side=>'left', -padx=>4);
+  $fr -> Checkbutton(-text=>'Convolute by the natural core-level width',
+		     -font=>$config{fonts}{small},
+		     -variable=>\$data{f1f2_naturalwidth},
+		     -command=>sub{$w_label->configure(-foreground => ($data{f1f2_naturalwidth}) ? 'grey50'   : 'blue4');
+				   $w_entry->configure(-state      => ($data{f1f2_naturalwidth}) ? 'disabled' : 'normal',
+						       -foreground => ($data{f1f2_naturalwidth}) ? 'grey50'   : 'black' );
+				 })
+    -> pack(-side=>'left');
+
+  $fr = $frame -> Frame() -> pack(-side=>'top', -pady=>3);
+  $fr -> Radiobutton(-text=>'New plot',
+		     -font=>$config{fonts}{small},
+		     -variable=>\$data{f1f2_plot},
+		     -value=>'new')
+    -> grid(-column=>0, -row=>0, -sticky=>'w');
+  $fr -> Radiobutton(-text=>'Overplot',
+		     -font=>$config{fonts}{small},
+		     -variable=>\$data{f1f2_plot},
+		     -value=>'over')
+    -> grid(-column=>0, -row=>1, -sticky=>'w');
+
+  $fr -> Label(-width=>5)
+    -> grid(-column=>1, -row=>1);
+
+  $fr -> Radiobutton(-text=>"Plot just f\'",
+		     -font=>$config{fonts}{small},
+		     -variable=>\$data{f1f2_function},
+		     -value=>'f1')
+    -> grid(-column=>2, -row=>0, -sticky=>'w');
+  $fr -> Radiobutton(-text=>"Plot just f\"",
+		     -font=>$config{fonts}{small},
+		     -variable=>\$data{f1f2_function},
+		     -value=>'f2')
+    -> grid(-column=>2, -row=>1, -sticky=>'w');
+  $fr -> Radiobutton(-text=>"Plot both f' and f\"",
+		     -font=>$config{fonts}{small},
+		     -variable=>\$data{f1f2_function},
+		     -value=>'both')
+    -> grid(-column=>2, -row=>2, -sticky=>'w');
+
+  $fr = $frame -> Frame() -> pack(-side=>'top', -pady=>3);
+  $data{f1f2_save} = $fr -> Button(-text=>"Save data", @button_args,
+				   -width=>20,
+				   -state=>'disabled')
+    -> pack();
+
+  return $frame;
+};
+
+
+sub get_f1f2_data {
+  my $z = get_Z($_[0]);
+  my $w = ($data{f1f2_naturalwidth}) ? '-2' : $data{f1f2_width};
+  Ifeffit::ifeffit("f1f2.energy = range($data{f1f2_emin},$data{f1f2_emax},$data{f1f2_egrid})\n");
+  Ifeffit::ifeffit("f1f2(energy=f1f2.energy, z=$z, width=$w)\n");
+  my $plot = ($data{f1f2_plot} eq 'new') ? "newplot" : "plot";
+  if ($data{f1f2_function} eq 'f1') {
+    my $key = "$_[0] f1";
+    Ifeffit::ifeffit("$plot(f1f2.energy, f1f2.f1, xmin=$data{f1f2_emin}, xmax=$data{f1f2_emax}, xlabel=\"Energy (eV)\", ylabel=f1, key=\"$key\")\n");
+    Ifeffit::ifeffit("plot(title=\"Complex scattering factors\")\n");
+  } elsif ($data{f1f2_function} eq 'f2') {
+    my $key = "$_[0] f2";
+    Ifeffit::ifeffit("$plot(f1f2.energy, f1f2.f2, xmin=$data{f1f2_emin}, xmax=$data{f1f2_emax}, xlabel=\"Energy (eV)\", ylabel=f2, key=\"$key\")\n");
+    Ifeffit::ifeffit("plot(title=\"Complex scattering factors\")\n");
+  } else {
+    my $key = "$_[0] f1";
+    Ifeffit::ifeffit("$plot(f1f2.energy, f1f2.f1, xmin=$data{f1f2_emin}, xmax=$data{f1f2_emax}, xlabel=\"Energy (eV)\", ylabel=\"f1 and f2\", key=\"$key\")\n");
+    $key = "$_[0] f2";
+    Ifeffit::ifeffit( "plot(f1f2.energy, f1f2.f2, xmin=$data{f1f2_emin}, xmax=$data{f1f2_emax}, xlabel=\"Energy (eV)\", ylabel=\"f1 and f2\", key=\"$key\")\n");
+    Ifeffit::ifeffit("plot(title=\"Complex scattering factors\")\n");
+  };
+  my $sym = get_symbol($z);
+  $data{f1f2_save} -> configure(-text=>"Save data for $sym",
+				-command=>[\&save_f1f2, $sym, $data{f1f2_function},
+					   $data{f1f2_emin}, $data{f1f2_emax},
+					   $data{f1f2_egrid}],
+				-state=>'normal');
+};
+
+sub save_f1f2 {
+  my ($sym, $which, $emin, $emax, $egrid) = @_;
+  my $types = [['Scattering factor files', '*.f1f2'], ['All Files', '*'],];
+  my $file = $top -> getSaveFile(-filetypes=>$types,
+				 ##(not $is_windows) ?
+				 ##  (-sortcmd=>sub{$Tk::FBox::a cmp $Tk::FBox::b}) : () ,
+				 -initialfile=>lc($sym).".f1f2",
+				 -initialdir=>$save_dir,
+				 -title => "Hephaestus: Save f1f2 data");
+  return unless ($file);
+
+  $save_dir = dirname($file);
+  my $command;
+  my $ifeffit_version = (split(" ", Ifeffit::get_string("\$&build")))[0];
+  Ifeffit::put_string("f1f2_title1","Hephaestus $VERSION, Ifeffit $ifeffit_version");
+  if ($which eq 'f1') {
+    Ifeffit::put_string("f1f2_title2","f1 data for $sym");
+    $command = "write_data(file=$file, \$f1f2_title*, f1f2.energy, f1f2.f1)";
+  } elsif ($which eq 'f2') {
+    Ifeffit::put_string("f1f2_title2","f2 data for $sym");
+    $command = "write_data(file=$file, \$f1f2_title*, f1f2.energy, f1f2.f2)";
+  } else {
+    Ifeffit::put_string("f1f2_title2","f1 and f2 data for $sym");
+    $command = "write_data(file=$file, \$f1f2_title*, f1f2.energy, f1f2.f1, f1f2.f2)";
+  };
+  Ifeffit::put_string("f1f2_title3","computed between $emin and $emax on a $egrid eV grid");
+  Ifeffit::ifeffit($command);
+};
+#! /usr/bin/perl -w      # -*- cperl -*-
+
+## ===========================================================================
+##  This is the ion chamber portion of hephaestus
+
+sub ion {
+  $periodic_table -> packForget() if $current =~ /$uses_periodic_regex/;
+  switch({page=>"ion", text=>'Compute Absorption of Ion Chambers'});
+};
+
+sub setup_ion {
+  my $frame = $_[0] -> Frame(-borderwidth=>2, -relief=>'flat');
+
+  $data{ion_energy}   ||= 9000;
+  $data{ion_length}   ||= 15;
+  $data{ion_userlength} = 20;
+  $data{ion_gas1}     ||= 'N2';
+  $data{ion_gas2}       = 'He';
+  $data{ion_frac1}      = 100;
+  $data{ion_frac2}      = 0;
+  $data{ion_pressure} ||= 760;
+  $data{ion_gain}     ||= 8;
+  $data{ion_voltage}    = 0;
+  $data{ion_flux}       = 0;
+
+  my $top = $frame -> Frame()
+    -> pack(-side=>'top', -padx=>4, -pady=>8);
+  my $left = $top -> Frame()
+    -> pack(-side=>'left', -padx=>8, -pady=>0, -anchor=>'n');
+  my $right = $top -> Frame()
+    -> pack(-side=>'right', -pady=>0);
+
+  $left -> Label(-textvariable=>\$data{ion_resource}, -width=>30, @label_args)
+    -> pack(-side=>'top');
+
+  my $frm = $left -> Frame()
+    -> pack(-side=>'top', -pady=>0);
+  $data{ion_energy_label} = $frm -> Label(-text=>'Photon energy:', @label_args)
+    -> pack(-side=>'left');
+  my $entry = $frm -> Entry(-textvariable=>\$data{ion_energy}, -width=>6,
+			    -font=>$config{fonts}{smfixed},
+			    -validate=>'key', -validatecommand=>[\&set_variable, 'ion_energy'])
+    -> pack(-side=>'left', -padx=>4);
+
+  $frm = $left -> LabFrame(-label=>'Chamber Length',
+			   -labelside=>'acrosstop', @label_args)
+    -> pack(-side=>'top');
+
+  $frm -> Radiobutton(-text=>"3.3 cm Lytle Detector",
+		      -font=>$config{fonts}{small},
+		      -command=>[\&get_ion_data, 0],
+		      -variable=>\$data{ion_length},
+		      -value=>3.3)
+    -> grid(-column=>0, -row=>0, -sticky=>'w', -columnspan=>2);
+  $frm -> Radiobutton(-text=>"6.6 cm Lytle Detector",
+		      -font=>$config{fonts}{small},
+		      -command=>[\&get_ion_data, 0],
+		      -variable=>\$data{ion_length},
+		      -value=>6.6)
+    -> grid(-column=>0, -row=>1, -sticky=>'w', -columnspan=>2);
+  $frm -> Radiobutton(-text=>"5 cm",
+		      -font=>$config{fonts}{small},
+		      -command=>[\&get_ion_data, 0],
+		      -variable=>\$data{ion_length},
+		      -value=>5)
+    -> grid(-column=>0, -row=>2, -sticky=>'w', -columnspan=>2);
+  $frm -> Radiobutton(-text=>"10 cm",
+		      -font=>$config{fonts}{small},
+		      -command=>[\&get_ion_data, 0],
+		      -variable=>\$data{ion_length},
+		      -value=>10)
+    -> grid(-column=>0, -row=>2, -sticky=>'w', -columnspan=>2);
+  $frm -> Radiobutton(-text=>"15 cm",
+		      -font=>$config{fonts}{small},
+		      -command=>[\&get_ion_data, 0],
+		      -variable=>\$data{ion_length},
+		      -value=>15)
+    -> grid(-column=>0, -row=>3, -sticky=>'w', -columnspan=>2);
+  $frm -> Radiobutton(-text=>"30 cm",
+		      -font=>$config{fonts}{small},
+		      -command=>[\&get_ion_data, 0],
+		      -variable=>\$data{ion_length},
+		      -value=>30)
+    -> grid(-column=>0, -row=>4, -sticky=>'w', -columnspan=>2);
+  $frm -> Radiobutton(-text=>"45 cm",
+		      -font=>$config{fonts}{small},
+		      -command=>[\&get_ion_data, 0],
+		      -variable=>\$data{ion_length},
+		      -value=>45)
+    -> grid(-column=>0, -row=>5, -sticky=>'w', -columnspan=>2);
+  $frm -> Radiobutton(-text=>"60 cm",
+		      -font=>$config{fonts}{small},
+		      -command=>[\&get_ion_data, 0],
+		      -variable=>\$data{ion_length},
+		      -value=>60)
+    -> grid(-column=>0, -row=>6, -sticky=>'w', -columnspan=>2);
+  $frm -> Radiobutton(-text=>"Choose your own",
+		      -font=>$config{fonts}{small},
+		      -command=>[\&get_ion_data, 0],
+		      -variable=>\$data{ion_length},
+		      -value=>0)
+    -> grid(-column=>0, -row=>7, -sticky=>'w');
+  $data{ion_user_entry} = $frm -> Entry(-width=>8,
+					-state=>'disabled',
+					(($Tk::VERSION > 804) ? (-disabledbackground=>$bgcolor) : ()),
+					-foreground=>'grey50',
+					-font=>$config{fonts}{smfixed},
+					-textvariable=>\$data{ion_userlength},
+					-validate=>'key',
+					-validatecommand=>\&set_variable,)
+    -> grid(-column=>0, -row=>8, -sticky=>'e');
+  $data{ion_user_label} = $frm -> Label(-text	    => 'cm',
+					-font	    => $config{fonts}{small},
+					-foreground => 'grey50')
+    -> grid(-column=>1, -row=>8, -sticky=>'w');
+
+
+  $right -> Label(-text=>"Primary Gas ", -font=>$config{fonts}{smbold},)
+    -> grid(-column=>0, -row=>0,);
+  my $be = $right -> Optionmenu(-options=> [qw(N2 He Ne Ar Kr Xe)],
+				-font=>$config{fonts}{smbold},
+				-command => [\&get_ion_data, 0],
+				-variable => \$data{ion_gas1},
+				-borderwidth => 1,)
+    -> grid(-column=>1, -row=>0, -sticky=>'w', -padx=>4);
+  my $sc = $right -> Scale(-from	 => 100,
+			   -to		 => 0,
+			   -orient	 => 'vertical',
+			   -tickinterval => 20,
+			   -length	 => 250,
+			   #-foreground	 => '#640096',
+			   -variable	 => \$data{ion_frac1},
+			   -font         => $config{fonts}{small},
+			   -command	 => [\&get_ion_data, 1])
+    -> grid(-column=>0, -columnspan=>2, -row=>1);
+  #BindMouseWheel($sc);
+
+  $right -> Label(-text=>"Secondary Gas ", -font=>$config{fonts}{smbold},)
+    -> grid(-column=>3, -row=>0,);
+  $be = $right -> Optionmenu(-options	  => [qw(He N2 Ne Ar Kr Xe)],
+			     -command	  => [\&get_ion_data, 0],
+			     -font	  =>$config{fonts}{smbold},
+			     -variable	  => \$data{ion_gas2},
+			     -borderwidth => 1,)
+    -> grid(-column=>4, -row=>0, -sticky=>'w', -padx=>4);
+
+##   $be = $right -> BrowseEntry(-label => "Secondary Gas ",
+## 			      -width=>5,
+## 			      #-listwidth=>30,
+## 			      #-listheight=>6,
+## 			      #-foreground=>'darkgreen',
+## 			      -variable => \$data{ion_gas2},
+## 			      -choices => [qw(He N2 Ne Ar Kr Xe)],
+## 			      -browsecmd=>[\&get_ion_data, 0],)
+##     -> grid(-column=>4, -row=>0, -sticky=>'e', -padx=>4);
+
+  $sc = $right -> Scale(-from	      => 100,
+			-to           => 0,
+			-orient	      => 'vertical',
+			-tickinterval => 20,
+			-length	      => 250,
+			#-foreground  => 'darkgreen',
+			-variable     => \$data{ion_frac2},
+			-font         => $config{fonts}{small},
+			-command      => [\&get_ion_data, 2])
+    -> grid(-column=>3, -columnspan=>2, -row=>1);
+  #BindMouseWheel($sc);
+
+  $right -> Label(-text=>'Pressure (Torr)', -font=>$config{fonts}{smbold}, )
+     -> grid(-column=>5, -row=>0, -sticky=>'e', -padx=>4);
+  $right -> Scale(-from		=> 2300,
+		  -to		=> 0,
+		  -orient	=> 'vertical',
+		  -tickinterval	=> 500,
+		  -length	=> 250,
+		  #-foreground	=> 'darkgreen',
+		  -variable	=> \$data{ion_pressure},
+		  -font=>$config{fonts}{small},
+		  -command	=> [\&get_ion_data, 2]
+		 )
+    -> grid(-column=>5, -row=>1);
+   #BindMouseWheel($sc);
+
+
+  $frame -> Label(-text=>'Rules of thumb: 10% absorption in I0; 70% absorption in It or If  (1 Atm = 760 Torr)',
+		  -font=>$config{fonts}{small})
+    -> pack(-side=>'bottom', -anchor=>'center', -pady=>8);
+
+  $frm = $frame -> LabFrame(-label=>"Photon flux",
+			    -labelside=>'acrosstop',@label_args)
+    -> pack(-side=>'bottom', -anchor=>'center', -pady=>8, -fill =>'x', -padx=>12);
+  $frm -> Label(-text=>"    Amplifier gain", @label_args)
+    -> pack(-side=>'left');
+  $frm -> NumEntry(-orient => 'horizontal',
+		   -increment => 1,
+		   -minvalue => 0,
+		   -width => 4,
+		   -textvariable => \$data{ion_gain},
+		   -font=>$config{fonts}{smfixed},
+		   -command => [\&get_ion_data, 0],
+		   -browsecmd => [\&get_ion_data, 0]
+		   )
+     -> pack(-side=>'left');
+  $frm -> Label(-text=>" with ", @label_args)
+    -> pack(-side=>'left');
+  my $e = $frm -> Entry(-width => 7,
+			-font=>$config{fonts}{smfixed},
+			-textvariable=>\$data{ion_voltage},
+			-validate=>'key',
+			-validatecommand=>\&set_variable,)
+    -> pack(-side=>'left');
+  $e -> bind("<KeyPress-Return>"=>[\&get_ion_data, 0]);
+
+  $frm -> Label(-text=>" volts gives ", @label_args)
+    -> pack(-side=>'left');
+  $frm -> Label(-width => 11,
+		-font=>$config{fonts}{smfixed},
+		-textvariable=>\$data{ion_flux})
+    -> pack(-side=>'left');
+  $frm -> Label(-text=>"photons/second", @label_args)
+    -> pack(-side=>'left');
+
+
+  my $bottom = $frame -> Frame()
+    -> pack(-side=>'bottom', -padx=>8, -pady=>4);
+  $bottom -> Label(@label_args, -text=>"Percentage absorbed:")
+    -> pack(-side=>'left');
+  $bottom -> Label(-textvariable=>\$data{ion_absorbed},
+		   -font=>$config{fonts}{smfixed},
+		   -relief=>'groove',
+		   -width=>10)
+    -> pack(-side=>'left', -padx=>4);
+  $bottom -> Button(-text=>'Reset', @button_args,
+		    -command=>sub{
+		      $data{ion_energy}	    = 9000;
+		      $data{ion_length}	    = 15;
+		      $data{ion_userlength} = 20;
+		      $data{ion_gas1}	    = 'N2';
+		      $data{ion_gas2}	    = 'He';
+		      $data{ion_frac1}	    = 100;
+		      $data{ion_frac2} 	    = 0;
+		      $data{ion_pressure}   = 760;
+		      $data{ion_gain}       = 8;
+		      $data{ion_voltage}    = 0;
+		      $data{ion_flux}       = 0;
+		      &get_ion_data(0);
+		   }
+		  )
+    -> pack(-side=>'left', -padx=>4);
+  $entry -> bind("<KeyPress-Return>"=>[\&get_ion_data, 0]);
+  $data{ion_user_entry} -> bind("<KeyPress-Return>"=>[\&get_ion_data, 0]);
+
+  return $frame;
+};
+
+
+sub get_ion_data {
+  if ((lc($data{resource}) eq "henke") and ($data{ion_energy} > 30000)) {
+    my $dialog =
+      $top -> Dialog(-bitmap         => 'info',
+		     -text           => "The Henke tables only include data up to 30 keV.",
+		     -title          => 'Hephaestus warning',
+		     -buttons        => [qw/OK/],
+		     -default_button => 'OK')
+	-> Show();
+    return;
+  };
+
+  my $which = $_[0];
+  if ($which eq 1) {
+    $data{ion_frac2} = 100 - $data{ion_frac1};
+  } elsif ($which eq 2) {
+    $data{ion_frac1} = 100 - $data{ion_frac2};
+  };
+
+  $data{ion_user_entry} ->
+    configure(-state=>($data{ion_length}==0) ? 'normal' : 'disabled',
+	      -foreground=>($data{ion_length}==0) ? 'black' : 'grey50');
+  $data{ion_user_label} ->
+    configure(-foreground=>($data{ion_length}==0) ? 'black' : 'grey50');
+
+  my ($barns_per_component, $amu_per_component, $dens) = (0,0, 0);
+  my $energy = ($data{units} eq 'Energies') ? $data{ion_energy} : e2l($data{ion_energy});
+  foreach my $i (1, 2) {
+    my $g = $data{"ion_gas$i"};
+    $g = 'N' if ($g eq 'N2');
+    $dens += $data{"ion_frac$i"} * $density{ucfirst(get_name($g))} / 100;
+    my $this;
+    my $one_minus_g = 1; #Xray::Absorption->get_one_minus_g($g, $data{ion_energy});
+    #print "$g    $one_minus_g\n";
+    if ((lc($data{resource}) eq "henke") or (lc($data{resource}) eq "cl")) {
+      $this = Xray::Absorption -> cross_section($g, $energy, 'total');
+    } else {
+      $this = (Xray::Absorption -> cross_section($g, $energy, 'photo') +
+               Xray::Absorption -> cross_section($g, $energy, 'incoherent'))
+	     * $one_minus_g;
+    };
+    ##     my $how = 'photo';
+    ##     ($how = 'xsec') if ((lc($data{resource}) eq "henke") or (lc($data{resource}) eq "cl"));
+    ##     my $this = Xray::Absorption -> cross_section($g, $energy, $how);
+    my $mass_factor = ($g eq 'N') ? 2 : 1;
+    $barns_per_component += $this * $data{"ion_frac$i"} * $mass_factor;
+    $amu_per_component += Xray::Absorption -> get_atomic_weight($g) * $data{"ion_frac$i"} * $mass_factor;
+  };
+  ## this is in cm ...
+  my $xsec = $dens * $barns_per_component / $amu_per_component / 1.6607143;
+  my $len = $data{ion_length} || $data{ion_userlength} || 0;
+  #print 1/$xsec, "  $len\n";
+  my $atm = $data{ion_pressure} / 760;
+  $atm ||= EPSILON;
+  $xsec *= $atm;
+  $data{ion_absorbed} = sprintf("%.2f %%", 100*(1-exp(-1*$xsec*$len)));
+
+  ## flux calculation
+  if ($data{ion_voltage} > 0) {
+    my $flux = (30/16) * (10**(20-$data{ion_gain})) * $data{ion_voltage} / $data{ion_energy};
+    ($data{ion_flux} = 0), return unless ($xsec);
+    $flux /= (1-exp(-1*$xsec*$len)); # account for fraction absorbed
+    $data{ion_flux} = sprintf("%.3e", $flux);
+  } else {
+    $data{ion_flux} = 0;
+  };
+};
+
+## ===========================================================================
+##  This is the transition chart portion of hephaestus
+
+sub trans {
+  $periodic_table -> packForget() if $current =~ /$uses_periodic_regex/;
+  switch({page=>"trans", text=>'Electronic Transitions of the Emission Lines for Any Element'});
+};
+
+
+sub setup_trans {
+  my $frame = $_[0] -> Frame(-borderwidth=>2, -relief=>'flat');
+
+  my $transition_pic = $frame -> Photo(-file => File::Spec->catfile($hephaestus_lib, "transition.gif"));
+  $frame -> Label(-image=>$transition_pic)
+    -> pack(-anchor=>'center', -pady=>8);
+
+  return $frame;
+};
+## -*- cperl -*-
+## ===========================================================================
+##  This is the find energies portion of hephaestus
+
+sub find {
+  $periodic_table -> packForget() if $current =~ /$uses_periodic_regex/;
+  switch({page=>"find", text=>'Ordered List of Absorption Energies'});
+};
+
+
+sub setup_find {
+  my $frame = $_[0] -> Frame(-borderwidth=>2, -relief=>'flat');
+
+  $data{find_min}      = 100;
+  $data{find_energy}   ||= 9000;
+  $data{find_harmonic} ||= 1;
+
+  ## snarf (quietly!) the list of energies from the list used for the
+  ## next_energy function in Xray::Absoprtion::Elam
+  my $hash;
+  do {
+    no warnings;
+    $hash = $$Xray::Absorption::Elam::r_elam{energy_list};
+  };
+  my @find_list = ();
+  foreach my $key (keys %$hash) {
+    next unless exists $$hash{$key}->[2];
+    push @find_list, $$hash{$key};
+  };
+  ## and sort by increasing energy
+  @find_list = sort {$a->[2] <=> $b->[2]} @find_list;
+  $data{find_list} = \@find_list;
+
+  ## a list of all edges and energies
+  my $lf = $frame -> LabFrame(-label=>"All edges ($data{find_min} eV - 135 keV)",
+			      -labelside=>'acrosstop',@label_args)
+    -> pack(-fill=>'both', -side=>'left', -padx=>10, -pady=>1);
+  my $lb = $lf -> Scrolled("Listbox", -scrollbars=>'e',
+			   -selectmode=>'single',
+			   -font =>$config{fonts}{fixed})
+    -> pack(-fill=>'both', -expand=>1, -side=>'left');
+  BindMouseWheel($lb);
+  $data{find_lb} = $lb;
+  foreach (@find_list) {
+    next if ($_->[2] < $data{find_min});
+    $lb -> insert('end', sprintf("%-2s %-2s....%8.1f ", ucfirst($_->[0]), ucfirst($_->[1]), $_->[2]));
+  };
+
+  ## the interactive part
+  $lf = $frame -> LabFrame(-label=>'Target energy',
+			   -labelside=>'acrosstop', @label_args)
+    -> pack(-fill=>'x', -expand=>1, -side=>'right', -pady=>1, -padx=>10);
+  my $fr = $lf -> Frame() -> pack(-side=>'top', -pady=>3, -anchor=>'c');
+  my $entry = $fr -> Entry(-width=>8, -textvariable=>\$data{find_energy},
+			   -font=>$config{fonts}{fixed},
+			   -validate=>'key', -validatecommand=>\&set_variable)
+    -> pack(-side=>'left', -pady=>4);
+  $fr -> Label(-text=>'eV', @label_args)
+    -> pack(-side=>'right');
+  $fr = $lf -> Frame() -> pack(-side=>'top', -pady=>3, -anchor=>'c');
+  $fr -> Label(-text=>'Harmonic: ', @label_args)
+    -> pack(-side=>'left');
+  $fr -> Radiobutton(-text=>"Fundamental", -variable=>\$data{find_harmonic},
+		     -font=>$config{fonts}{smbold},
+		     -value=>1, -command => \&find_energy)
+    -> pack(-side=>'left');
+  $fr -> Radiobutton(-text=>"2nd", -variable=>\$data{find_harmonic},
+		     -font=>$config{fonts}{smbold},
+		     -value=>2, -command => \&find_energy)
+    -> pack(-side=>'left');
+  $fr -> Radiobutton(-text=>"3rd", -variable=>\$data{find_harmonic},
+		     -font=>$config{fonts}{smbold},
+		     -value=>3, -command => \&find_energy)
+    -> pack(-side=>'left');
+  ##   $fr -> Radiobutton(-text=>"4th", -variable=>\$data{find_harmonic},
+  ## 		     -value=>4, -command => \&find_energy)
+  ##     -> pack(-side=>'left');
+  ##   $fr -> Radiobutton(-text=>"5th", -variable=>\$data{find_harmonic},
+  ## 		     -value=>5, -command => \&find_energy)
+  ##     -> pack(-side=>'left');
+  my $button = $lf -> Button(-width=>8, -text=>"Find it!", @button_args,
+			     -command => \&find_energy)
+    -> pack(-side=>'bottom', -pady=>3, -fill=>'x', -expand=>1);
+  $entry -> bind("<KeyPress-Return>"=>sub{$button->invoke});
+
+  ## initialize
+  &find_energy;
+  return $frame;
+};
+
+sub find_energy {
+  ## deal with the harmonic setting
+  my $energy = $data{find_energy} * $data{find_harmonic};
+  ## deal with energies below the low energy cutoff
+  if ($energy <= $data{find_min}) {
+    $data{find_lb} -> see(0);
+    $data{find_lb} -> selectionClear(0, 'end');
+    $data{find_lb} -> selectionSet(0);
+    return;
+  };
+  ## find the energy just above the specified energy
+  my $count = -2;
+  foreach (@{$data{find_list}}) {
+    next if ($_->[2] < $data{find_min});
+    my $en = $_->[2];
+    ++$count;
+    last if ($en >= $energy);
+  };
+  ## display the edge just below the specified energy
+  $data{find_lb} -> see($count);
+  $data{find_lb} -> selectionClear(0, 'end');
+  $data{find_lb} -> selectionSet($count);
+};
+
+## ===========================================================================
+##  This is the find lines portion of hephaestus
+
+sub line {
+  $periodic_table -> packForget() if $current =~ /$uses_periodic_regex/;
+  switch({page=>"line", text=>'Ordered List of Fluorescence Line Energies'});
+};
+
+
+sub setup_line {
+  my $frame = $_[0] -> Frame(-borderwidth=>2, -relief=>'flat');
+
+  $data{line_min}      = 100;
+  $data{line_energy} ||= 8047;
+  $data{line_harmonic} = 1;
+
+  ## snarf (quietly!) the list of energies from the list used for the
+  ## next_energy function in Xray::Absoprtion::Elam
+  my $hash;
+  do {
+    no warnings;
+    $hash = $$Xray::Absorption::Elam::r_elam{line_list};
+  };
+  my @line_list = ();
+  foreach my $key (keys %$hash) {
+    next unless exists $$hash{$key}->[2];
+    push @line_list, $$hash{$key};
+  };
+  ## and sort by increasing energy
+  @line_list = sort {$a->[2] <=> $b->[2]} @line_list;
+  $data{line_list} = \@line_list;
+
+  ## a list of all edges and energies
+  my $lf = $frame -> LabFrame(-label=>"All fluorescence lines ($data{line_min} eV - 135 keV)",
+			      -labelside=>'acrosstop',@label_args)
+    -> pack(-fill=>'y', -side=>'left', -padx=>10, -pady=>1);
+  my $lb = $lf -> Scrolled("Listbox",
+			   -scrollbars => 'e',
+			   -width      => 46,
+			   -selectmode => 'single',
+			   -font       => $config{fonts}{fixed},)
+    -> pack(-fill=>'both', -expand=>1, -side=>'left');
+  BindMouseWheel($lb);
+  $data{line_lb} = $lb;
+  foreach (@line_list) {
+    next if ($_->[2] < $data{line_min});
+    $lb -> insert('end', sprintf("%-2s %-8s %-9s (%6.4f) .... %8.1f ",
+				 ucfirst($_->[0]),
+				 Xray::Absorption->get_Siegbahn_full($_->[1]),
+				 Xray::Absorption->get_IUPAC($_->[1]),
+				 Xray::Absorption->get_intensity($_->[0],$_->[1]),
+				 $_->[2]));
+  };
+
+  ## the interactive part
+  $lf = $frame -> LabFrame(-label=>'Target energy',
+			   -labelside=>'acrosstop', @label_args)
+    -> pack(-fill=>'x', -expand=>1, -side=>'right', -pady=>1, -padx=>10);
+  my $fr = $lf -> Frame() -> pack(-side=>'top', -pady=>3, -anchor=>'c');
+  my $entry = $fr -> Entry(-width	    => 8,
+			   -textvariable    => \$data{line_energy},
+			   -font	    => $config{fonts}{smfixed},
+			   -validate	    => 'key',
+			   -validatecommand => \&set_variable)
+    -> pack(-side=>'left', -pady=>4);
+  $fr -> Label(-text=>'eV', @label_args)
+    -> pack(-side=>'right');
+##   $fr = $lf -> Frame() -> pack(-side=>'top', -pady=>3, -anchor=>'c');
+##   $fr -> Label(-text=>'Harmonic: ', @label_args)
+##     -> pack(-side=>'left');
+##   $fr -> Radiobutton(-text=>"Fundamental", -variable=>\$data{line_harmonic},
+## 		     -value=>1, -command => \&line_energy)
+##     -> pack(-side=>'left');
+##   $fr -> Radiobutton(-text=>"2nd", -variable=>\$data{line_harmonic},
+## 		     -value=>2, -command => \&line_energy)
+##     -> pack(-side=>'left');
+##   $fr -> Radiobutton(-text=>"3rd", -variable=>\$data{line_harmonic},
+## 		     -value=>3, -command => \&line_energy)
+##     -> pack(-side=>'left');
+  my $button = $lf -> Button(-width=>8, -text=>"Find it!", @button_args,
+			     -command => \&line_energy)
+    -> pack(-side=>'bottom', -pady=>3, -fill=>'x', -expand=>1);
+  $entry -> bind("<KeyPress-Return>"=>sub{$button->invoke});
+
+  ## initialize
+  &line_energy;
+  return $frame;
+};
+
+sub line_energy {
+  ## deal with the harmonic setting
+  my $energy = $data{line_energy} * $data{line_harmonic};
+  ## deal with energies below the low energy cutoff
+  if ($energy <= $data{line_min}) {
+    $data{line_lb} -> see(0);
+    $data{line_lb} -> selectionClear(0, 'end');
+    $data{line_lb} -> selectionSet(0);
+    return;
+  };
+  ## find the line energy just above the specified energy
+  my $count = -2;
+  foreach (@{$data{line_list}}) {
+    next if ($_->[2] < $data{line_min});
+    my $en = $_->[2];
+    ++$count;
+    last if ($en >= $energy);
+  };
+  ## display the line energy just below the specified energy
+  $data{line_lb} -> see($count);
+  $data{line_lb} -> selectionClear(0, 'end');
+  $data{line_lb} -> selectionSet($count);
+};
+#! /usr/bin/perl -w
+
+sub BindMouseWheel {		# Mastering Perl/Tk ch. 15, p. 370
+  my ($w) = @_;
+  if ($^O eq 'MSWin32') {
+    $w->bind('<MouseWheel>' =>
+	     [ sub { $_[0]->yview('scroll', -($_[1]/120)*3, 'units') },
+	       Ev('D') ]
+	     );
+  } elsif ($^O eq 'linux') {
+    ## on linux the mousewheel works by mapping to buttons 4 and 5
+    $w->bind('<4>' => sub { $_[0]->yview('scroll', -1, 'units') unless $Tk::strictMotif; });
+    $w->bind('<5>' => sub { $_[0]->yview('scroll', +1, 'units') unless $Tk::strictMotif; });
+  };
+};
+
+sub switch {
+  my ($rhash) = @_;
+  if ($current) {
+    $bottom{$current} -> packForget;
+    $frames{$current} -> configure(-relief=>'flat');
+  };
+  $current = $$rhash{page};
+  $frames{$current} -> configure(-relief=>'ridge');
+  $bottom{$current} -> pack(-side=>'top', -anchor=>'n', -fill=>'both', -expand=>1);
+  $title->configure(-text=>$$rhash{text});
+  return $current;
+};
+
+sub e2l {
+  ($_[0] and ($_[0] > 0)) or return "";
+  return 2*PI*HBARC / $_[0];
+};
+
+
+sub swap_energy_units {
+  ## fix labels
+  my $units = $data{units};
+  my @edges = (qw(K L1 L2 L3 M1 M2 M3 M4 M5 N1 N2 N3 N4 N5 N6 N7
+		    O1 O2 O3 O4 O5 P1 P2 P3));
+  my @data_style_params = ('text', -font=>'Helvetica 10', -anchor=>'e', -foreground=>'black');
+  if ($units eq 'Energies') {
+    #$data{abs_energy_label}  -> configure(-text=>'Energy');
+    #$data{abs_units_label}   -> configure(-text=>'eV');
+    $data{form_energy_label} -> configure(-text=>'Energy:');
+    $data{form_energy_units} -> configure(-text=>'eV');
+    $data{ion_energy_label}  -> configure(-text=>'Photon energy');
+    $energies{edges} -> headerConfigure(1, -text=>'Energy');
+    $energies{lines} -> headerConfigure(2, -text=>'Energy');
+    if ($data{sample_energy} < 8000) {
+      ## swap energy values
+      map {$energies{$_} = ($_ =~ /edges|lines/) ? $energies{$_} : &e2l($energies{$_})} keys(%energies);
+      map {$data{$_}     = &e2l($data{$_})} (qw(abs_energy form_energy ion_energy));
+    };
+    $data{sample_energy} = 9000;
+    my $data_style = $energies{edges} -> ItemStyle(@data_style_params);
+    foreach my $e (@edges) {
+	$energies{edges} -> itemConfigure($e, 1, -text=>$energies{$e}, -style=>$data_style);
+    };
+    $energies{edges} -> selectionClear;
+    $energies{edges} -> anchorClear;
+    $data_style = $energies{lines} -> ItemStyle(@data_style_params);
+    foreach my $l (@LINELIST) {
+	$energies{lines} -> itemConfigure($l, 2, -text=>$energies{$l}, -style=>$data_style);
+	$energies{lines} -> itemConfigure($l, 3, -text=>$probs{$l}, -style=>$data_style);
+    };
+  } elsif ($units eq 'Wavelengths') {
+    #$data{abs_energy_label}  -> configure(-text=>'Wavelength');
+    #$data{abs_units_label}   -> configure(-text=>'Å');
+    $data{form_energy_label} -> configure(-text=>'Wavelength:');
+    $data{form_energy_units} -> configure(-text=>'Å');
+    $data{ion_energy_label}  -> configure(-text=>'Photon wavelength');
+    $energies{edges} -> headerConfigure(1, -text=>'Wavelength');
+    $energies{lines} -> headerConfigure(2, -text=>'Wavelength');
+    if ($data{sample_energy} > 8000) {
+      ## swap energy values
+      map {$energies{$_} = ($_ =~ /edges|lines/) ? $energies{$_} : &e2l($energies{$_})} keys(%energies);
+      map {$data{$_}     = &e2l($data{$_})} (qw(abs_energy form_energy ion_energy));
+    };
+    $data{sample_energy} = e2l(9000);
+    my $data_style = $energies{edges} -> ItemStyle(@data_style_params);
+    foreach my $e (@edges) {
+	$energies{edges} -> itemConfigure($e, 1, -text=>$energies{$e}, -style=>$data_style);
+    };
+    $energies{edges} -> selectionClear;
+    $energies{edges} -> anchorClear;
+    $data_style = $energies{lines} -> ItemStyle(@data_style_params);
+    foreach my $l (@LINELIST) {
+	$energies{lines} -> itemConfigure($l, 2, -text=>$energies{$l}, -style=>$data_style);
+	$energies{lines} -> itemConfigure($l, 3, -text=>$probs{$l}, -style=>$data_style);
+    };
+  };
+};
+
+
+sub set_xsec {
+  my $resource = $_[0];
+  $xsec_menu -> menu -> entryconfigure($_, -state=>"normal") foreach (1 .. 4);
+  if (($resource eq "henke") or ($resource eq "cl")) {
+    $data{cross_section} = "Total";
+    $data{xsec} = "xsec";
+    $xsec_menu -> menu -> entryconfigure($_, -state=>"disabled") foreach (1 .. 4);
+  };
+};
+
+sub set_pt_explain {
+  my $which = lc($data{cross_section});
+  ($which = "scattering") if (($data{resource} eq "Chantler") and ($data{cross_section} =~ /oherent/));
+  $data{pt_explain} = "Using $data{resource} database\nComputing $which cross-section";
+  $data{ion_resource} = "Using $data{resource} database";
+};
+
+## validation callback.  enforce positive numbers
+sub set_variable {
+  #print join(" | ", @_, $/);
+  my ($k, $entry, $prop) = (shift, shift, shift);
+  #print $k, $/;
+  return 1 unless defined $entry;
+  ($entry =~ /^\s*$/) and ($entry = '1');	# error checking ...
+  if ($k eq 'width') {
+    ($entry =~ /^\s*-$/) and return 1; # error checking ...
+    ($entry =~ /^\s*-?(\d+\.?\d*|\.\d+|\.)\s*$/) or return 0;
+  } else {
+    ($entry =~ /^\s*(\d+\.?\d*|\.\d+|\.)\s*$/) or return 0;
+  };
+  ##get_ion_data(0) if (defined($entry) and ($k eq 'ion_energy'));
+  return 1;
+};
+
+## I got this off of Usenet.  Do a search at groups.google.com for the
+## package to find discussions of slow dialog boxes.  The text of this
+## will be among the discussions.
+package Patch::SREZIC::Tk::Wm;
+
+use Tk::Wm;
+package Tk::Wm;
+
+sub Post
+{
+ my ($w,$X,$Y) = @_;
+ $X = int($X);
+ $Y = int($Y);
+ $w->positionfrom('user');
+ # $w->geometry("+$X+$Y");
+ $w->MoveToplevelWindow($X,$Y);
+ $w->deiconify;
+# $w->idletasks; # to prevent problems with KDE's kwm etc.
+# $w->raise;
+}
+
+package Patch::Workaround::_HistoryEntry;
+no warnings;
+sub _HistoryEntry::create {
+  my $o = shift->new;
+#    my($what, $index) = @_;
+#    if (ref $what eq 'HASH') {
+#	$o->file($what->{file});
+#	$o->text($what->{text});
+#    } else {
+#	$o->file($what);
+#    }
+#    $o->index($index);
+  $o;
+};
+
+
+1;

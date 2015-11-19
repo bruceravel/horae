@@ -1,0 +1,67 @@
+                                        8 June, 2009
+                                        Bruce Ravel (bravel@bnl.gov)
+
+
+        Installing Horae and LibPerlXray and its dependencies
+                         without root access
+
+
+If you do not have root access on your computer, but you want to
+download and install all of my stuff and all of its dependencies, you
+will have to do some work to prepare your user account. Fortunately, a
+clever fellow has already worked out a solution to this problem.  The
+trick is to use the local::lib package from CPAN
+(http://search.cpan.org/~mstrout/local-lib/).
+
+   1. Go to http://search.cpan.org/~mstrout/local-lib/ and download
+      the latest tar.gz file using the link at the top of the page.
+
+   2. Follow the instructions under the heading "To bootstrap if you
+      don't have local::lib itself installed", which I will repeat here:
+
+      1. unpack the local::lib tar.gz file that you just downloaded
+
+      2. cd into the local-lib-1.002000 subdirectory (the version
+         number might be different...) 
+
+      3. at the command line, enter "perl Makefile.PL --bootstrap"
+
+      4. answer "yes" to the question it asks about configuring CPAN
+
+      5. do make test then make install
+
+      6. finally do
+
+            echo 'eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)' >>~/.bashrc
+
+         This will alter your .bashrc file so that perl will know to
+         install modules in your own diskspace and find them there
+         once installed. It also exports some environment variables so
+         you can run the programs installed by Horae. (See the
+         local::lib web page for instructions on how to do this for
+         the C shell.)
+
+  3. You will now need to log out and log back in to make this change
+     to the .bashrc file take effect. (Logging out and in is not
+     strictly necessary, but it's easy and it will certainly work.)
+
+
+
+Notes:
+======
+
+1. These instructions only apply to perl code.  This procedue will NOT
+   help you install PGPLOT or Ifeffit without root access.  For
+   PGPLOT, you will need to run the PGPLOT_install script with the
+   --prefix command line switch.  For Ifeffit, you will need to run
+   the configure script with the --prefix switch.  In each case the
+   argument of the switch should be the installation location in your
+   personal disk space.  You will then need to set your executation
+   path to find the things that get installed.
+
+2. Using local::lib behind a proxy server requires that you handle
+   communications through the proxy at the level of the shell. Here at
+   Brookhaven, I have the following in my .bashrc file:
+
+      export http_proxy=http://192.168.1.130:3128/
+

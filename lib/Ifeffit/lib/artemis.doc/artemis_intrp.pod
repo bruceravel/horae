@@ -1,0 +1,164 @@
+=head1 ARTEMIS: Interpretation of the FEFF Calculation
+
+B<ARTEMIS> - Interpretation of the B<FEFF> calculation
+
+This page provides a concise overview of the B<Feff> calculation.  At
+the top of the page is a summary of some of the statistics of the
+calculation.  Below that is a chart showing the details of each path
+from the calculation.  For each path, the degeneracy, the half path
+length and the amplitude factor are shown.  The last column shows a
+tokenized summary of the scattering path -- this allows you to see at
+a glance which atoms were involved in the path.
+
+The information and context menus available on this page allow you
+organize, understand, and manipulate the paths in this B<Feff>
+calculation.  Pretty much all functions involving the paths I<except>
+writing math expressions for the path parameters are available on this
+page.
+
+=head2 The interpretation chart
+
+The colors and fonts used in the chart convey information:
+
+=over 4
+
+=item B<Bold, black font>
+
+These are paths that have been imported into the project and are
+included in the fit.
+
+=item B<Bold, brown font>
+
+These are paths that have been imported into the project but are
+excluded in the fit.
+
+=item B<Normal, black text>
+
+These are paths that have not been imported into the project but which
+are available to be imported.
+
+=item B<Normal, grey text>
+
+These are paths that are unavailable for importation into the project.
+These can be made available by re-running the B<Feff> calculation.
+After the B<Feff> run, it is best to choose the "import no paths" to
+avoid reimporting paths already in the project.  After that, these
+paths will be written in normal, black text, indicating that they are
+available for import.
+
+=item B<Light brown background>
+
+The light brown background is used to indicate single scattering paths.
+
+=item B<Light blue background>
+
+The light blue background is used to indicate collinear or nearly
+collinear multiple scattering paths.
+
+=back
+
+
+=head2 Context menus
+
+There are interesting and useful context menus on every part of this
+page.  These menus are available by right clicking.
+
+Right clicking anywhere in the text box at the top of the page will
+pop up a menu with options for viewing files from the B<Feff>
+calculation.
+
+Right clicking in the interpretation chart will post a menu of options
+relevant to the path on the line on which you clicked.  Each of the
+four kinds of paths given by the four fonts described above has its
+own menu.
+
+For paths that are imported in the fit, the menu offers options for
+plotting the path, displaying that path's page, including or excluding
+the path in the fit, selecting or deselecting that path for plotting,
+making that path the default for evaluation of def parameters after a
+fit, displaying the text of the file containing the path, or
+discarding the path.  The choices for including or excluding and for
+selecting or deselecting depend on the state of that path in the Data
+and Paths List. Also some options might be greyed out depending on the
+state of that path.
+
+For paths that have not been imported into the project, the context
+menu allows you to import the path with the option of displaying its
+page or leaving the display on the B<Feff> interpretation.  For paths
+that are unavailable for import, a message saying so is posted when
+one of those lines is right-clicked.
+
+The interpretation chart allows for extended selection of lines in the
+chart.  You can select additional paths by holding the control key
+while clicking with the left mouse button.  Holding the shift key
+while left clicking selects all line between the anchor (the one
+outlined with a dashed line) and the one you click on.  You can also
+click and drag to select all the lines you drag over.  When more than
+one line is selected, the content of the context menu change to
+reflect functionality that makes sense for many paths.  Extended
+selection in the interpretation chart is therefore a good way of
+including/excluding, selecting/deselecting, or plotting a large number
+of paths.
+
+The context menu that pops up when many lines are selected may be a
+little surprising.  Its contents depend upon the state of the anchored
+line, which in this case is the one that you right-click on to post
+the menu.  The options in the context menu will be suitable to the
+state of the anchored selection regardless of the states of the other
+selected lines.  If you choose a menu item that does not make sense
+for some of the selected lines, those lines will be ignored.
+
+Here is a concrete example.  Suppose that you select a number of
+lines, some of which are included in the fit and some of which have
+not been imported in the fit.  If you then right click on one of the
+included paths, you will get options appropriate to included paths.
+If you then ask to plot the selected paths along with the data, the
+included paths will be plotted and the imported paths will be
+ignored.  If, instead, you click on one of the paths that has not been
+imported yet, the context menu will give you the option of importing
+the selected paths.  In that case, the paths that have already been
+imported will be ignored.
+
+
+=head2 Trouble shooting
+
+On occassion you might see that lines in the B<Feff> interpretation
+do not properly report on the contents of the path.  When this
+happens, site tags are replaced by this string: C<E<lt>?E<gt>>.  There
+are a couple common reasons you might see the C<E<lt>?E<gt>> tags:
+
+=over 4
+
+=item 1.
+
+You have done some advanced voodoo with B<Feff>, editing the
+C<files.dat> or C<paths.dat> files then rerunning the last module to
+produce specialized output. 
+
+=item 2.
+
+You have discovered a bug in the algorithm B<Artemis> uses to harvest
+information from the B<Feff> calculation.  IN that case, you should
+send the C<feff.inp> file or the B<Artemis> project file to Bruce so
+he can fix the problem.
+
+=back
+
+
+Note that the appearance of the C<E<lt>?E<gt>> tags is probably not an
+indication that B<Feff> has misbehaved.  The B<Feff> calculation has
+to run to completion and generate its normal output before this
+problem can manifest itself.  The B<Feff> calculation is almost
+certainly usable to analyze the data.  The B<Feff> interpretation page
+is B<Artemis>'s attempt to organize information about the B<Feff>
+calculation in some user-friendly format.  That this organizational
+effort failed is not necessarily an indication that B<Feff> failed.
+
+=over 5
+
+=item
+
+L<Back to the main document|artemis>
+
+=back
+

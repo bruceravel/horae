@@ -1,0 +1,103 @@
+
+If you are reading this file, you have figured out that the Artemis
+project file is nothing more than a common zip file with a different
+three-letter extension.  Here I explain the structure of the files and
+directories in a project.
+
+First, a caveat.  Artemis may not be sufficiently tolerant of faults
+in a project file.  If you remove, rename, or add any files, you run
+the serious risk of confusing Artemis beyond her abilities to cope.
+Doing so could, therefore, break this project file.  That said, it is
+sometimes useful to peek inside a project file or to extract a file
+from it.
+
+At the top level of the zip file you will find a few files and
+directories.  This file is one of them.  There is also an empty file
+named `HORAE'.  You will also find the following directories:
+
+chi_data/
+    All data used by the project is stored in this directory.  The
+    filenames of the files in this directory are usually the same as
+    the names of the original data files, although a few characters
+    might be added to file names to avoid file name collisions.
+
+    When background subtracted data or difference spectra are made,
+    those data are also stored in this directory.  These files will
+    have the characters "_bkgsub" or "_diff" added to the file name.
+
+log_files/
+    The most recent log file is stored in this directory.  (This
+    directory may go away in future versions).
+
+descriptions/
+    This directory stores the current description file, called
+    `artemis'.  The description files contains a flat text
+    representation of the objects used by Artemis to describe the
+    data, the GDS parameters, and all the paths.  The line that starts
+    "@args" contains all the attributes of an object as key/value
+    pairs.  The "@titles" lines are text strings associated with that
+    object.  The token "[record]" tells artemis to process the
+    previous two lines.  At the end of the file are flat
+    representations of the GDS parameters, the plot features, and the
+    text on the Properties palette.
+
+    The other file in this directory is the journal entry.  This text
+    will be displayed in the journal palette.  This is a separate file
+    mostly as a convenience to someone who wants to read this file
+    without firing up Artemis.
+
+tmp/
+    Artemis uses this space as a staging area for temporary files.
+    There normally are not any files in this space since Artemis
+    typically deletes any files it writes here.
+
+fits/
+    This directory contains all the fits ever performed with this
+    project.  See below for the whole scoop.
+
+
+
+Feff Directories
+================
+
+Each Feff calculation gets its own directory.  These directories are
+named by this scheme: dataN.feffM.  The number N is the number of the
+data file, starting at 0.  The first data file you import becomes
+"data0", the second becomes "data1", and so on.  Likewise, the first
+Feff calculation you make is called "feff0", the second is called
+"feff1".  Thus a project with two data sets and one Feff calculation
+for each data set will have directories called "data0.feff0" and
+"data1.feff1".  
+
+Each of these directories has all the files you expect from a Feff
+run.  There will be a `feff.inp' file and all the output files from
+the Feff run.  There may also be a file called `atoms.inp' if Atoms
+was used prior to this calculation.  The Atoms and Feff input files
+are always called by those names regardless of the names of the input
+files that are imported from elsewhere on the disk.
+
+
+
+Fit Directories
+===============
+
+Every time the fit button is pressed, a new directory is made under
+the `fits/' directory.  These are named "fitNNNN/".  The number NNNN
+increments starting with 1.  So the first fit directory is called
+"fit0001/" and so on.
+
+Several things get written to the fitNNNN/ directory.  These include
+the description file used for this fit, a short file containing the
+text string used as the label for the fit in the Data and Paths List,
+and files containing the best fit and residual arrays for each data
+set.  The fit files are called `data0.fit', `data1.fit', and so on.
+The residual files are called `data0.res', and so on.  If a background
+co-refinement is made, then files called `data0.bkg' and so on are
+written to this directory.
+
+`dataN.FT' contains the Foruier transform and fit parameters used for
+data set N in the fit.  `dataN.fs' identifies whether a fit or a sum
+was performed.  `label' contains the label string from the fit history
+dialog and is the string used in the Data and Paths List.  `log' is
+the log file from the fit or summation.  `description' is the fit
+description for this fit or summation.

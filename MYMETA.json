@@ -1,0 +1,202 @@
+{
+   "abstract" : "XAS data processing and analysis using Ifeffit",
+   "author" : [
+      "Bruce Ravel <bravel AT bnl DOT gov>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Module::Build version 0.4003, CPAN::Meta::Converter version 2.112621",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "horae",
+   "prereqs" : {
+      "runtime" : {
+         "requires" : {
+            "Archive::Zip" : 0,
+            "Chemistry::Elements" : 0,
+            "Compress::Zlib" : 0,
+            "Config::IniFiles" : 0,
+            "Math::Combinatorics" : 0,
+            "Math::Derivative" : 0,
+            "Math::Round" : 0,
+            "Math::Spline" : 0,
+            "Parse::RecDescent" : 0,
+            "Pod::Escapes" : 0,
+            "Pod::Simple" : 0,
+            "Spreadsheet::WriteExcel" : 0,
+            "Statistics::Descriptive" : 0,
+            "Text::Glob" : 0,
+            "Tie::IxHash" : 0,
+            "Tie::Watch" : 0,
+            "Time::Stopwatch" : 0,
+            "Tk" : "804.027",
+            "Tk::FileDialog" : 0,
+            "Tk::HistEntry" : 0,
+            "Tk::NumEntry" : 0,
+            "Tk::Pod" : 0,
+            "Tk::Splashscreen" : 0
+         }
+      }
+   },
+   "provides" : {
+      "Ifeffit::ArtemisLog" : {
+         "file" : "lib/Ifeffit/ArtemisLog.pm",
+         "version" : "v0.8.13"
+      },
+      "Ifeffit::Elements" : {
+         "file" : "lib/Ifeffit/Elements.pm",
+         "version" : 0
+      },
+      "Ifeffit::Files" : {
+         "file" : "lib/Ifeffit/Files.pm",
+         "version" : 0
+      },
+      "Ifeffit::FindFile" : {
+         "file" : "lib/Ifeffit/FindFile.pm",
+         "version" : 0
+      },
+      "Ifeffit::Group" : {
+         "file" : "lib/Ifeffit/Group.pm",
+         "version" : "v0.8.59"
+      },
+      "Ifeffit::Parameter" : {
+         "file" : "lib/Ifeffit/Parameter.pm",
+         "version" : "v0.8.13"
+      },
+      "Ifeffit::ParseFeff" : {
+         "file" : "lib/Ifeffit/ParseFeff.pm",
+         "version" : 0
+      },
+      "Ifeffit::Path" : {
+         "file" : "lib/Ifeffit/Path.pm",
+         "version" : "v0.8.13"
+      },
+      "Ifeffit::Plugins::Filetype::Athena::BESSRC" : {
+         "file" : "lib/Ifeffit/Plugins/Filetype/Athena/BESSRC.pm",
+         "version" : 0
+      },
+      "Ifeffit::Plugins::Filetype::Athena::CMC" : {
+         "file" : "lib/Ifeffit/Plugins/Filetype/Athena/CMC.pm",
+         "version" : 0
+      },
+      "Ifeffit::Plugins::Filetype::Athena::Encoder" : {
+         "file" : "lib/Ifeffit/Plugins/Filetype/Athena/Encoder.pm",
+         "version" : 0
+      },
+      "Ifeffit::Plugins::Filetype::Athena::HXMA" : {
+         "file" : "lib/Ifeffit/Plugins/Filetype/Athena/HXMA.pm",
+         "version" : 0
+      },
+      "Ifeffit::Plugins::Filetype::Athena::Lambda" : {
+         "file" : "lib/Ifeffit/Plugins/Filetype/Athena/Lambda.pm",
+         "version" : 0
+      },
+      "Ifeffit::Plugins::Filetype::Athena::PFBL12C" : {
+         "file" : "lib/Ifeffit/Plugins/Filetype/Athena/PFBL12C.pm",
+         "version" : 0
+      },
+      "Ifeffit::Plugins::Filetype::Athena::SSRLA" : {
+         "file" : "lib/Ifeffit/Plugins/Filetype/Athena/SSRL.pm",
+         "version" : 0
+      },
+      "Ifeffit::Plugins::Filetype::Athena::SSRLB" : {
+         "file" : "lib/Ifeffit/Plugins/Filetype/Athena/SSRLB.pm",
+         "version" : 0
+      },
+      "Ifeffit::Plugins::Filetype::Athena::SSRLmicro" : {
+         "file" : "lib/Ifeffit/Plugins/Filetype/Athena/SSRLmicro.pm",
+         "version" : 0
+      },
+      "Ifeffit::Plugins::Filetype::Athena::X10C" : {
+         "file" : "lib/Ifeffit/Plugins/Filetype/Athena/X10C.pm",
+         "version" : 0
+      },
+      "Ifeffit::Plugins::Filetype::Athena::X15B" : {
+         "file" : "lib/Ifeffit/Plugins/Filetype/Athena/X15B.pm",
+         "version" : 0
+      },
+      "Ifeffit::Tools" : {
+         "file" : "lib/Ifeffit/Tools.pm",
+         "version" : "070"
+      },
+      "STAR::Checker" : {
+         "file" : "lib/STAR/Checker.pm",
+         "version" : "0.02"
+      },
+      "STAR::DataBlock" : {
+         "file" : "lib/STAR/DataBlock.pm",
+         "version" : "0.58"
+      },
+      "STAR::Dictionary" : {
+         "file" : "lib/STAR/Dictionary.pm",
+         "version" : "0.56"
+      },
+      "STAR::Filter" : {
+         "file" : "lib/STAR/Filter.pm",
+         "version" : "0.01"
+      },
+      "STAR::Parser" : {
+         "file" : "lib/STAR/Parser.pm",
+         "version" : "0.59"
+      },
+      "STAR::Writer" : {
+         "file" : "lib/STAR/Writer.pm",
+         "version" : "0.01"
+      },
+      "Tk::KeyEntry" : {
+         "file" : "lib/Tk/KeyEntry.pm",
+         "version" : 0
+      },
+      "Tk::PathparamEntry" : {
+         "file" : "lib/Tk/PathparamEntry.pm",
+         "version" : 0
+      },
+      "Tk::RetEntry" : {
+         "file" : "lib/Tk/RetEntry.pm",
+         "version" : 0
+      },
+      "Tk::TextUndoQuiet" : {
+         "file" : "lib/Tk/TextUndoQuiet.pm",
+         "version" : 0
+      },
+      "WWWBrowser" : {
+         "file" : "lib/WWWBrowser.pm",
+         "version" : "2.23"
+      },
+      "Xray::ATP" : {
+         "file" : "lib/Xray/ATP.pm",
+         "version" : 0
+      },
+      "Xray::Atoms" : {
+         "file" : "lib/Xray/Atoms.pm",
+         "version" : "3.0"
+      },
+      "Xray::Tk::SGB" : {
+         "file" : "lib/Xray/Tk/SGB.pm",
+         "version" : "0.03"
+      },
+      "Xray::Xtal" : {
+         "file" : "lib/Xray/Xtal.pm",
+         "version" : "0.31"
+      },
+      "Xray::Xtal::Cell" : {
+         "file" : "lib/Xray/Xtal.pm",
+         "version" : 0
+      },
+      "Xray::Xtal::Site" : {
+         "file" : "lib/Xray/Xtal.pm",
+         "version" : 0
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://dev.perl.org/licenses/"
+      ]
+   },
+   "version" : "070"
+}

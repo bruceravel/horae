@@ -1,0 +1,62 @@
+This directory contains the library files for Athena and Artemis.
+
+The hints, pod, rc, and logo files go into
+    $Config{site_lib}/Ifeffit/lib/<program>
+on Unix (including linux and Mac OSX).
+
+The hints, pod, ini, and logo files go into
+    C:\Program Files\Ifeffit\<program?
+on Windows.
+
+The tex and html files are not typically installed, but come with the
+distribution for the benefit of those who do not know about the
+pod2XXX programs.
+
+----------------------------------------------------------------------
+
+README                    This file
+artemis/
+  artemis-logo.gif        Image used for Artemis splashscreen
+  artemis.config          Config file for Artemis, used on prefs page
+  artemis.hints	          Hints file for Artemis
+  artemis.ico	          Windows icon for Artemis
+  artemis.ini	          Windows initialization file for Artemis
+  artemis_icon.???        icon for Artemis in various formats
+  artemisrc	          Unix runtime config file for Artemis
+  artemisrcw	          Windows runtime config file for Artemis
+  artemis_project.readme  File explaining proj. format, inserted in all projects
+artemis.doc/
+  *.pod			  pod files for document pages
+  make_doc		  script for generating doc in various formats
+athena/
+  athena-logo.gif         Image used for Athena splashscreen
+  athena.config           Config file for Athena, used on prefs page
+  athena.hints	          Hints file for Athena
+  athena.ico	          Windows icon for Athena
+  athena.ini	          Windows initialization file for Athena
+  athena_icon.???         icon for Athena in various formats
+  athenarc	          Unix runtime config file for Athena
+  athenarcw	          Windows runtime config file for Athena
+athena.doc/
+  *.pod			  pod files for document pages
+  make_doc		  script for generating doc in various formats
+hephaestus/
+  absorption.gif          button graphic
+  data.gif		  button graphic
+  f1f2.gif		  button graphic
+  find.gif		  button graphic
+  find.xcf		  button graphic, gimp native
+  formulas.gif		  button graphic
+  hephaestus_icon.xbm     bitmap icon
+  ion.gif		  button graphic
+  kalziumrc		  data for Data utility
+  line.gif		  button graphic
+  trans.gif		  button graphic
+  trans.xcf		  button graphic, gimp native
+  transition.fig          transition chart, xfig native
+  transition.gif	  transition chart
+  vulcan.gif              splashscreen and icon graphic
+  vulcan.ico              icon graphic
+  vulcan.png		  icon graphic
+  vulcan.xpm		  icon graphic
+

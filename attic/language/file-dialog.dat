@@ -1,0 +1,11 @@
+-DirLBCaption| Directories| Directorios| Répertoires| Verzeichnisse
+-FileLBCaption| Files| Ficheros| Fichiers| Dateien
+-FileEntryLabel| Filename:| Nombre de Fichero:| Nom du Fichier:| Dateiname:
+-PathEntryLabel| Pathname:| Nombre del camino:| Nom du Chemin:| Pfadangabe:
+-FltEntryLabel| Filter:| Filtro:| Filtre:| Filter:
+-ShowAllLabel| Show All| Mostrar todos| Montrer tout| Zeigt Alles
+-OKButtonLabel| OK| OK| OK| OK
+-RescanButtonLabel| Rescan| Rescan| Recharger| erneutes Durcgsuchen
+-CancelButtonLabel| Cancel| Cancelar| Annuler| Abbrechen
+-EDlgTitle| File does not exist!| Este fichero no existe!| Ce fichier n'existe pas!| Datei existiert nicht!
+-EDlgText| You must specify an existing file.(\$filename not found)| Tiene que especificar un fichero que existe.(\$filename no existe)| Vous devez spécifier un fichier qui existe déjà.(\$filename n'existe pas)| Sie müssen eine existierende Datei angeben.(\$filename not found)

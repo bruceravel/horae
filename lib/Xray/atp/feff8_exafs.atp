@@ -1,0 +1,68 @@
+<atp -- Atoms Template File>
+<com> This file is part of the Atoms distribution.
+<com> Atoms is copyright (c) 1998-2006 Bruce Ravel
+<com> This is the atoms template file for a feff8 input file
+<com> Homepage: http://cars9.uchicago.edu/~ravel/software/
+<com>
+<meta :precision 9.5 :file "feff8 input file" :output "feff.inp">
+<meta :feff 8 :list "cluster" :sphere 2.2 :occupancy 0>
+
+<id :prefix " * ">
+
+<titles :prefix " TITLE ">
+
+ *  <central> <edge> edge energy = <eedge> eV
+ EDGE      <edge>
+ S02       1.0
+
+ *         pot    xsph  fms   paths genfmt ff2chi
+ CONTROL   1      1     1     1     1      1
+ PRINT     1      0     0     0     0      3
+
+                          *** ixc=0 means to use Hedin-Lundqvist
+ *         ixc  [ Vr  Vi ]
+ EXCHANGE  0
+
+ RPATH     <rmax>
+ EXAFS     20
+ NLEG      4
+
+                          *** Radius of small cluster for
+                          *** self-consistency calculation
+                          *** A sphere including 2 shells is
+                          *** a good choice
+                          *** l_scf = 0 for a solid, 1 for a molecule
+ *         r_scf  [ l_scf   n_scf   ca ]
+ *SCF       4.0
+
+                          *** Upper limit of XANES calculation.
+                          *** This *must* be uncommented to
+                          *** make Feff calculate full multiple
+                          *** scattering rather than a path expansion
+ *         kmax   [ delta_k  delta_e ]
+ *XANES     4.0
+
+                          *** Radius of cluster for Full Multiple
+                          *** Scattering calculation
+                          *** l_fms = 0 for a solid, 1 for a molecule
+ *         r_fms     l_fms
+ *FMS      <rss>  0
+
+                          *** Energy grid over which to calculate
+                          *** DOS functions
+ *         emin  emax   eimag
+ LDOS      -30   20     0.1
+
+<com> the stoichiometry counts the number of each potential in the
+<com> unit cell, but does NOT divide out the greatest common denominator
+ POTENTIALS
+ *    ipot   Z  element            l_scmt  l_fms   stoichiometry
+<com> styles are species, tags, and sites
+<potentials :ipots species :gcd 0>
+        <ipot>   <znum>   <elem>         <l>       <l>       <stoi>
+
+ ATOMS                          * this list contains <nclus> atoms
+ *   x          y          z      ipot  tag           distance
+<list :style cluster>
+  <x>  <y>  <z>  <ipot>    <tag>  <r>  <inc>
+ END

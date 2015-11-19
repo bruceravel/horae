@@ -1,0 +1,87 @@
+<atp -- Atoms Template File>
+<com> This file is part of the Atoms distribution.
+<com> Atoms is copyright (c) Bruce Ravel 1998-2006.
+<com> This is the atoms template file for testing atoms upon
+<com> installation.  This does not produce useful output, except
+<com> for testing and development purposes.
+<com> Homepage: http://cars9.uchicago.edu/~ravel/software/
+<com>
+<meta :file "test file" :occupancy 0>
+<com><id :prefix "--test-- ">
+
+This file is intended for diagnostic and developmental purposes only.
+It is probably not a useful file for most Atoms users.
+
+<com> operating system          = <os>
+central atom              = <central>
+edge                      = <edge>
+edge integer              = <iedge>
+edge energy               = <eedge>
+number of atoms           = <nclus>
+R_max                     = <rmax>
+a lattice constant        = <a>
+b lattice constant        = <b>
+c lattice constant        = <c>
+alpha angle               = <alpha>
+beta angle                = <beta>
+gamma angle               = <gamma>
+canonicalized space group = <space>
+given space group         = <given>
+crystal class             = <class>
+setting                   = <setting>
+not a tagword             = <dummy>
+there should be a newline between the dashes: -<n>-
+
+---------------------------------------------------------------
+Bravais translation vectors:
+    <bravais>
+
+---------------------------------------------------------------
+EASE lines:
+<ease :file dummy>
+
+---------------------------------------------------------------
+McMaster corrections:
+<resource :prefix "# ">
+<corrections :prefix "--test-- ">
+
+---------------------------------------------------------------
+titles:
+<titles :prefix "--test-- ">
+
+---------------------------------------------------------------
+This is the list style used in an atoms file:
+<meta :occupancy 1>
+<list :style atoms>
+  <elem>  <x>  <y>  <z>  <tag>  <occ>
+
+
+---------------------------------------------------------------
+This is the list style used in a p1 file:
+<meta :occupancy 1>
+<list :style unit>
+  <elem>  <x>  <y>  <z>  <itag>	<inc>  <color>
+
+
+---------------------------------------------------------------
+This is the list style used in a symmetry file:
+<list :style symmetry>
+	<x>		<y>		<z>		<inc>
+
+
+
+---------------------------------------------------------------
+This is the list style used in an overfull unit cell file:
+<meta :occupancy 1>
+<list :style overfull>
+<elem>       <x>       <y>       <z>
+
+
+---------------------------------------------------------------
+These are the list styles used in feff input files:
+<potentials :ipots species>
+        <ipot>   <znum>   <elem>   <l>    <stoi>
+
+<meta :occupancy 0>
+<list :style cluster>
+  <x>  <y>  <z>  <ipot>    <itag>  <r>   <1bou>

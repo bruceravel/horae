@@ -1,0 +1,29 @@
+<atp -- Atoms Template File>
+<com> This file is part of the Atoms distribution.
+<com> Atoms is copyright (c) Bruce Ravel 1998-2006.
+<com> This is the atoms template file for an absorption output file
+<com> Homepage: http://cars9.uchicago.edu/~ravel/software/
+<com>
+<meta :precision 9.5 :file "absorption calculation" :output "absorption.dat">
+<meta :occupancy 1>
+#
+<id :prefix "# ">
+#
+# The following absorption calculations were made using
+<resource :prefix "# ">
+# around the <central> <edge> edge (<eedge>) eV
+#
+<corrections :prefix "# " :prettyline 0 :units "microns">
+#
+# ---------------------------------------------------------------------------
+# The following crystallographic data was used:
+#
+<titles :prefix "title	">
+space = <space>
+a =	<a>	b =	<b>	c =	<c>
+alpha =	<alpha>	beta =	<beta>	gamma =	<gamma>
+core =	<ctag>	edge =	<edge>
+atoms
+! elem   x          y          z       tag        occ
+<list :style atoms>
+  <elem>  <x>  <y>  <z>  <tag>  <occ>

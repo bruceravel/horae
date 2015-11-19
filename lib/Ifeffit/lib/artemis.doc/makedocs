@@ -1,0 +1,16 @@
+#!/bin/sh
+files=`ls *.pod | cut -d . -f 1`
+rm -f pod2htmd.tmp pod2htmi.tmp
+
+for f in $files; do
+   echo "converting $f"
+   pod2html --css=../pod.css --htmlroot=.  --podpath=. --infile=$f.pod --outfile=intermediate.html
+   sed 's/<!-- INDEX BEGIN -->/<div class=index>/' intermediate.html | \
+     sed 's/<!-- INDEX END -->/<\/div>/' > $f.html
+   rm -f intermediate.html
+done
+
+perl combine_pod.pl $files
+
+pod2pdf --podfile letter artemisdoc.pod
+mv artemisdoc.pod.pdf artemis.pdf

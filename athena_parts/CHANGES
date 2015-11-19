@@ -1,0 +1,1198 @@
+
+   +--------------------------------------------------------------+
+   |                    Change log for Athena                     |
+   |        http://cars9.uchicago.edu/~ravel/software/exafs       |
+   +--------------------------------------------------------------+
+   |                         Bruce Ravel                          |
+   |                       bravel@anl.gov                         |
+   +--------------------------------------------------------------+
+
+
+Change log for version numbers starting at 0.8.  See CHANGES.1 for
+earlier versions whose version numbers were the same as release dates.
+
+June 9 2009 0.9.059
+  * fixed the buggy make data group button in the peak fitting dialog
+  * peak fitting log report is now a column data file with the results
+    in the header and the data+fit+components+residual as the columns
+  * work around a bug in Ifeffit 1.2.11 where norm_order is not
+    respected in the spline() command
+  * copy group now copies value of norm order
+  * update installation instruction files
+
+Sep 23 2008 0.8.057
+  * Filetype plugins for SSRL ASCII and binary files, Photon Factory
+    BL12C, and CLS HXMA beamlines
+  * sort files imported alphabetically
+  * fixed the fix_chik macro
+
+Oct 4 2007 -- July 29 2008 0.8.056
+  * various changes to make use of pod version of Athena User's Guide
+  * removed old pod docs from tarball
+  * fixed a bug in which the i0 array for each group was set incorrectly
+    when importing multiple data sets
+  * plot smoothed derivative by default
+  * treat noise correctly in lcf when plotting or writing report --
+    only generate noise when fitting, otherwise reuse noise array
+  * merge reference channels when merging in mu(E)
+  * fixed an LCF bug that resulted in an infinite loop when fitting in 
+    k and one of the standards is shorter than the data and shorter than 
+    the fitting range  
+
+Aug 2 -- Sep 15 2007 0.8.055
+  * correctly use Ifeffit's $column_labelN strings
+  * more sensible behavior when importing multiple project files (as
+    soon as one is read in its entirety, read all subsequent in their
+    entirety without prompting)
+  * changed N to U in the mark buttons
+  * added peak of L edge white line as an e0 setting option, added a
+    preference for turning it on and off
+  * set normalization order to 2 for xanes data when imported
+  * fixed an error in the default plot style settings -- sadly, this
+    will be hard to propagate backwards
+  * added multi-electron excitation dialog
+  * clear project name, biound to control-zero
+  * use USERPROFILE location for .horae stuff on Windows
+  * flatten turned off when CL normalization turned on
+  * change mouse cursor for mouse-over of hot spots
+
+Feb 12 -- July 23 2007 0.8.054
+  * project file selection dialog
+  * bind values menu items to Project context menu
+  * double click on a group label to change its name
+  * mouse 2 on a group toggles mark
+  * fixed a bug in rename group where null op not recognized
+  * fixed a bug in which values were not being updated after calibrating
+  * fixed a bug importing demo projects by setting -multiple=>0 in getOpenFile
+  * respect plot_yoffset in lcf plots
+  * write out chi(E) for current group
+  * k window plots correctly with chi(E)
+  * always show "extra features" in the column selection dialog.
+    remmeber settings between similar files, reset between different
+    files
+  * value menu cascades for setting e0 for this/all/marked
+  * the problem that won't go away: I fixed another instance of
+    incorrect mouse-over behavior in the group list, this time for the
+    renamed reference channel
+  * added a reset button to stack tab
+  * preference for normalization order
+  * correctly append .prj to project files
+  * fixed some issues with reference channels and partial project import
+  * identify reference group in eshift context menu
+  * fixed a bug in writing an LCF group in which the wrong energy
+    array was written as the LCF group's energy array
+  * added some useful language to font preference descriptions
+
+Jan 15 2007 0.8.053
+  * fixed a noisy but harmless bug in recognizing valid indicators
+  * fixed a bug computing step functions where the energy shift
+    parameter was ignored.  this has a nasty effect flattening xanes
+    data measured over a short energy range (such as low-E edges)
+
+Dec 28 2006 0.8.052
+  * improved functionality for detecting and correcting MAC (\r) eol.
+    also added a number of eol tests to the examples.
+  * use -multiple flag in getOpenFile when Tk > 804 is detected.  this
+    cleans up the File menu nicely.  Also commented out the Open URL
+    item
+  * use readonly state in all BrowseEntry widgets and set
+    disabledforeground color to foreground color
+
+Nov 28 2006 0.8.051
+  * tie energy and k values to E0, in E0 context menu and Ctrl-T
+  * created FT teaching tool, in Help menu
+  * plot non-integer k-weights in k
+  * new k-weighting scheme, removed FFT k-weight widget, added FFT arbitrary
+    k-weight widget, re-organized FFT and BFT boxes, reorganized k plotting
+    options tab, moved plot chi(E) to k plotting options tab
+  * added kmax_suggest to k-range context menu
+  * copy group sets mark of copy to mark of original.  also leave current on
+    original (which looks nicer for successive C-y events)
+  * fixed some bugs in handling a reference channel of a different
+    element from the main data
+  * change the mouse-over behavior in the groups list to avoid a nasty race
+    condition 
+  * remove quotes from labels
+  * improved the use of smoothed derivative in alignment dialog, also smooth
+    three times by default
+  * fixed a bug involving the edge step widget becoming disabled
+  * added normalization order of 1
+  * added a crude but hopefully effective mechanism for warning about
+    obviously spurious parameters values (e.g. fft_kmax = 82)
+  * contents of global plugin registry not hardwired
+  * more informative splashscreen, also different color
+  * change default current group color from orange2 to indianred1
+
+May 22 2006 0.8.050
+  * compressed project files
+  * implemented frozen groups + all surrounding functionality
+  * added mark buttons above group list and changed appearence of the modified
+    indicator
+  * hide/show plotting options
+  * enabled normalization order buttons
+  * flag update_bkg when changing record type
+  * configurable step fraction rather than half-height
+  * keep 7 digits for edge step
+  * fixed a spewy bug attempting to read a non-data file as the first
+    group
+  * fixed a bug changing plot styles in an empty project
+  * adjustable spline clamp values
+  * fixed broken linear term in LCF
+  * fixed a bug involving extrapolation when interpolating for LCF
+  * flag for updating bkg when changing record type
+  * improved handling of xmu.dat files
+  * fixed a bug involving small or negative values of pre-edge slope
+  * error message for negative edge step
+  * save norm and save deriv were greyed out for xanes records
+
+Mar 28 2006 0.8.049
+  * fixed the bug where the menu entry for the self absorption dialog
+    was greyed out for XANES data
+  * save LCF fit group as mu(E) even when fitspace is deriv
+  * implemented a pref for how the mru list is displayed
+  * added SSRL.pm as one of the standard filetype plugins
+  * corrected misbehavior in how the self absorption dialog interacted with
+    chi(k) data 
+  * try to make sure that the situation of bkg_eshift getting set to a
+    non-number never happens
+  * carry on with multiple data file import when a data file is too short and
+    a few other situations
+  * when setting parameters during pre-processing, use standard for bkg_e0
+    rather than finding new value
+  * change record type now works on current or marked and changes type of
+    reference/referent 
+  * reinstated natural log button for reference channel
+  * fit range is now properly updated in LCF when editing by hand or by pluck
+    button.  also unnecessary autoreplot not done when using pluck button
+  * fixed problem where "0: None" option goes missing on the LCF page
+  * fixed a couple of bugs that resulted from using then not using the
+    pre-processing auto-alignment.  this includes the bug whereby the Eshift
+    would get set to an empty string, leading to plotting problems
+  * fixed rather innocuous bug importing xmu.dat that had to do with
+    displaying the proper tab in the plot features section
+  * use linespoints3 when deglitching
+  * fixed a bug where preprocessing tab was disabled after control-w
+  * persistent variable for remembering working directory between sessions
+    with a pref for turning it on and off
+  * echo area progress messages during merge
+  * value menu entry to purge lcf from project
+  * fixed a problem displaying standards lists correctly when switching groups
+    or deleting groups from project
+  * disabled scroll wheel in canvases on main window
+
+
+Feb 6 2006 0.8.048
+  * updated Tk::Pod so doc pages display properly
+  * respect calibration display setting in set_properties
+  * corrected the typo that labeled derivative in E plots as smoothed
+    even when they weren't
+  * added a 2nd derivative zero crossing finder in calibrate dialog
+  * fixed a bug where modified indicator was getting toggled just by switching
+    from some dialogs back to the normal view
+  * refactored various e0 setting algorithms into a single dispatcher
+    subroutine 
+  * added zero-crossing option to e0 context menu and Values menu, added zero
+    option to pref bkg->e0, chnaged language from "peak of 1st deriv" to
+    "Ifeffit's default"
+  * fitmin and fitmax were not being updated on screen when switching between
+    fitspaces in LCF
+  * disable replotting and other context specific chores when calling
+    set_properties during a project save.  this is epecially key when the
+    views other than the normal view are displayed which almost always involve
+    replotting when changing groups.
+  * in LCF, make sure that the standards menus are always up to date with
+    respect to the current state of the groups list
+  * handle group deletion in non-normal views gracefully, even if group lists
+    are involved (LCF, LR, align, diff)
+
+Dec 12 2005 - Jan 02 2005 0.8.047
+  * preferences for charsize and charfont
+  * fixed auto-align bug
+  * added pre- and post-lines to mu(E) output
+  * added pre- and post-edge coefficients to output header
+  * fixed a bug involving unmatched parens in the title lines
+  * write k-weighted chi(k) output, both single and marked, added File
+    menu cascades
+  * added second derivative and variable smoothing to calibration
+    dialog, select a point just takes cursor_x, edit pod
+  * put prefs_modified on browsecmd and command of NumEntry in
+    preferences
+  * quote filename in write_data
+  * fixed a bug involving not clearing out error bars from previous
+    fits in LCF
+  * bound control-b to "About group"
+  * changed default for plot->bordercolor to wheat4
+  * fixed issues surrounding setting and constraining fitmin/fitmax in LCF
+  * fixed a problem restoring LCF standards from a project file
+  * fixed a bug where modified indicator was getting toggled just by switching
+    from normal view to some other dialog
+  * added button to file selection dialog for plotting reference selection.
+    also added a replot button
+  * fixed a bug in the x-array of an lcf report
+
+Nov 17 - Nov 22 2005 0.8.046
+  * don't truncate if truncation energy is outside the range of the 
+    data set
+  * if any item in a merge in energy is a xanes record, then the merge is a
+    xanes record
+  * don't ask about sorting data -- the answer is always yes
+  * when importing a reference channel, leave focus on the data group, not the
+    reference group
+  * made auto plotting in normal view.  configurable with a pref:
+    general->groupreplot.  also settable in cascade in Group menu
+  * raise proper plot options tab after reading in data
+  * switch for auto-alignment in derivative or smoothed derivative
+  * when plotting smoothed derivative, say so in the y-axis label
+  * fixed a bug where, after truncating, spline kmax was set to the value norm
+    emax
+  * fixed a couple of uninitialized value bugs when using LCF with
+    older project files
+  * fixed various outstanding issues with plugins on Windows (this was
+    mostly a packaging problem)
+
+Oct 15 - Nov 7 2005 0.8.045
+  * respect invert flag when making a difference group
+  * respect plot multiplier when plotting a difference spectrum in E
+  * add weighted components to column data report written by LCF
+  * fixed a bug in LCF pluck buttons
+  * fixed a bug whereby values chosen for LCF parameters were not
+    remembered when clicking away then back to a data group
+  * constrain LCF parameters between groups
+  * preference for how to handle constraints when doing marked group
+    fitting 
+  * split bkg parameters into two groups, switchable by a button
+  * added a control for functional normalization, added fnorm to 
+    various reports (disabled waiting for Ifeffit bug fix)
+  * fixed a bug in choice of bkg standard that came from mishandling 
+    the data after the switch to the BrowseEntry control
+  * avoid updating bkg when merging, plotting in mu(E)or doing diff
+    in mu(E) -- i.e. in a way that does not require that the update
+    be done.  
+  * put a note in reference pre-processing tab about energy array
+  * use norm_order in spline and pre_edge + control in secondary bkg
+    panel (disabled waiting for Ifeffit bug fix)
+  * added a required column to the LCF table which is used to require
+    that a component be in all combinatoric fits.
+  * fixed the annoying bug where the group would go out of view when
+    changing its name
+  * sort indeces in first column of upper table in combinatoric tab of
+    LCF
+  * fixed a serious bug in selecting the pre-processing standard from
+    the BrowseCommand widget
+  * I think I fixed an annoying bug which spit up a spurious warning
+    when deleting many groups -- it had to do with having the cursor
+    hanging out over a group that was being deleted.
+  * modified indicator displayed correctly when closing project
+  * created the plugin registry (see Settings menu) + document for plugins
+  * added Encoder and Lambda filetype plugins
+  * added a fourth argument to filetype plugin fix method which is
+    used for persistence of plugin parameters
+
+Sep 23 - Oct 14 2005 0.8.044
+  * created session defaults + various menu entries for setting them
+  * Added options to diff page for inverting and plotting spectra
+    along with difference
+  * replot when restoring a plot style
+  * operate on marked groups: truncate, rebin
+  * fix centroid marking in peak fit dialog
+  * pluck button now invokes plot lineshapes button in peak fit dialog
+  * fixed a counting problem in the plot menu
+  * fixed a bug counting feff index in a project file with feff calcs
+    sprinkled among mutiple data sets.  now explicitly set n_feff to
+    larger than the largest index after importing a project
+  * report number of background spline knots per data set in log file
+    -- computed using the same formula as around line 349 in
+    iff_feffit.f 
+  * lcf:
+     - use marked groups button was broken
+     - allow fitting chi(k) spectra with one standard
+     - fixed a bug using nonneg and chi(k) fits
+     - reorganized page, collecting buttons into an operations list
+     - functionality for fitting all marked groups and writing out a
+       CSV report
+     - several bug fixes for combinatoric fitting and display of
+       combinatoric results
+     - attempt to make combinatorial and marked group fitting interact
+       well at the UI level (it's a toughie!)
+
+Sep 15 2005  0.8.043
+  Version number was incremented.  No changes
+
+Aug 4 -- Sep 3 2005  0.8.042
+  * color c9 was never being used in Group::plot_marked
+  * added an align marked groups button to the alignment dialog
+  * display how mu string was made for a group
+  * split Group menu into Group and Values menus, both in menu bar and
+    in right click on group pop up
+  * moved contents of Align menu to the Data menu.  Broke Group menu
+    into Group and Values.
+  * removed encoder tab from column selection dialog.  that is better
+    done as a file type plugin
+  * removed automatic replot checkbutton from the plot menu.  that was
+    just a poor idea....
+  * added functionality and pod for the plot styles utility
+  * added About current group dialog, removed all the individual menu
+    entries for the things that go in the About dialog.  added mu_str
+    to the About dialog
+  * don't toggle modified flag if there are no data groups
+  * finally figured out how to automatically zoom in on the pod text!
+  * do three iterations of setting e0 to half the edge step to be sure
+    it has converged
+  * also make half edge step algorithm respect a non-zero value of e0
+    shift
+  * removed "Plot current" and "Plot marked" labels (longer group
+    list!)
+  * can now change record types between mu(E), norm(E), xanes,
+    detector with item in Group menu
+  * using BrowseEntry in LCF dialog
+  * in Group.pm explicitly set flatten and fixstep for norm(E) records
+  * fixed a few bugs in LCF
+  * fixed a bug setting none option in standards menu
+
+May 6 -- July 16 2005 0.8.041  (039 and 040 were testing versions)
+  * many improvements to the LCF system.
+  * fixed a layout problem in CSV reports
+  * fixed several issues surrounding truncation, both in preprocessing
+    and in its dialog
+  * added importance to weight by arbitrary amounts in a merge +
+    special context menu entries for setting importance to 1 for all
+    or marked groups
+  * saving I0 to the project file.  also items in the plot menu for
+    plots with I0.  also include i0 in mu, norm, deriv output files.
+    also plot I0 or marked groups
+  * specify proper column headings when saving flattened data
+  * sensible delete protocol for detached plot window (re-attach it!)
+  * disabled pluck buttons in the preprocessing dialog when the
+    general->autoplot parameter is false
+  * fixed a counting bug in Groups::floor_ceil
+  * use floor_ceil for vertical line in truncate dialog
+  * changed default kmax for FFT to -2 in athena.config
+  * athena now remembers where you were on the screen and how wide the
+    window was
+  * showgrid pref for turning grid on and off
+  * fixed a bug where fixstep may not have properly respected the
+    entered value of the step
+  * autoreplot after pluck
+  * preserve the "file" information when importing a project file
+  * generated group labels now called "XXX YYY" where XXX is a tag
+    indicated what operation was done (bin, smooth, convolve, etc) and
+    YYY is the original group label
+  * fixed a problem with pre-edge default ranges
+  * fixed a bug in the situation where marked groups are saved and the
+    referent of one of the groups is not saved.  in that case, the
+    reference property of the saved group is now blanked
+  * tie groups to be reference channels
+  * preprocessing alignment will now use reference channels if both
+    data and standard have a references
+  * do not include bkg_eshift when constraining all bkg parameters
+  * check to see if input data is an Artemis project file
+  * use BrowseEntry rather than Optionmenu when displaying a list of
+    groups from the groups list.  this behaves better when the list is
+    quite long (preprocess, align, diff, lograt, bkg standard, pixel)
+  * file type plugin system (NSLS X10C, NSLS X15B, and APS BESSRC
+    12BM plugins written)
+
+March 17 -- April 23 2005 0.8.038
+  * added rebinning, both as a dialog and as something that can be
+    done on the fly via the column selection dialog.  made a pod and a
+    prefs section
+  * bound a replotting command to return or enter in many entry
+    widgets.  also replot upon using other widget types on the main
+    window
+  * fixed a problem reading multiple data files reported by Raul
+    Berrea
+  * implemented a choice after making a merge for plotting mean+stddev
+    or a multi-data set plot of the merged data + mean spectrum
+  * added icons in various formats to the distro for use on the
+    desktop
+  * set project as saved when removing the last group from the groups
+    list via Group->Remove group.
+  * fixed a bug in the calibrate dialog related to reference groups --
+    the e0 of the referent must be shifted by the energy shift applied
+    during calibration so the e0 is at the same spot in the data
+  * fixed a reference group bug where fft params were not being set
+    sensibly for the reference channel.  used set_to_another.
+  * force preprocessing state in the column selection dialog to be
+    disabled if all groups have been removed from the project
+  * raise plot option notecard after doing the merge plot
+  * fixed a bug (I think) removing glitches algorithmically from the
+    pre-edge
+  * added a group stats entry to the Group menu.  this reports number
+    of points, min and max abscissa values for the group
+  * fixed a bug in history for renaming groups
+  * do not change saved state when saving marked groups.  also don't
+    change project file name
+  * when setting spline range to its default from the context menu,
+    the value in E will be correctly set
+  * fixed a problem involving the setting of data type in the column
+    selection dialog wherein the previous data type was not correctly
+    displayed, leading to a situation where on could inadvertently
+    import data as the wrong type
+  * added a couple more elements to the rel2tmk list
+  * combined dialogs when constraining both e0 and eshift
+  * save columns used by reference channel so that detector groups can
+    be made from the reference group
+  * fixed some problems with indicators and detector groups
+  * don't try to plot detector groups in a marked chi(E) plot
+  * generate title lines with parameters from preprocessing,
+    rebinning, and encoder to energy
+  * fixed seveal minor problems with LCF interface
+  * turned the widget for the edge step into a NumEntry for quick,
+    clicky adjustment of the step height
+  * adjusted the flatten algorithm to deal properly with a manual
+    adjustment of the edge step
+  * change the color of the section headers on the main page from
+    light blue to dark blue to indicate whether the group is up to
+    date for that section (i.e. if a forward transform needs to be
+    done, the FFT section header will be light blue.  once done it
+    will be dark blue)
+  * add a preference for autoreplotting the current group in the most
+    recent space when a something happens to trigger a call to
+    project_state() (which is a lot of things -- including editing a
+    parameter in an entry box)  defaults to off.  Also put a
+    checkbutton for toggling this in the Plot menu.
+  * fixed the macro for moving input chi(k) from a non-uniform grid
+    onto the canonical k grid
+  * fixed the truncate and deglitch pluck buttons
+  * fixed preprocessing truncation
+  * replot with vertical line after truncating in truncation dialog
+  * only reset relevant bkg params after doing a truncation
+  * disable pre and nor entry boxes and change foreground color for a
+    normalized record
+  * commented out the merge chi(R) and chi(q) menu items
+
+January 10 2005 0.8.037
+  * fixed some problems related to Tk804
+  * fixed several problems in energy LCF. I was applying the unknown's
+    e0 shift twice to the new data group.  the LCF group is not longer
+    a detector group.  this fixes a problem with data being exported
+    incorrectly
+
+November 21 2004 -- January 3 2005 0.8.036
+  * added self-absorption corrections (Fluo, Booth, Troger, and Atoms
+    algorithms) 
+  * change order of plotting data and background in an E plot so that the
+    common data between the two is plotted in the color of the data.  Also,
+    force colors of data, bkg, pre, and post so that they are consistent
+  * added alignment of scans by smoothed derivative
+  * fixed a bug involving group names with a trailing underscore
+  * fixed a problem finding pods that cropped up on Windows
+  * fixed a bug recoving group names of fitting standards for an LCF
+    fit from a project file
+  * use random 4-digit strings as ifeffit group names rather than
+    computing them from the label
+  * added fitting chi(k) to the LCF dialog
+  * allow all weights in LCF to float rather than constrained to sum
+    to one
+  * rearrange the LCF page using a notebook for the table and the
+    results, all buttons are below the notebook
+  * use labels instead of group names in make_background and make_detectors
+  * another stab at getting the column memory to work correctly
+  * make legend location parameters customizable, parameters are in
+    the plot section
+  * handle data as a function of wavelength or encoder
+  * use the plot_marker command in the pmarker macro
+  * fixed a bug in writing out marked chi(q)
+  * added the valuie of fft_pc to the text, csv, and excel reports
+  * set update_bkg for reference when aligning
+  * fixed a problem with column labels in write_data in save_marked.  with
+    long labels, the column_label can be too long, leading to ifeffit
+    weirdness.  in that case, use alt_label, which is short, safe, and
+    non-descriptive
+  * remove commas from label and file when writing csv report
+  * added a context menu to the flatten checkbutton and the e0 shift text.
+    The e0 shift also gets a confirmation dialog like E0.
+  * cleaned up and standardized layout of all the various modal
+    dialogs
+  * made sure to diable mouse-3 click on various ROText widgets in
+    modal dialogs  
+  * fixed a bug in which an error message did not release the cursor
+    when doing difference groups of marked groups in diff dialog
+  
+  
+
+October 9 2004 -- November 5 2004 0.8.035
+  * fixed a bug in setting the current_data_dir variable the first
+    time a project was saved
+  * put a mouse sensitive modified indicator in the projectbar and
+    made a project_state sub for controlling the project_saved
+    variable and the indicator
+  * fixed several UI issues in the smoothing dialog
+  * toggle modified when discarding groups, moving groups, changing
+    plot feature parameters
+  * fixed indicators to determion indicator height based on the data
+    in the plotting region
+  * memory buffer for renaming groups
+  * fixed several text color issues under Tk804
+  * fixed problems imported xanes data and setting range parameters
+  
+October 7 2004 0.8.034
+  * fixed a bug involving data that must be sorted upon entry
+
+
+August 2 2004 -- August 30 2004 0.8.033 (svn r13)
+  * Added a button to the column selection dialog for negating the
+    spectrum.  (White lines at ALS 6.3.1 tend to point down!)
+  * Removed interpolation option from preprocesing options.
+  * Added (but disabled) encoder energy units to column selection
+    dialog
+  * Using native menubar
+  * fixed a bug triggered by Alt-k and Alt-j (group move commands)
+    with an empty list of groups
+  * anchor the projectbar text to the east side to better accommodate
+    very long filenames
+  * for filename do an xview('end') so that basename is visible even
+    for a very long filename
+  * flag project as not saved when using right click menus on main
+    page
+  * fixed a bug where renaming groups might have left them unclickable
+  * added noise to the convolution dialog, also explicitly use set
+    through convolution stuff because def-ing a convolution is a
+    baaaad idea
+  * added some dynanism to the mouse-over in the groups list
+  * always use labels instead of group names in a text report
+  * when making transmission data, do ln(abs(I0/It)) to deal with the
+    odd situation of a negative scalar for either I0 or It.  If the
+    data are OK, then taking the abs is a no-op.  If either goes
+    negative, this keeps Ifeffit from barfing on ill-defined data.
+    Then the data cen be deglitched or truncated normally. (REV 7)
+  * added an rmax_out config variable to the fft section
+
+
+July 28 2004 -- August 2 2004 0.8.031
+  * THIS VERSION NOT RELEASED AS SUCH -- TRANSFER TO SUBVERSION
+  * fixed a bug setting the default energy column for an xmu.dat file
+    in the column selection dialog.
+  * do autoplot when changing the x-axis column in the column
+    selection dialog
+
+
+June 17 2004 -- July 26 2004 0.8.030
+  * fixed a bug writing out normalized data for marked groups.  The
+    first group was always being written out as norm(E), even when the
+    flatten button was checked.
+  * some flags were not set when copying a group
+  * I think I fixed the column memory problem in the column selection
+    dialog...
+  * fixed problems drawing the deglitching boundaries
+  * fixed problems in the post-edge line for normalized records (which
+    leads to problems in the deglitching dialog)
+  * fixed some situation where filehandles were opened and not closed
+  * updated several CPAN modules
+  * improved performance of detached plot buttons
+  * small improvement to the header information in the excel report
+  * save window function to chi(k) and chi(R) files.
+  * in column selection dialog, made preprocessing and reference
+    dialogs mutually exclusive.  also added a button for dismissing
+    the preprocessing dialog.
+  * attempt to fix a bug in the sub that restores the echo area after
+    the prompt box is dismissed
+  * warn user when constraining E0 across groups about the poor idea
+    of doing so for groups of different edges
+  * memory for dialog that asks about sorting of non-monotonic data
+    when importing multiple files 
+  * memory for dialog that asks about saving project before quitting
+ 
+
+May 28 2004 0.8.029
+  * fixed a bug in point finder regarding normalized plots
+  * sub for cleaning up trap files to work with new scheme of writing
+    a new file for each trap
+
+April 18 2004 -- May 20 2004 0.8.028
+  * new features in peak fit dialog
+     -- remove autofitting
+     -- separate plot and fit buttons
+     -- plot difference
+     -- ability to fit centroid
+     -- report R-factor and chi-square in results
+     -- some UI changes
+     -- allow edditional step functions
+     -- updated pod
+  * fixed a non-serious but trapfile-generating bug in setting
+    standards for groups in a project file that used them
+  * prefer [Bi L3 over Ir L1] and [Mn K over Ce L1]
+  * put a limit of 94 characters on a message in the echo area.  the
+    full message gets written to the echo buffer
+  * fixed a typo in the computation of the post-edge line
+  * truncate dialog: reset range parameters after truncating, redo
+    background, allow plotting as mu(E) or norm(E)
+  * fixed some mistakes in handling filenames with certain
+    non-alphanumeric characters (such as # or -)
+
+
+March 11 2004 -- April 8 2004 0.8.027
+  * added an athenarcw file for use on windows that uses the windows
+    options from the config file
+  * raise appropriate plot options tab when switching views
+  * remember position on screen of the column selection dialog
+  * open many files dialog starts wider
+  * write parameters to output column files
+  * unset project filename when merging projects.  this avoids
+    overwriting the most recent project with the merged project
+  * mark a project as unsaved when changing a group name
+  * closing project and deleting marked groups is now WAY faster
+  * truncate dialog now has a before/after option for removing data
+    points prior to or after the chosen energy point
+  * new features in linear combo dialog: ability to plot difference
+    between data and lc fit, column of entry boxes for e0 values
+  * data convolution dialog
+  * special handling for xanes data
+     -- added a new data type to the column selection dialog
+     -- xanes data as a record type, only plotable in energy
+     -- disable a bunch of widgets
+     -- some configuration parameters
+     -- ad hoc file check before importing to see if it is xanes
+     -- is also xmu data in the sense that alignment, claibration,
+        pixel, etc work
+     -- skip autobk step, which is quirky for short data anyway
+  * changed some widget layout details for better visual performance
+    on Windows (made a container for the main window that never gets
+    packForget-ed) 
+
+
+February 21 2004 -- March 8 2004 0.8.026
+  * added linear combination fitting (+ pod + config parameters + key
+    bindings + storage of parameters in object + fix up standards when
+    reading project file)
+  * fixed a couple of bugs in the header information of a marked group
+    multicolumn output file.  also use Busy while writing a multicolumn
+    file
+  * fixed some places in the peak fit dialog where the group name
+    rather than the label was used
+  * fixed (I think) a problem with the y axis scaling of plots
+    involving markers
+  * fixed some funky behavior in the deglitching tool and made some
+    cosmetic changes.  also fixed a bug when choosing point that
+    showed up (but was not directly caused by) whenever E0 for the
+    spectrum was changed from its initial guess
+  * Made a demo of adding new functionality to Athena, see demo.pl +
+    comments about "demo", "foobar" and "foobarication" scattered
+    throughout the code
+  * added a title line identifying label, group, and space at top of
+    file in save_chi
+  * tracked down a very hard-to-find bug wherein writing out column
+    data would get confused if you clicked on a new group before the
+    done! message appeared for that write.  wow!
+  * improved the pmarker macro and propagated the changes through the
+    code
+  * trapping $SIG{__DIE__} and $SIG{__WARN__} in a way that leaves the
+    user with a file that can be submitted as part of a bug report and
+    that writes a useful message to the echo area while still writing
+    the traceback to stderr
+
+
+December 7 2003 --  February 20 2004 0.8.025
+  * explained aligmnment to reference in the doc
+  * added some more functionality to reference channel alignment
+  * disallow editing a project file via the data edit palette
+  * added a data file with a reference channel to the examples
+  * added a configuration parameter and some logic to recognize Nd l1
+    and change it to Fe K.  the theory is that many more people will
+    measure iron oxide K-edge data than Nd L1-edge data.
+  * added the project name to the main window
+  * config fft.kmax to 0 means to use kmax_suggest from chi_noise().
+    this is now the default in athena.config
+  * bkg standards are no longer lost when a project file is imported
+  * athena now remembers the state of the purple mark buttons
+  * the control sequence for user-defined keybindings is not
+    configurable.  the default is still comma, but general.user_key
+    can be set to an keysym.
+  * made the alignment dialog perkier, so long as mu(E) or deriv(E) is
+    used.  for norm(E) it still needs to do a background removal each
+    time.
+  * added a plotting feature to make_xmu_string.  this allows the user
+    to see a quick-n-dirty plot of the current state of the column
+    selection dialog
+  * fixed a bug in the logic for guessing columns as a new file is
+    read in.  should be able to switch between fluo and trans data
+    with better column guesses.  also improved the default for the
+    transmission_regex so it now interprets "I" as the transmission
+    column
+  * put some validation on the plot options min/max entry boxes to
+    assure that these are numbers.
+
+October 30 2003 -- November 25 2003 0.8.024
+  * journal text box now word wraps
+  * bound &quit_athena as the delete protocol for the main window
+  * fixed a problem with the y label for purple plots of derivative
+    spectra
+  * several appearence problems uncovered by Tk 804.025
+  * in deglitching, respect choice of mu or chi when changing groups.
+    also fixed up ylabel and title for chi(E) plots.  also make sure
+    background has been removed so tolerance lines are drawn
+    correctly.
+  * fixed an error in merging flattened, normalized data
+  * added reference channels to the column selection dialog, the
+    reference channel is tied to the data in that any e0 shift given
+    to one is given to the other.
+
+September 15 2003 -- October 27 2003 0.8.023
+  * introduced an option for flattening normalized spectra by
+    subtracting off any post-edge slope (this idea was swiped from
+    Sam)
+  * added a flatten widget to the background removal section and check
+    this whenever normalized data is used
+  * added a Group menu option for setting E0 to half the edge height
+  * added a configuration option for setting E0 to half-step or atomic
+    value as data is read in.  the default is the inflection point, as
+    always.
+  * added the point finder utility
+  * fixed repititious language in the File menu for saving marked
+    groups as a project or as data.
+  * integration of difference spectra + some relevant configuration
+    options + fixed several minor bugs in diff spectrum dialog
+  * batch processing of difference spectra + reporting of interated areas
+  * added dialog for calibrating dispersive data to a known standard +
+    some relevant configuration options
+  * updated pods to include flattening and dispersive data calibration
+  * fixed a bug in using the right click menus to set range parameters
+    to their defaults -- all range parameters were being set rather
+    than just the requested pair
+  * respect flattening in the alignment dialog display
+  * added an xbm icon so the unix windowmanager toolbars/panels/icon
+    boxes/docks/whatever have something pretty to display
+  * revamped keyboard shortcuts to be more consistent with standard UI
+    choices.  added C-w for closing project.  changed plotting
+    keychains to use Control-semicolon.
+  * for mark regex, check that regex is valid
+  * deglitching can now work on a sort of chi(E) function, which is
+    (mu-bkg)*(energy-e0).  this is kind of like k^2 weighted chi(E).
+    This should help in removing small glitches above spl1.
+  * added a bit more intelligence to the way the column selection
+    dialog makes it initial selection.  it was working a bit poorly in
+    some situations, such as when it and if are both columns.  better
+    now?
+  * key bindings dialog and all the functionality associated.
+    Control-comma or Alt-comma is the beginning of the user defined
+    key chains
+  * added a multiplexer for dispatching space-sensitve functions to
+    the correct space.  this is for use with key bindings so, for
+    instance, "C-, m k" can merge chi(k) and "C-, m e" can merge mu(E)
+  * Indicators work correctly when deglitching.
+  * transfer files from NSLS X10C to the stash directory and fix them
+    up such that Athena/Ifeffit can read them properly
+
+
+July 3 2003 -- August 20 2003 0.8.022
+  * can now merge detector groups
+  * preserve e0 shifts when saving marked groups
+  * filenames longer than 127 character (which are trouble for
+    ifeffit) are read in transparently by transfering them to a stash
+    location, then reading from there
+  * transparently handle files with Mac EOL characters, with the
+    option to skip, fix, or ask for each such file
+  * made right click menus for the group headers on the main window
+  * added a restore button to the align view
+  * fixed a bug using background standards where background group may
+    not have been up to date with respect to it's own background
+    removal.
+  * fixed how the palettes expand when the window is resized
+  * added indicators, which are a way of indicating points in
+    successive plots.  interaction is by a plotting options tab.
+    indicators chosen in E, k or q will be plotted in E, k, and q.  R
+    indicators are plotted only in R.  indicators work sensibly with
+    single or multiple plots
+  * can now choose to merge weighting the data by unity or by
+    chi_noise
+  * added components to the plot after peak fitting
+  * added a sensible delete protocol to the palettes window and other
+    toplevels
+  * removed the word "delete" from menus for fear of confusing with
+    deletion of file on disk (which Athena does not do!)
+  * use current label when copying group rather than original label
+  * remove the following characters from initial file names \/:*?'<>|
+  * switch line types every ten plots in marked group plots with a
+    config variable for turning it on and off
+  * added some suggested values to the click help strings
+  * preferences dialog, rearranged config hash, added sections for
+    setting defaults for analysis parameters, added flexibility to
+    default values for things like bkg_nor2 (i.e. it can take a zero
+    or neg. value to denote a distance from the end of the array)
+  * added a set to prefs option for individual params, groups of
+    params, or all params.  take care not touch certain parameters for
+    which defaults do not exist (plot_* or bkg_e0, for example).
+  * fixed a bug whereby postedge line for norm(E) data was not
+    computed correctly
+  * added a replot button to the calibrate dialog and fixed a bug in
+    how markers get plotted during calibration
+  * fixed a problem updating spline ranges in energy and k when
+    constraining parameters between data sets.
+  * Mark groups matching a perl regular expression
+  * figured out how to explicitly set backpage and inactive colors in
+    the NoteBook widget
+  * fixed a severe bug in merging normalized mu(E) data
+  * fixed a bug in computation of the pre-edge line
+  * altered the pmarker macro to avoid drawing spurious points
+  * fixed a bug in switching from autobk to clnorm wherein the Z and
+    edge would be reset even if they had been explicitly set by the
+    user.  Also made it so the unnormalized mu and mu0 is plotted
+    whenever the switch is made
+  * when plots are made in the alignment dialog, the label rather than
+    the group name is used as the key
+
+
+June 18 2003 -- June 19 2003 0.8.021
+  * removed the options for saving records and chi(k) records
+  * perl/Tk 804.024 is pickier that earlier versions about minus signs
+    in front of method arguments, such as width and height, so put in
+    the dash wherever needed
+
+
+May 27 2003 -- June 16 2003 0.8.020
+  * don't barf if a file cannot be read because of permissions
+  * attempt to determine Z and edge when data is read in
+  * fixed a bug determining energy column when saving marked groups in
+    energy
+  * removed Control-c keyseq, replaced it with Control-period
+  * moved Z and edge menus to the top panel of the main window,
+    removed those menus from the bkg and fft panels, made them always
+    enabled, changed set to atomic option in the groups menu to a
+    command rather than a cascade, made click_help stuff work
+    correctly for Z and edge.
+  * fixed the final Echo in rename_group
+  * fixed a bug where the purple derivative button from the E-space
+    plot options would be used when plotting in R space
+    (i.e. deriv(|chi(R)|) would get plotted in that case
+  * disable making detector groups menu entry for data from a project
+    file (is_proj)
+  * deglitch view now starts with current group is current is an xmu
+    group
+  * use group labels in titles of difference plots
+  * dispatch_bkg if needed before saving a chi(k) record
+  * added a "Save as ..." to the file menu.  Made Control-s save
+    without prompting if a default project filename already exists.
+    Project saving now writes a .bak backup file.
+
+May 3 2003 -- May 18 0.8.019
+  * rebinning happens automagically by virtue of ifeffit 1.0077
+  * refuse to run without Ifeffit 1.0077 or higher installed
+
+April 23 2003 -- May 2 0.8.018
+  * a few improvements to the peak fitting screen
+  * make the formula box in the column selection dialog non-editable
+  * fixed a buglet in setting default values in the column selection
+    dialog where the ? in compressed group names was causing a pattern
+    matching problem
+  * make sure that the data type menu in the column selection dialog
+    is correctly set when a file matches the prior file
+  * it is possible to that pre_edge can return a zero value for e0, in
+    that case, choose the maximum of the derivative or the 15th point
+    in the array if the max_deriv is within 5 points of the beginning
+    of the data set
+  * found some more places where group name rather than label is
+    reported in the echo area
+  * remember most recent project file name
+  * check that files are writable before writing
+
+April 22 2003 -- April 23 2003 0.8.017
+  * move rc and mru files to the .horae directory
+
+
+April 13 2003 -- April 21 2003 0.8.016
+  * fixed some bookkeeping issues regarding the title and file entries
+    of a merge group
+  * in pre-processing standard menu, use labels, not group names
+  * never plot post edge line if the fix edge step button is pressed
+  * fixed a serious bug in the deglitching interface that only allowed
+    deglitching the first data set in the groups list + a few minor
+    bugfixes on the deglitch page
+  * use group labels in titles and file of a diff group
+
+March 27 2003 0.8.015
+  * remove ! % and # from title lines to avoid Windows-related
+    problems in interpretting title lines with those characters inside
+    of parens.
+
+
+Feb 6 2003 -- Feb 28 0.8.014
+  * major UI change -- the analytical pop-up dialogs (align, peak fit,
+    log-ratio, and so on) are now handled modally in the fat part of
+    the main window.  this will be helpful when PCA and a few other
+    things come along.  this includes some changes to the appearence
+    of the dialogs so they fit ok in the main window
+  * use echo area to house the rename group dialog rather than using a
+    popup
+  * moved the stacked plot dialog to a plotcard in the lower right
+    corner
+  * crude web fetching of data.  requires providing fully qualified
+    URL and offers no browsing.
+  * altered the merging algorithm to merge only over the longest
+    common abscissa range among themarked groups.  previously, it
+    merged over the range of the first marked group, leading to
+    extrapolation of data in some cases.
+  * fixed a display bug in plotting merge+std.dev. of normalized
+    spectra
+  * do something sensible if a project file with no records is
+    imported
+  * added an Error function which is a wrapper around Echo with a
+    bell call.  also make it so that an echo never ends with 
+    " ... done! ... done!"
+  * added a plot_window method to Group.pm
+  * fixed a bug interpretting filenames given on the command line
+  * fleshed out some features of the log-ratio interface
+  * in column selection dialog, give focus to the ok button
+  * fixed a bug in copy_group where fft_edge did not get copied
+  * generic get_string dialog which replaces the echo area.  this is
+    used to rename groups and for getting file URLs.  it has a generic
+    history buffer interface using the up and down arrows
+  
+
+Jan 30 2003 -- Feb 5 0.8.013
+  * worked on pod document
+  * worked on and added several new project demos
+  * changed Align menu to have only one option and now you can switch
+    between plotting options from the alignment dialog
+  * added some stuff to the help menu related to the demos
+  * allow fixing the edge step in a CLnorm
+  * fixed a poor interaction between the balloons attached to the Data
+    menu and the reporting of the number of spline knots from the Data
+    menu
+  * change how first plot is made after reading in a project to
+    respect plot_features from project file.
+  * fixed some bugs in csv and xls report generation and use label
+    rather than group in the first column
+  * athena now plots the first group when reading a project rather
+    than the last one
+
+Jan 30 2003 0.8.012
+  * fixed a bug in construct_xmu in the lines where the new group name
+    is substituted into the old energy, numerator, and denominator
+    strings.  I had neglected to include ? (see name/label changes in
+    0.8.009) in the regex
+
+Jan 16 2003 -- Jan 28 2003 0.8.011
+  * fixed color flashing for mouse-over in groups list after renaming
+    a group
+  * if e_marked is set to 'd' in a project, convert it to 'n' now that
+    the purple deriv button is no longer a radiobutton
+  * use label rather than group to build suggested name when saving
+    data
+  * push a saved project name onto the MRU list
+
+Jan 15 2003 -- version 0.8.010
+  * fixed some problems involving configuration files
+  * storing returned ref from tied %hash into a variable rather than
+    trying to use the shorthand suggested in the Config::IniFiles pod
+  * fixed a bug preventing saving image files from plots
+  * moved fallbacks for PGPLOT_DIR and PGPLOT_DEV to the BEGIN block
+  * fixed a bug in the code which attempts to deal with labels and
+    groupnames in a backwards compatable way.  the problem was that
+    "undef" was an allowed value in the @args array in a record and
+    spit up a scary but unharmful undefined-value warning near the
+    beginning of read_record
+  * set default value of 0 (rather than undef) for bkg_fixstep when
+    object is created
+  * fixed a display problem in the column selection dialog when the
+    preprocessing button was pressed
+  * can now plot deriv(mu) or deriv(norm) for single or marked group
+    plots.  changed purple rediobutton for deriv into a checkbutton
+    while leaving mu/norm as rediobuttons
+  * a red button plot of deriv(mu(E)) now displays a marker for e0
+
+
+Dec 15 2002 to Jan 9 2003 -- version 0.8.009
+  * differentiate between the label displayed in the groups list and
+    the string used for the group name in ifeffit.  the "label"
+    property of the group is use in thelist, while the "group"
+    property is the ifeffit group name.  the original scheme of adding
+    _# to make a label unique is still used.  the group is a
+    truncation of the label with extra care to assure that it is still
+    unique.  this will solve several reported problems related to very
+    long file names resulting in ifeffit command strings that are too
+    long for ifeffit.
+  * deal intelligently with label/groupname issue when reading project
+    files from prior versions of athena
+  * implemented a most recently used files menu under the "File"
+    menu.  this works by writing a small list of files in $HOME on
+    unix or $ENV{IFEFFIT_DIR} on Windows.  this was implemented along
+    with a uniform wrapper for handling certain global variables
+    associated with file I/O.
+  * the MRU list can be accessed from the command line by invoking
+    athena with a command argument.  "athena -1" starts athena and
+    loads the first item on the MRU list.  "athena -4" starts athena
+    and loads the fourth item on the MRU list.  and so on.
+  * use crosshairs with cursor commands
+  * added number of spline knots to the reports
+  * found and fixed several typos
+  * found and fixed several bugs in dealing with the energy column of
+    input data, particularly for energy columns that are not the first
+    column.  also remember which column is the energy column between
+    similar data files
+  * I think I have corrected a problem computing the pre-edge line
+    (and thus the normalized data) in certain situations
+  * also changed the logic somewhat for setting the default pre-edge
+    range.  pre1, pre2, and e0 should be guaranteed ascending even for
+    data with a very short preedge
+  * undid the change to the pmarker macro from the last version
+  * changed the "overwrite" button on the "edit data" palette to
+    "save" and have it prompt for a file/path to save to.
+  * make sure that a group is up to date before using it as a spline
+    standard for another group
+  * indicate Ifeffit group name in the message from the "Identify
+    record type" option in the Groups menu.
+  * small improvements to the "rename group" dialog.
+  * fixed a problem in the "sort data" dialog wherein the "Discard
+    data" button left athena in a broken state
+  * more sensible heuristic for recognizing energy column in an input
+    data file
+  * a dialog accessible from the Plot menu for setting the y-offset
+    parameters for all marked groups in a swoop.  this is handy for
+    quickly generating/tweaking stacked plots.
+
+
+Dec  4 2002 to Dec 13 2002 -- version 0.8.008
+  * added a near edge peak fitting dialog with lots of features
+  * report on all parameter values in excel or comma-separated-value
+    for export to a spreadsheet or in flat text, tabular format.
+    reports on all or marked groups
+  * fixed a serious problem setting default configuration parameters
+    and then reading the system and personal rc files (it was due to a
+    bug in Config::IniFiles and may only have been visible to me ;-)
+  * fixed a bug saving detector groups to files
+  * changed the pmarker macro to avoid the y-scale problem in plotting
+    non-flat normalized data.
+  * fixed a bug in computing preline in case of e0-shifted data
+  * speed up reading in projects by only plotting the first group
+  * fixed a crippling bug in the truncate dialog.  the problem was in
+    set_properties handling the state of the %grab buttons -- the
+    etruncate grab button needed to be skipped like others not on the
+    main page
+  * fixed a bug that caused a crash when printing
+
+
+Nov 14 2002 to Nov 20 2002 -- version 0.8.007
+  * corrected a problem in construction of normalized background for
+    plotting or writing out
+  * flag files that contain very few points (less than 10, which is
+    configurable in the rc file)
+  * deal with chi(k) data files that are not on a uniform grid
+
+Nov 6 2002 to Nov 7 2002 -- version 0.8.006
+  * fixed a bug that had inadvertently disabled CL normalization
+  * added an example project for CL normalization of XANES data
+
+
+Oct 25 2002 to Nov 4 2002 -- version 0.8.005
+  * fixed 2 problems with calibration: set update_bkg and use e0 shift
+    when selecting a point so that the select point button can be used
+    after a calibration
+  * disabled detachable plot buttons on Windows
+  * using Config::IniFiles
+  * disable spline knot counter in Data menu is group is not an xmu
+    group 
+
+
+Oct 17 2002 to Oct 23 2002 -- version 0.8.004
+  * new key bindings galore!
+     Ctrl-t      toggle marking of current group
+     Ctrl-p e    plot current in energy
+     Ctrl-p k    plot current in k-space
+     Ctrl-p r    plot current in R-space
+     Ctrl-p q    plot current in q-space
+     Meta-p e    plot marked in energy
+     Meta-p k    plot marked in k-space
+     Meta-p r    plot marked in R-space
+     Meta-p q    plot marked in q-space
+     Ctrl-k      select group above
+     Ctrl-j      select group below
+  * the keyboard plot shortcuts required a hack to create something
+    like Emacs-style key-sequences.  When Ctrl-p is hit, the Echo area
+    takes focus and nothing happens until another key is hit
+  * C-k and C-j also required some new functionality in group_ops
+  * changed the group re-ordering keyboard shortcuts from (Meta-u,
+    Meta-d) to (Meta-k, Meta-j) for consistency with the (C-k, C-j)
+  * added a rather wacky detachable plot button window.  this uses the
+    Tk::tixWm stuff which a groups.google search will tell you may go
+    away in Tk804.
+  * can now save deriv(E) and marked deriv(E)
+  * restrict autoalignment minimization to E0-50 : E0+100
+  * specify interpolation order (line|quad|cubic) in rc file and use
+    interp argument to spline() and bkg_cl()
+  * remove those annoying \r characters in the column selection
+    dialog's data file display
+  * use memory a bit more efficiently by erasing any columns from
+    ifeffit's memory that were not used to construct xmu.  save the
+    ones used in case detector groups need be made
+  * fixed several configuration problems with the text in the column
+    selection dialog.  text is now more appropriate to the data type
+  * fixed a problem with continuing to read data after canceling in
+    the column selection dialog after selecting many data sets with
+    the read many dialog.
+  * fixed a problem with the plot after doing a merge in mu(E)
+  * fixed a bug in the preprocessing functionality -- check to see
+    that the previous preprocessing standard still exists as a group
+  * fixed time lag when rasing a palette
+
+
+Oct 2 2002 to Oct 14 2002 -- version 0.8.003
+  * added ability to save marked groups to a single file for easy
+    export to another plotting program, works in mu, norm, chi(k),
+    |chi(R)|, Re[chi(R)], Im[chi(R)], |chi(q)|, Re[chi(q)], Im[chi(q)]
+  * added a smoothing function to the Data menu.  Choice of repeated
+    three-point smoothing or Fourier filtering of mu(E) data
+  * added a calibration dialog.  this works by setting bkg_eshift.
+    the pluck function is a bit flaky
+  * fixed a bug in the auto-align preprocessing feature where the e0
+    value was not set correctly
+  * remove nclamp from front screen, move it to %meta hash and rc file
+  * made a feature for reporting on the number of spline knots used.
+  * fixed a bug in how the pre-edge line is evaluated.  it now
+    correctly stays up to date with the values chosen for pre1 and pre2
+  * fixed a situation where the the "edit data as text" thing could
+    crash Athena.  also remove \r from the data on the fly when
+    viewing it as text.
+
+  
+Sep 27 2002 to Oct 1 2002 -- version 0.8.002
+  * saving chi(q) wrote r values to the first column rather than q
+    values.
+  * fixed a problem wherein data read in as detector data would not
+    have bkg_e0 set correctly.  this lead to bad xmin/xmax in the plot
+    function which would cause a crash on Windows.
+  * use a scrolled Pane to contain the column selection checkbuttons.
+    move the natural log checkbutton to below that pane.
+  * changed transmission regex so it only matches I1 and not I1?.
+    also changed i0 regex to match I0 but not I0?, which is less
+    important, but for the sake of completeness....
+  * Added the ability to save each channel of multi-element data into
+    separate groups.  this is a toggle button next to the natural log
+    button thatonly becomes enabled if two or more columns are
+    selected for the numerator.
+  * ran into a problem with really the long command strings generated
+    by dealing with multi-element data.  if the command is over 250
+    characters, assume it's multi-element fluorescence data of the
+    sort "set foo.xmu = (foo.a + foo.b + ...) / (foo.i0)" and split it
+    into several commands.
+  * added a dialog for doing log-ratio/phase-difference analysis.
+    this also required adding several macros to those disposed at
+    start-up.  it seems to work, but needs testing
+
+Sep 20 2002 -- version 0.8.001
+  * fixed a serious bug wherein deleting groups lead to other groups
+    being unselectable.  The problem was using the variable
+    $line_count to build the tag bound to mouse-1 in the groups list.
+    It was fixed by using a variable guaranteed to be unique for each
+    group.
+  * added lots of menu items with -state=>'disabled'
+  * use $sep in set_properties to compute which File menu items should
+    be disabled
+  * use Tk::Balloon in status mode with Echo area
+  * attached balloons to lots of menu items
+  * got rid of quick help menu items in favor of balloons
+
+
+Sep 13 2002 -- version 0.8.000
+  * begin new versioning scheme and begin releasing Athena and Artemis
+    together
+  * moved the thing that writes info to the head of a project file
+    into Tools.pm
+  * moved the memory_check into Tools.pm
+  * can now explicitly export data as a chi(k) record for use with
+    Artemis. this required some otherwise transparent changes to
+    save_record 
+  * startup messages run faster (all done after 5.5 sec rather than 9)
+  * disabled the mouse-3 pop-up menu in all text widgets (exit
+    considered dangerous!!)
+  * plot select help altered to ROText
+  * "Preferences" menu is now "Settings" menu

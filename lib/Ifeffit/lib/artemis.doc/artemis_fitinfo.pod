@@ -1,0 +1,64 @@
+=head1 ARTEMIS: The Fit Information Dialog
+
+B<ARTEMIS> -  The fit information dialog
+
+
+=head1 Fit information dialog
+
+Part of the concept of a project in B<Artemis> is the ability to track
+changes to your data analysis as you change your fitting model.  To
+this end, B<Artemis> is able to save information about every fit that
+gets made.  As you do this work, you will, no doubt, collect a large
+number of past fits within your project.  B<Artemis> helps you
+organize these fits by asking you to fill out a small form each time
+you begin a fit.
+
+=over 4
+
+=item Label
+
+This is a short text string which will be displayed in the Data and
+Paths List.  The default is to make a label which indicates: (1)
+whether a fit or a sum of paths is being made and (2) which fit in the
+sequence of fits this is.  Of course, you can change this to any
+string which helps you remember which fit this is.
+
+=item Comment
+
+This is a longer text string which will be written to the log file and
+will also be inserted into the Comment section of the Properties
+palette.  The purpose of this is to provide a concisem one-line
+description of the current fit.
+
+=item Figure of merit
+
+This is an number (either an integer or a real) that somehow describes
+the current fit.  The default is to number of the current fit in the
+sequence of fits.  When writing reports on the log viewer page, the
+reports will contain this number.  When plots are made from those
+reports, these numbers will be used as the x-axis values.  One example
+of how these might be used is in a project wherein you will fit a
+sequence of data taken at different temperatures.  The figure of merit
+might then be the temperature of the data.  That way, plots made from
+reports will be plots as a function of temperature.
+
+=back
+
+There are also two radio buttons on the fit information dialog which
+control whether a new slot will be created for the fit.  That is, you
+can choose whether to insert a new entry in the Data and Paths List
+for this fit or instead to reuse the previous one.
+
+If you wish the fits to run without interaction with this dialog, set
+the general->fit_query parameter in the preferences to false.  When
+this is false, the default values will always be used for the label,
+comment, and figure of merit.
+
+
+=over 5
+
+=item
+
+L<Back to the main document|artemis>
+
+=back

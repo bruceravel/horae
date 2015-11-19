@@ -1,0 +1,103 @@
+=head1 ARTEMIS: Editing Math Expressions
+
+B<ARTEMIS> - Editing math expressions
+
+
+
+
+The math expression editing dialog is a way of setting path parameter
+math expressions for many paths at once.  It works on a given path
+parameter, e.g. it sets e0 or sigma^2 for many paths but does not
+touch other path parameters.  This dialog is available in two
+different context menus.  If you right click on a path parameter label
+on the path page and selection "Edit for many paths", then the dialog
+will pop up for editing that parameter.  If you right click on an
+entry on the B<Feff> interpretation page and select the "Edit path
+parameters" cascade, then select a path parameter, the dialog will pop
+up for editing that parameter.
+
+
+=head2 Operation of the dialog
+
+The dialog is fairly simple.  At the top is a text entry box for
+typing in your math expression.  Below that are various radiobuttons
+for specifying how to apply the math expression to the various paths
+in your project.  The options are:
+
+=over 4
+
+=item 1.
+
+Add the math expression to every path in the current B<Feff> calculation.
+
+=item 2.
+
+Add the math expression to every path in the each B<Feff> calculation.
+
+=item 3.
+
+Add the math expression to every path in the each B<Feff> calculation
+associated with the current data set.
+
+=item 4.
+
+Add the math expression to selected paths (i.e. the ones highlighted
+in orange in the Data and Paths list).
+
+=back
+
+
+=head2 Tokens
+
+You can write your math expressions using token.  Tokens are short
+character strings which will be replaced by path-specific information
+as the math expression is applied to each path.  The tokens are:
+
+=over 4
+
+=item C<%i>
+
+The path index from the B<Feff> calculation.  This is actually
+computed from the name of the C<`feffNNNN.dat'> file from the B<Feff>
+calculation.  For instance, if the file is C<`feff0029.dat'>, then
+C<%i> will expand to C<29>.
+
+=item C<%I>
+
+The path index from the B<Feff> calculation, padded to fill four
+characters.  For instance, if the file is C<`feff0029.dat'>, then
+C<%I> will expand to C<0029>.
+
+=item C<%r>
+
+The effective path length (or C<reff>) from the B<Feff> calculation
+for the path.
+
+=item C<%d>
+
+The degeneracy of the path.
+
+=item C<%D>
+
+A template for the Debye function.  This always expands to the string
+"debye(temp,thetad)" and may need be edited after the fact to use the
+correct variable names.  This is offered because the author finds it
+hard to remember the order of the arguments to the Debye function.
+
+=item C<%E>
+
+A template for the Einstein function.  This always expands to the string
+"eins(temp,thetae)" and may need be edited after the fact to use the
+correct variable names.  This is offered because the author finds it
+hard to remember the order of the arguments to the Einstein function.
+
+=back
+
+
+=over 5
+
+=item
+
+L<Back to the main document|artemis>
+
+=back

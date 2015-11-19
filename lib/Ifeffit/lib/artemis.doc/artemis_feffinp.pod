@@ -1,0 +1,34 @@
+=head1 ARTEMIS: The FEFF Input File
+
+B<ARTEMIS> - The B<FEFF> input file
+
+This page displays the B<Feff> input data, which includes some control
+parameters and a long list of atomic coordinates.  This page is no
+more sophisticated than a text box which serves as a primitive editor
+and a button at the bottom for running B<Feff>.  Explaining B<Feff> is
+beyond the scope of this document.
+
+When B<feff> is finished, you will presented with a dialog asking how
+many paths to import.  The choices are none, the first path, the first
+10 paths, and all paths.  The number in the third option is
+configurable in the preferences dialog.  Should you ever need to rerun
+B<Feff> after starting a project, "none" is usually the right answer.
+The other options may result in one or more paths being defined twice
+in the project -- a confusing situation.
+
+If B<Feff> fails to run to completion, B<Artemis> will try to
+recognize the problem and post a suggestion for how to solve the
+problem.  If B<Artemis> does not recognize your problem, explain it
+Bruce so he can add that problem to B<Artemis>'s database of
+troubleshooting solutions.
+
+
+
+=over 5
+
+=item
+
+L<Back to the main document|artemis>
+
+=back
+

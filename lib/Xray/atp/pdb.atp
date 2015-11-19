@@ -1,0 +1,12 @@
+<atp -- Atoms Template File>
+<com> This file is part of the Atoms distribution.
+<com> Atoms is copyright (c) Bruce Ravel 1998-2006.
+<com> This is the atoms template file for a file of the Protein Data Bank style
+<com> Homepage: http://cars9.uchicago.edu/~ravel/software/
+<com>
+<meta :file "Protein Data Bank file" :precision 7.3 :incbegin 1 :output "data.pdb">
+<meta :list cluster :occupancy 1>
+<id :prefix "REMARK   1 ">
+<titles :prefix "REMARK   2 ">
+<list :style cluster>
+ATOM   <inc>  <elem>          1     <x> <y> <z>  1.00  0.00

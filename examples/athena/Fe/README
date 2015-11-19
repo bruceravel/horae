@@ -1,0 +1,30 @@
+
+Files in this directory:
+
+README	  This file
+fe.060	  Iron foil, 60K scan 1
+fe.061    60K scan 2
+fe.062    60K scan 3
+fe.150    150K scan 1
+fe.151    150K scan 2
+fe.300    300K scan 3
+fe.301    300K scan 1
+
+
+This data set is provided for testing the calibration and data
+pre-processing features of Athena.  When these data were collected,
+the calibration was intentionally set to be wrong by several volts.
+Specifically the peak of the first derivative was set to something
+other than 7112 eV.
+
+Read in the `fe.060' and choose the data calibration option from the
+Group menu.  Calibrate the data as desired.  Then adjust the
+parameters until you are happy.  Next read in the remaining data using
+the "Open many files" option in the File menu.  In the "Data columns"
+dialog, click on the button labeled "Set preprocessing parameters".
+Choose "fe_060" as the standard, then click on the checkbuttons for
+aligning the data and for setting parameters.  For this data set, the
+auto-alignment algorithm works quite well.
+
+You may also want to merge these data as appropriate and use them with
+the example project in the Artemis section of the example files.

@@ -1,0 +1,10 @@
+<SOFTPKG NAME="Ifeffit" VERSION="1,2,11,0">
+    <TITLE>Ifeffit</TITLE>
+    <ABSTRACT>Interface to Ifeffit XAFS library</ABSTRACT>
+    <AUTHOR>Matt Newville (newville@cars.uchicago.edu)</AUTHOR>
+    <IMPLEMENTATION>
+        <OS NAME="MSWin32" />
+        <ARCHITECTURE NAME="MSWin32-x86-multi-thread-5.8" />
+        <CODEBASE HREF="PPM-Ifeffit-1.2.11_Perl5.8.tar.gz" />
+    </IMPLEMENTATION>
+</SOFTPKG>
