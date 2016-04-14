@@ -10,6 +10,14 @@ This software was last updated in 2008 and has been replaced by
 You really shouldn't be using this software.  You really should be
 using [[https://github.com/bruceravel/demeter][Demeter]].
 
+If you use this software and run into probelms, Bruce will not provide 
+support.  Again, use [[https://github.com/bruceravel/demeter][Demeter]].
+
+Installer packages for Windows for this software are no longer maintained.
+Bruce does not have copies of the old installer packages and cannot 
+help you locate them on the internet.  Again, use 
+[[https://github.com/bruceravel/demeter][Demeter]].
+
 More information about Demeter -- including Windows installer
 packages and installation instructions for linux and Mac -- can be
 found at [[http://bruceravel.github.io/demeter/][the Demeter homepage]].
